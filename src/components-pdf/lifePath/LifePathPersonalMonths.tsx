@@ -1,0 +1,337 @@
+import Person, { SplittedDate } from '@/resources/Person';
+import { getAllMonths } from '@/utils/numbers';
+import { StyleSheet, Text, View } from '@react-pdf/renderer';
+import { capitalize } from 'lodash';
+import { useTranslation } from 'react-i18next';
+
+export const lifePath = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: '413px',
+    left: '11px',
+    fontSize: '7px',
+    width: '533px',
+    backgroundColor: 'red',
+  },
+  wrap: {
+    position: 'relative',
+  },
+  personalYears: {
+    position: 'absolute',
+    left: '173px',
+    width: '317px',
+    top: '12px',
+    // backgroundColor: 'red',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  item: {
+    width: '20px',
+    height: '20px',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '12px',
+  },
+  itemWrap: {
+    fontSize: '12px',
+  },
+  year: {
+    position: 'absolute',
+    top: '20px',
+    left: '-20px',
+    width: '65px',
+    height: '12px',
+    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '8px',
+    // backgroundColor: 'red'
+  },
+});
+
+export default function LifePathPersonalMonths({ consultant, now, newDate }: { consultant: Person, now: SplittedDate, newDate: Date }) {
+  const { t } = useTranslation();
+  const listOfMonths = consultant.getCustomMonths();
+  let quarterOne: string[] = [];
+  let quarterTwo: string[] = [];
+  let quarterThree: string[] = [];
+  let quarterFour: string[] = [];
+  const allMonths = getAllMonths();
+
+  // Use birth month index (0-11) instead of searching for 'Enero'
+  const indexMonth = listOfMonths.findIndex((i) => i === capitalize(t('months.january') as string));
+  // Get current month index from the date (0-11)
+  const currentMonthIndex = newDate.getMonth();
+
+  switch (indexMonth) {
+    case 0:
+      quarterOne = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterTwo = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterThree = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      break;
+    case 1:
+      quarterOne = [listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterTwo = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterThree = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterFour = [listOfMonths[0]];
+      break;
+    case 2:
+    case 3:
+      quarterOne = [listOfMonths[3], listOfMonths[4]];
+      quarterTwo = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterThree = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterFour = [listOfMonths[0], listOfMonths[1], listOfMonths[2]];
+      break;
+    case 4:
+      quarterOne = [listOfMonths[4]];
+      quarterTwo = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterThree = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterFour = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3]];
+      break;
+    case 5:
+      quarterOne = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterTwo = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterThree = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      break;
+    case 6:
+      quarterOne = [listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterTwo = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterThree = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterFour = [listOfMonths[5]];
+      break;
+    case 7:
+      quarterOne = [listOfMonths[7], listOfMonths[8]];
+      quarterTwo = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterThree = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterFour = [listOfMonths[5], listOfMonths[6]];
+      break;
+    case 8:
+      quarterOne = [listOfMonths[8]];
+      quarterTwo = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterThree = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterFour = [listOfMonths[5], listOfMonths[6], listOfMonths[7]];
+      break;
+    case 9:
+      quarterOne = [listOfMonths[9], listOfMonths[10], listOfMonths[11]];
+      quarterTwo = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterThree = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      break;
+    case 10:
+      quarterOne = [listOfMonths[10], listOfMonths[11]];
+      quarterTwo = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterThree = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterFour = [listOfMonths[9]];
+      break;
+    case 11:
+      quarterOne = [listOfMonths[11]];
+      quarterTwo = [listOfMonths[0], listOfMonths[1], listOfMonths[2], listOfMonths[3], listOfMonths[4]];
+      quarterThree = [listOfMonths[5], listOfMonths[6], listOfMonths[7], listOfMonths[8]];
+      quarterFour = [listOfMonths[9], listOfMonths[10]];
+      break;
+    default:
+  }
+  // Find which quarter contains the current month by comparing indices
+  const isQuarterOne = quarterOne.find((month) => allMonths.findIndex((m) => m === month) === currentMonthIndex);
+  const isQuarterTwo = quarterTwo.find((month) => allMonths.findIndex((m) => m === month) === currentMonthIndex);
+  const isQuarterThree = quarterThree.find((month) => allMonths.findIndex((m) => m === month) === currentMonthIndex);
+  const isQuarterFour = quarterFour.find((month) => allMonths.findIndex((m) => m === month) === currentMonthIndex);
+
+  if (isQuarterOne !== undefined) {
+    return (
+      <View style={lifePath.container}>
+        <View style={lifePath.wrap}>
+          <View style={lifePath.personalYears}>
+            {quarterOne.map((mes:string) => {
+              const index = allMonths.findIndex((month:string) => month === mes);
+              const isCurrentMonth = index === currentMonthIndex;
+              return (
+                <View style={lifePath.itemWrap}>
+                  <View style={[lifePath.item, { backgroundColor: `${isCurrentMonth ? '#E7B62C' : '#F5E2A7'}` }]}>
+                    <Text>
+                      {consultant.calcPersonalMonth({ ...now, month: index + 1 })}
+                      {consultant.calcPersonalMonthISK({ ...now, month: index + 1 })}
+                    </Text>
+                  </View>
+                  <View style={lifePath.year}>
+                    <Text>{mes.toUpperCase()}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </View>
+    );
+  }
+  if (isQuarterTwo !== undefined) {
+    return (
+      <View style={lifePath.container}>
+        <View style={lifePath.wrap}>
+          <View style={lifePath.personalYears}>
+            {quarterTwo.map((mes:string) => {
+              const index = allMonths.findIndex((month:string) => month === mes);
+              return (
+                <View style={lifePath.itemWrap}>
+                  <View style={[lifePath.item, { backgroundColor: `${index === currentMonthIndex ? '#E7B62C' : '#F5E2A7'}` }]}>
+                    <Text>
+                      {consultant.calcPersonalMonth({ ...now, month: index + 1 })}
+                      {consultant.calcPersonalMonthISK({ ...now, month: index + 1 })}
+                    </Text>
+                  </View>
+                  <View style={lifePath.year}>
+                    <Text>{mes.toUpperCase()}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </View>
+    );
+  }
+  if (isQuarterThree !== undefined) {
+    return (
+      <View style={lifePath.container}>
+        <View style={lifePath.wrap}>
+          <View style={lifePath.personalYears}>
+            {quarterThree.map((mes:string) => {
+              const index = allMonths.findIndex((month:string) => month === mes);
+              return (
+                <View style={lifePath.itemWrap}>
+                  <View style={[lifePath.item, { backgroundColor: `${index === currentMonthIndex ? '#E7B62C' : '#F5E2A7'}` }]}>
+                    <Text>
+                      {consultant.calcPersonalMonth({ ...now, month: index + 1 })}
+                      {consultant.calcPersonalMonthISK({ ...now, month: index + 1 })}
+                    </Text>
+                  </View>
+                  <View style={lifePath.year}>
+                    <Text>{mes.toUpperCase()}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </View>
+    );
+  }
+  if (isQuarterFour !== undefined) {
+    return (
+      <View style={lifePath.container}>
+        <View style={lifePath.wrap}>
+          <View style={lifePath.personalYears}>
+            {quarterFour.map((mes:string) => {
+              const index = allMonths.findIndex((month:string) => month === mes);
+              return (
+                <View style={lifePath.itemWrap}>
+                  <View style={[lifePath.item, { backgroundColor: `${index === currentMonthIndex ? '#E7B62C' : '#F5E2A7'}` }]}>
+                    <Text>
+                      {consultant.calcPersonalMonth({ ...now, month: index + 1 })}
+                      {consultant.calcPersonalMonthISK({ ...now, month: index + 1 })}
+                    </Text>
+                  </View>
+                  <View style={lifePath.year}>
+                    <Text>{mes.toUpperCase()}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={lifePath.container}>
+      <View style={lifePath.wrap}>
+        <View style={lifePath.personalYears}>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+          <View style={lifePath.itemWrap}>
+            <View style={lifePath.item}>
+              <Text>-</Text>
+            </View>
+            <View style={lifePath.year}>
+              <Text>-</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}

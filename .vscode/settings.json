@@ -1,0 +1,36 @@
+{
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "eslint.options": {
+    "overrideConfigFile": ".eslintrc"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#ab8ca7",
+    "activityBar.background": "#ab8ca7",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#d5d7c8",
+    "activityBarBadge.foreground": "#15202b",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#ab8ca7",
+    "statusBar.background": "#966e90",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#ab8ca7",
+    "statusBarItem.remoteBackground": "#966e90",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#966e90",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#966e9099",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#966e90",
+  "cSpell.words": [
+    "airthmax",
+    "Arithmax",
+    "Synastry"
+  ]
+}

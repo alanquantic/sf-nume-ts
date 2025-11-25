@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="200" width="220">
+  <polygon points="65,20 3,136 130,136" fill="transparent" stroke="#004AAD" stroke-width="3"/>
+  <polygon points="160,20 220,136 90,136" fill="transparent" stroke="#51A133" stroke-width="3"/>
+  <line x1="90" y1="0" x2="90" y2="196" stroke="#DF4545" stroke-width="3"/>
+  <line x1="133" y1="0" x2="133" y2="196" stroke="#DF4545" stroke-width="3"/>
+  <line x1="90" y1="0" x2="133" y2="0" stroke="#DF4545" stroke-width="6"/>
+  <line x1="90" y1="196" x2="133" y2="196" stroke="#DF4545" stroke-width="3"/>
+</svg>

@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx eslint:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(find:*)",
+      "Bash(node:*)",
+      "Bash(for key in \"noMembersInGroupMessage\" \"descriptionOfGroup\" \"groupData\" \"groupOf\" \"creationDate\" \"lastYearIntegration\" \"membersOfGroup\" \"noMembersInThisGroup\" \"clickToAddMember\" \"addMemberToGroup\" \"names\" \"paternalLastName\" \"maternalLastName\" \"yearStartInGroup\" \"dragToSeeMore\" \"nameLabel\" \"pinnacleLabel\" \"returnLabel\")",
+      "Bash(do)",
+      "Bash(if grep -q \"\"\"$key\"\"\" src/locales/en.json)",
+      "Bash(then)",
+      "Bash(echo:*)",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(for key in \"alerts.confirmDeleteMember\" \"alerts.deletingMember\" \"alerts.memberDeletedSuccess\" \"errors.errorSavingMember\")",
+      "Bash(if grep -q \"\"\"$key##*.\"\"\" src/locales/en.json)",
+      "Bash(for file in src/components/personal/vibrationTime/QuarterPerYear.tsx )",
+      "Bash(src/components/personal/vibrationTime/QuarterPerMonth.tsx )",
+      "Bash(src/components/personal/vibrationTime/CurrentQuarterFont.tsx )",
+      "Bash(src/components/personal/vibrationTime/CustomMonths.tsx )",
+      "Bash(src/components/personal/lifePath/PathMonth.tsx )",
+      "Bash(src/components-pdf/VibrationTimeQuarterY.tsx )",
+      "Bash(src/components-pdf/VibrationTimeQuarterM.tsx)",
+      "Bash(if [ -f \"$file\" ])",
+      "Bash(for file in src/components/partners/vibrationTime/SynastryQuarterPerYear.tsx )",
+      "Bash(src/components/partners/vibrationTime/SynastryQuarterPerMonth.tsx )",
+      "Bash(src/components/partners/vibrationTime/synastryCurrentQuarterFont.tsx )",
+      "Bash(src/components-pdf/synastryVibrationTime/SynastryVTQuaterY.tsx )",
+      "Bash(src/components-pdf/synastryVibrationTime/SynastryVTQuaterM.tsx)",
+      "Bash(for file in src/components-pdf/groupVibrationTime/GroupQuaterY.tsx )",
+      "Bash(src/components-pdf/groupVibrationTime/GroupQuaterM.tsx)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

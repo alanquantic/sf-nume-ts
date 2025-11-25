@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:3800",
+      "webRoot": "${workspaceFolder}/src"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Brave Windows",
+      "webRoot": "${workspaceFolder}/src",
+      "runtimeExecutable": "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+      "url": "http://localhost:3800",
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Brave Mac",
+      "webRoot": "${workspaceFolder}/src",
+      "runtimeExecutable": "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+      "url": "http://localhost:3800",
+    }
+  ]
+}

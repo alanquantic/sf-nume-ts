@@ -1,0 +1,306 @@
+/* Botón flotante de Laura */
+.floating-laura-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.floating-laura-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.floating-laura-button:active {
+  transform: scale(0.95);
+}
+
+/* Estilos del modal */
+.floating-laura-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.floating-laura-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+}
+
+.floating-laura-content {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header con fondo morado */
+.floating-laura-header {
+  background: #7f4577;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px 12px 0 0;
+}
+
+.floating-laura-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.floating-laura-header-icon {
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.floating-laura-header-title {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.floating-laura-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.floating-laura-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Sección de información con gradiente */
+.floating-laura-info-section {
+  background: linear-gradient(135deg, #E0BBE4 0%, #F0E4F5 100%);
+  padding: 16px 20px;
+  border-bottom: 1px solid #E0BBE4;
+}
+
+.floating-laura-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.floating-laura-info-label {
+  font-size: 14px;
+  color: #4A4A4A;
+  font-weight: 500;
+}
+
+.floating-laura-info-value {
+  font-size: 16px;
+  color: #2D2D2D;
+  font-weight: 600;
+}
+
+.floating-laura-back-link {
+  font-size: 16px;
+  color: #7f4577;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.floating-laura-back-link:hover {
+  color: #4A1F4F;
+}
+
+/* Sección de búsqueda */
+.floating-laura-search-section {
+  padding: 20px;
+}
+
+.floating-laura-label {
+  display: block;
+  font-size: 14px;
+  color: #4A4A4A;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.floating-laura-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: none;
+}
+
+.floating-laura-search-input:focus {
+  outline: none;
+  border-color: #7f4577;
+  box-shadow: 0 0 0 3px rgba(106, 44, 112, 0.1);
+}
+
+.floating-laura-search-input::placeholder {
+  color: #9CA3AF;
+  font-style: italic;
+}
+
+/* Resultados */
+.floating-laura-results {
+  flex: 1;
+  padding: 0 20px 20px;
+  overflow-y: auto;
+}
+
+.floating-laura-terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.floating-laura-term-item {
+  padding: 12px 16px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.floating-laura-term-item:hover {
+  background: #F3F4F6;
+  border-color: #7f4577;
+}
+
+.floating-laura-term-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+/* Definición */
+.floating-laura-definition {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.floating-laura-definition-content {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.floating-laura-definition-text {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.floating-laura-definition-paragraph {
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Mensajes de estado */
+.floating-laura-no-results,
+.floating-laura-placeholder {
+  text-align: center;
+  color: #6B7280;
+  font-size: 14px;
+  padding: 20px;
+  font-style: italic;
+}
+
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.floating-laura-modal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .floating-laura-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .floating-laura-header {
+    padding: 12px 16px;
+  }
+  
+  .floating-laura-info-section {
+    padding: 12px 16px;
+  }
+  
+  .floating-laura-search-section {
+    padding: 16px;
+  }
+  
+  .floating-laura-results {
+    padding: 0 16px 16px;
+  }
+  
+  .floating-laura-definition {
+    padding: 16px;
+  }
+  
+  .floating-laura-button {
+    bottom: 15px;
+    left: 15px;
+    width: 45px;
+    height: 45px;
+  }
+}

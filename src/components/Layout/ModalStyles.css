@@ -1,0 +1,474 @@
+/* Estilos personalizados para el modal de reportes PDF */
+
+.modal-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+}
+
+.modal-container {
+  animation: modalSlideIn 0.3s ease-out;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+}
+
+.modal-header {
+  background: #7f4577; /* Color sólido en lugar de gradiente */
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.2;
+}
+
+.modal-close-btn {
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: #9F5D9B #f3f4f6;
+  max-height: calc(95vh - 120px); /* Altura aumentada */
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #9F5D9B;
+  border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #7f4577;
+}
+
+/* Área de visualización del PDF con altura aumentada */
+.pdf-preview-container {
+  height: calc(95vh - 200px);
+  min-height: 700px; /* Altura mínima aumentada */
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* Estilos mejorados para la selección de reportes */
+.report-selection-container {
+  background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.report-selection-title {
+  color: #7c3aed;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.report-selection-title svg {
+  margin-right: 8px;
+  color: #8b5cf6;
+}
+
+.report-item {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.report-item:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  transform: translateY(-1px);
+}
+
+.report-item.selected {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+}
+
+.report-checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #8b5cf6;
+  cursor: pointer;
+}
+
+.report-label {
+  flex: 1;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.report-item:hover .report-label {
+  color: #7c3aed;
+}
+
+.report-icon {
+  width: 32px;
+  height: 32px;
+  background: #f3e8ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.report-item:hover .report-icon {
+  background: #e9d5ff;
+}
+
+.report-icon svg {
+  width: 16px;
+  height: 16px;
+  color: #8b5cf6;
+}
+
+/* Estilos para el botón de generar reportes - COLOR SÓLIDO */
+.generate-button-container {
+  background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.generate-button {
+  background: #7f4577; /* Color sólido en lugar de gradiente */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(105, 48, 97, 0.25);
+}
+
+.generate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(105, 48, 97, 0.35);
+  background: #9F5D9B; /* Color sólido al hacer hover */
+}
+
+.generate-button:active {
+  transform: translateY(0);
+}
+
+.generate-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Estilos para el estado de carga */
+.loading-container {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #3b82f6;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+.loading-title {
+  color: #1e40af;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.loading-description {
+  color: #3b82f6;
+  font-size: 14px;
+}
+
+/* Estilos para la vista previa del PDF */
+.pdf-preview-container {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.pdf-preview-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Animaciones */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para los checkboxes personalizados */
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #f3f4f6;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover .checkmark {
+  border-color: #9F5D9B;
+  background-color: #fdf4ff;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #9F5D9B;
+  border-color: #9F5D9B;
+}
+
+.custom-checkbox .checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Estilos para las tarjetas de reportes */
+.report-card {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.report-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #9F5D9B;
+}
+
+.report-card.selected {
+  border-color: #9F5D9B;
+  background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+}
+
+/* Estilos para el botón de generar - COLOR SÓLIDO */
+.generate-btn {
+  background: #7f4577; /* Color sólido en lugar de gradiente */
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.generate-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.generate-btn:hover::before {
+  left: 100%;
+}
+
+.generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(105, 48, 97, 0.4);
+  background: #9F5D9B; /* Color sólido al hacer hover */
+}
+
+/* Estilos para los mensajes de error */
+.error-message {
+  animation: slideUp 0.3s ease-out;
+}
+
+.warning-message {
+  animation: slideUp 0.3s ease-out 0.1s both;
+}
+
+/* Estilos para el footer del modal */
+.modal-footer {
+  background: #7f4577; /* Color sólido en lugar de gradiente */
+  height: 4px;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-container {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .modal-content {
+    padding: 1rem;
+    max-height: calc(95vh - 120px);
+  }
+  
+  .pdf-preview-container {
+    height: calc(95vh - 250px);
+    min-height: 500px; /* Altura mínima ajustada para móviles */
+  }
+  
+  .report-selection-container,
+  .generate-button-container {
+    padding: 16px;
+  }
+  
+  .report-item {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .generate-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Tema oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .modal-container {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .modal-content {
+    background: #1f2937;
+  }
+  
+  .report-item {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .report-item:hover {
+    background: #4b5563;
+    border-color: #9F5D9B;
+  }
+  
+  .pdf-preview-container {
+    background: #374151;
+    border-color: #4b5563;
+  }
+  
+  .report-selection-container,
+  .generate-button-container {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    border-color: #4b5563;
+  }
+}
