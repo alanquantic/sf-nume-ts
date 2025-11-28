@@ -23,7 +23,7 @@ import useConsultants from '@/hooks/useConsultants';
 import Person, { AnnualReturn as AnnualReturnPerson } from '@/resources/Person';
 import { PDFPageConfig } from '@/types/pdf.types';
 import { pdf } from '@react-pdf/renderer';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { saveAs } from 'file-saver';
 
 function CreateNamePage() {
@@ -151,7 +151,7 @@ function CreateNamePage() {
       name: inputName,
       lastName: isPerson ? inputLastName : '',
       scdLastName: isPerson ? inputScdLastName : '',
-      birthDate: format(inputDate, 'yyyy-MM-dd'),
+      birthDate: format(parse(inputDate, 'yyyy-MM-dd', new Date()), 'yyyy-MM-dd'),
     }));
     setHasCalculated(true);
     setAnnualReturnPastYear(createNameObj?.annualReturn({ ...calculationDate, year: calculationDate.year - 1 }) || null);
@@ -362,7 +362,6 @@ function CreateNamePage() {
     )).toBlob();
     saveAs(blob, `${consultant?.fullName} - CreateName.pdf`);
   };
-
   return (
     <div className="page-content bg-cover pb-10">
       <div className="grid grid-cols-12 mt-8 gap-6 pt-10">
