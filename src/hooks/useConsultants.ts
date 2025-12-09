@@ -17,8 +17,9 @@ const useConsultants = () => {
   const updateConsultant = (consultantId: string, newConsultant: Api.Consultant): Api.Consultant[] => {
     const updatedConsultants = consultants.map((consultant) => {
       if (consultant?.id === consultantId) {
-        // Actualizar tanto el consultant (Person) como el activeConsultant en el ConsultProvider
-        selectConsultant(newConsultant);
+        // Solo retornar el nuevo consultant sin llamar a selectConsultant
+        // para evitar limpiar activePartnerData y selectedPartnersAsPersons
+        // El componente que llama debe usar updateConsultantPartners para actualizar el contexto
         return newConsultant;
       }
       return consultant;

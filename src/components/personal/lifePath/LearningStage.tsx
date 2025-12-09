@@ -373,7 +373,8 @@ function LearningStage() {
 
   const quarters = calculateQuarters();
   const activeStage = consultant.getLifeStageNumber(calculationDate);
-  const currentWeek = Math.ceil(getDate(newDate) / 7) as WeekNumber;
+  const currentWeek = Math.min(4, Math.ceil(getDate(newDate) / 7)) as WeekNumber;
+
   // Calculate cycle years
   const cycle = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
 

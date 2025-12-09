@@ -7,6 +7,7 @@ import { ConsultContext, ConsultContextInterface } from './ConsultContext';
 import { consultReducer, types } from './ConsultReducer';
 
 import Person from '@/resources/Person';
+import { sanitizeName } from '@/utils/constants';
 
 const INITIAL_STATE = {
   consultant: null,
@@ -61,9 +62,9 @@ function ConsultProvider({ children }: any) {
 
     const newConsultantPerson = new Person({
       id: newConsultant.id || '',
-      name: newConsultant.names || '',
-      lastName: newConsultant.lastName || '',
-      scdLastName: newConsultant.scdLastName || '',
+      name: sanitizeName(newConsultant.names || ''),
+      lastName: sanitizeName(newConsultant.lastName || ''),
+      scdLastName: sanitizeName(newConsultant.scdLastName || ''),
       birthDate: newConsultant.date?.toString() || '',
     });
     setConsultant(newConsultantPerson);
@@ -114,9 +115,9 @@ function ConsultProvider({ children }: any) {
 
     const newPartnerPerson = new Person({
       id: updatedPartner.id || '',
-      name: updatedPartner.names || '',
-      lastName: updatedPartner.lastName || '',
-      scdLastName: updatedPartner.scdLastName || '',
+      name: sanitizeName(updatedPartner.names || ''),
+      lastName: sanitizeName(updatedPartner.lastName || ''),
+      scdLastName: sanitizeName(updatedPartner.scdLastName || ''),
       birthDate: updatedPartner.date?.toString() || '',
       yearMet: 0, // Api.Partner no tiene yearMeet, se establece en 0
     });
@@ -153,9 +154,9 @@ function ConsultProvider({ children }: any) {
     if (updatedPartnerData.partner && updatedPartnerData.partner.length > 0) {
       const partnersAsPersons = updatedPartnerData.partner.map((partner) => new Person({
         id: partner.id,
-        name: partner.names,
-        lastName: partner.lastName,
-        scdLastName: partner.scdLastName,
+        name: sanitizeName(partner.names || ''),
+        lastName: sanitizeName(partner.lastName || ''),
+        scdLastName: sanitizeName(partner.scdLastName || ''),
         birthDate: partner.date,
         yearMet: updatedPartnerData.yearMeet,
       }));
@@ -210,9 +211,9 @@ function ConsultProvider({ children }: any) {
         if (updatedActivePartnerData.partner && updatedActivePartnerData.partner.length > 0) {
           const partnersAsPersons = updatedActivePartnerData.partner.map((partner) => new Person({
             id: partner.id,
-            name: partner.names,
-            lastName: partner.lastName,
-            scdLastName: partner.scdLastName,
+            name: sanitizeName(partner.names || ''),
+            lastName: sanitizeName(partner.lastName || ''),
+            scdLastName: sanitizeName(partner.scdLastName || ''),
             birthDate: partner.date,
             yearMet: updatedActivePartnerData.yearMeet,
           }));
@@ -229,9 +230,9 @@ function ConsultProvider({ children }: any) {
       if (updatedActivePartner) {
         const updatedPartnerPerson = new Person({
           id: updatedActivePartner.id || '',
-          name: updatedActivePartner.names || '',
-          lastName: updatedActivePartner.lastName || '',
-          scdLastName: updatedActivePartner.scdLastName || '',
+          name: sanitizeName(updatedActivePartner.names || ''),
+          lastName: sanitizeName(updatedActivePartner.lastName || ''),
+          scdLastName: sanitizeName(updatedActivePartner.scdLastName || ''),
           birthDate: updatedActivePartner.date?.toString() || '',
           yearMet: 0, // Api.Partner no tiene yearMeet, se establece en 0
         });
@@ -255,9 +256,9 @@ function ConsultProvider({ children }: any) {
         } else {
           const membersPerson = updatedActiveGroup.members?.map((member) => new Person({
             id: member.id,
-            name: member.name,
-            lastName: member.lastName,
-            scdLastName: member.scdLastName,
+            name: sanitizeName(member.name || ''),
+            lastName: sanitizeName(member.lastName || ''),
+            scdLastName: sanitizeName(member.scdLastName || ''),
             birthDate: member.date,
           }));
           setSelectedGroup(membersPerson as Person[]);
@@ -282,9 +283,9 @@ function ConsultProvider({ children }: any) {
     } else {
       const membersPerson = updatedGroup.members?.map((member) => new Person({
         id: member.id,
-        name: member.name,
-        lastName: member.lastName,
-        scdLastName: member.scdLastName,
+        name: sanitizeName(member.name || ''),
+        lastName: sanitizeName(member.lastName || ''),
+        scdLastName: sanitizeName(member.scdLastName || ''),
         birthDate: member.date,
       }));
       setSelectedGroup(membersPerson as Person[]);

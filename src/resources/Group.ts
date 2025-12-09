@@ -459,14 +459,13 @@ class Group {
     const occurrences :Record<number, number> = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const num of appearances) {
-      occurrences[num] = occurrences[num] ? occurrences[num] + 1 : 1;
+      occurrences[num] = (occurrences[num] || 0) + 1;
     }
-    Object.entries(occurrences).forEach((occurrence) => {
-      if (occurrence[1] === 3) {
-        occurrences[occurrence[1]] += 1;
-      }
-    });
-    return Object.entries(occurrences).filter((e) => e[1] === 3).map((e) => reduceNumber(Number(e[0]) * 3)).join(', ');
+    // Filtrar los números que aparecen exactamente 3 veces y calcular la triplicidad
+    const triplicities = Object.entries(occurrences)
+      .filter((e) => e[1] >= 3)
+      .map((e) => reduceNumber(Number(e[0]) * 3));
+    return triplicities.join(', ');
   }
 
   calcName():number {
