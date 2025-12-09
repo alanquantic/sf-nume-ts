@@ -44,15 +44,47 @@ export function formatDate(opts: { date: Date | string, format: 'short' | 'long'
     year: 'numeric',
   }).replace(/ de /g, ' ').replace('.', '');
 }
-export const sanitize = (text: string) => text
-  .toString()
-  .normalize('NFD') // split an accented letter in the base letter and the acent
-  .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
-  .toLowerCase()
-  .trim()
-  .replace(/\s+/g, '-')
-  .replace(/[^\w-]+/g, '')
-  .replace(/-+/g, '-');
+/**
+ * Normalize text by removing accents and special characters from vowels.
+ * This function preserves the original format (spaces, case) and only normalizes characters.
+ * @param text - The text to normalize
+ * @returns The normalized text with special characters removed
+ */
+export const sanitizeName = (text: string): string => {
+  if (!text) return '';
+  
+  return text
+    .toString()
+    .normalize('NFD') // split an accented letter in the base letter and the accent
+    .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents
+    // Handle special vowel characters with diacritics (ü, ö, ä, etc.)
+    .replace(/ü/g, 'u')
+    .replace(/Ü/g, 'U')
+    .replace(/ö/g, 'o')
+    .replace(/Ö/g, 'O')
+    .replace(/ä/g, 'a')
+    .replace(/Ä/g, 'A')
+    .replace(/ë/g, 'e')
+    .replace(/Ë/g, 'E')
+    .replace(/ï/g, 'i')
+    .replace(/Ï/g, 'I')
+    .trim();
+};
+
+/**
+ * Sanitize text for URL/slug usage by normalizing characters and converting to slug format.
+ * @param text - The text to sanitize
+ * @returns The sanitized text in slug format (lowercase, with hyphens)
+ */
+export const sanitize = (text: string) => {
+  if (!text) return '';
+  
+  return sanitizeName(text)
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/-+/g, '-');
+};
 
 export const isValidDate = (date: string) => {
   if (!date) return false;
