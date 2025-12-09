@@ -349,17 +349,17 @@ class Person {
       this.getS(),
       this.getP(),
     ];
-    const occurrences: Record<number, number> = [];
+    const occurrences: Record<number, number> = {};
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < appearances.length; i++) {
       const num = appearances[i];
-      occurrences[num] = occurrences[num] ? Object.values(occurrences[num])[1] + 1 : 1;
+      occurrences[num] = (occurrences[num] || 0) + 1;
     }
-    const triplicity = Object.entries(occurrences).filter((e) => e[1] === 3).map((e) => reduceNumber(Number(e[0]) * 3))[0];
-    if (occurrences[triplicity] !== 3) {
-      occurrences[triplicity] += 1;
-    }
-    return Object.entries(occurrences).filter((e) => e[1] === 3).map((e) => reduceNumber(Number(e[0]) * 3)).join(', ');
+    // Filtrar los números que aparecen exactamente 3 veces y calcular la triplicidad
+    const triplicities = Object.entries(occurrences)
+      .filter((e) => e[1] >= 3)
+      .map((e) => reduceNumber(Number(e[0]) * 3));
+    return triplicities.join(', ');
   }
 
   /**
