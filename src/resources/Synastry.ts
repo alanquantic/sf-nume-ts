@@ -411,9 +411,10 @@ class Synastry {
     for (const num of appearances) {
       occurrences[num] = (occurrences[num] || 0) + 1;
     }
-    // Filtrar los números que aparecen exactamente 3 veces y calcular la triplicidad
+    // Filtrar los números que aparecen exactamente 3 veces (triplicidad)
+    // Multiplicar por 3 el número que tiene triplicidad y reducirlo
     const triplicities = Object.entries(occurrences)
-      .filter((e) => e[1] >= 3)
+      .filter((e) => e[1] === 3)
       .map((e) => reduceNumber(Number(e[0]) * 3));
     return triplicities.join(', ');
   }
