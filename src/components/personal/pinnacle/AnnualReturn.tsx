@@ -59,7 +59,7 @@ function AnnualReturn({
 
   return (
     <div className="relative">
-      {months ? (
+      {months && (
         <div className="m-auto left-0 right-0 grid grid-cols-12 absolute top-12">
           <div className="text-11 border border-blue text-blue text-center">{_.toUpper(t('jan') as string)}</div>
           <div className="text-11 border border-blue text-blue text-center">{_.toUpper(t('feb') as string)}</div>
@@ -74,7 +74,7 @@ function AnnualReturn({
           <div className="text-11 border border-green text-green-table text-center">{_.toUpper(t('nov') as string)}</div>
           <div className="text-11 border border-green text-green-table text-center">{_.toUpper(t('dec') as string)}</div>
         </div>
-      ) : ''}
+      )}
       <div className={`annual-grid ${group === true ? 'ml-28' : 'm-auto'} relative w-44`}>
         {(group === true && personalYear !== undefined && yearsOld !== undefined && year !== undefined)
           ? (
@@ -123,10 +123,9 @@ function AnnualReturn({
           )}
         <div className="grid grid-cols-5 gap-2 relative pt-1">
           <img src="/assets/annual-polygon.svg" className="absolute w-full h-full object-contain top-1" alt="bk" />
-          {current
-            ? (
-              <img src="/assets/annual-polygon-active.svg" className="absolute w-full h-full object-contain top-1" alt="bk" />
-            ) : ''}
+          {current && (
+            <img src="/assets/annual-polygon-active.svg" className="absolute w-full h-full object-contain top-1" alt="bk" />
+          )}
 
           <CircleNumber size="xs" appearance="white" border="red" position="vf" borderwidth={current ? '4' : '1'}>
             {annualReturn.F}

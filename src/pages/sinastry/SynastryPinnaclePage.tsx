@@ -1,5 +1,5 @@
 import {
-  useCallback, useContext,
+  useCallback, useContext, useMemo,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +64,13 @@ export default function SynastryPinnaclePage() {
     return <NoConsultantSelected />;
   }
 
-  if (!activePartnerData || !selectedPartnersAsPersons || selectedPartnersAsPersons.length < 2) {
+  // Verificar que hay datos de pareja válidos con al menos 2 miembros
+  const hasValidPartnerData = activePartnerData 
+    && selectedPartnersAsPersons 
+    && Array.isArray(selectedPartnersAsPersons) 
+    && selectedPartnersAsPersons.length >= 2;
+
+  if (!hasValidPartnerData) {
     return (
       <div className="page-content bg-cover pb-10">
         <SelectPartner />
@@ -75,27 +81,27 @@ export default function SynastryPinnaclePage() {
     );
   }
 
-  if (selectedPartnersAsPersons.length < 2) {
-    return (
-      <div className="col-span-12 text-center mt-8">
-        <strong>Selecciona un grupo de parejas con al menos 2 miembros para ver la sinastría</strong>
-      </div>
-    );
-  }
-
   // Use the already converted Person objects from context
   const partner1 = selectedPartnersAsPersons[0];
   const partner2 = selectedPartnersAsPersons[1];
 
+  // Generar una key única para forzar re-render limpio cuando cambian los partners
+  const contentKey = useMemo(() => {
+    const p1Id = partner1?.id || 'p1';
+    const p2Id = partner2?.id || 'p2';
+    const pdId = activePartnerData?.id || 'pd';
+    return `synastry-${pdId}-${p1Id}-${p2Id}`;
+  }, [partner1?.id, partner2?.id, activePartnerData?.id]);
+
   // Create synastry instance between the two partners (not consultant)
-  const synastry = new Synastry(partner1, partner2);
+  const synastry = useMemo(() => new Synastry(partner1, partner2), [partner1, partner2]);
 
   // Calculate annual returns for both partners and synastry
-  const annualReturns = {
+  const annualReturns = useMemo(() => ({
     partner1: partner1.annualReturn(calculationDate),
     partner2: partner2.annualReturn(calculationDate),
     synastry: synastry.annualReturn(calculationDate.year),
-  };
+  }), [partner1, partner2, synastry, calculationDate]);
 
   // Calculate synastry metrics directly
   const synastryMetrics: SynastryMetrics = {
@@ -140,7 +146,7 @@ export default function SynastryPinnaclePage() {
   };
 
   return (
-    <div className="page-content bg-cover pb-10">
+    <div key={contentKey} className="page-content bg-cover pb-10">
       <SelectPartner />
 
       <div className="grid grid-cols-12 gap-6 mt-8">
