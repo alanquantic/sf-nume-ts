@@ -56,8 +56,8 @@ export default function SynastryNineCycle({ synastry, date }: { synastry: Synast
           {' '}
         </Text>
         <Text style={[cycle.number, { top: 23, left: 175, width: '30px' }]}>
-          {synastry.getLifeStage(currentYear)}
-          {synastry.getLifeStageISK(currentYear)}
+          {synastry.calcLifeStage(synastry.getLifeStageNumber(date.month, currentYear))}
+          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(date.month, currentYear))}
         </Text>
       </View>
       <View style={cycle.cyleMap}>

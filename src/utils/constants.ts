@@ -52,7 +52,7 @@ export function formatDate(opts: { date: Date | string, format: 'short' | 'long'
  */
 export const sanitizeName = (text: string): string => {
   if (!text) return '';
-  
+
   return text
     .toString()
     .normalize('NFD') // split an accented letter in the base letter and the accent
@@ -78,7 +78,7 @@ export const sanitizeName = (text: string): string => {
  */
 export const sanitize = (text: string) => {
   if (!text) return '';
-  
+
   return sanitizeName(text)
     .toLowerCase()
     .replace(/\s+/g, '-')

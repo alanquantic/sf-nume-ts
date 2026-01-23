@@ -51,6 +51,7 @@ export const data = StyleSheet.create({
 
 export default function SynastryData({ synastry, date, horizontal }: SynastryDataProps) {
   const { consultant, partner } = synastry;
+  const yearMet = synastry.getYearMeet();
 
   if (horizontal) {
     return (
@@ -69,7 +70,7 @@ export default function SynastryData({ synastry, date, horizontal }: SynastryDat
           <Text style={[data.textAge, { top: 45 }, { right: 175 }]}>{partner.getYearsOld(date.year)}</Text>
         </View>
         <View>
-          <Text style={[data.textYear, { top: 45, left: 525 }]}>{partner.yearMet}</Text>
+          <Text style={[data.textYear, { top: 45, left: 525 }]}>{yearMet}</Text>
         </View>
       </View>
     );
@@ -87,7 +88,7 @@ export default function SynastryData({ synastry, date, horizontal }: SynastryDat
         <Text style={[data.textAge, { top: 45 }]}>{partner.getYearsOld(date.year)}</Text>
       </View>
       <View>
-        <Text style={[data.textYear]}>{partner.yearMet}</Text>
+        <Text style={[data.textYear]}>{yearMet}</Text>
       </View>
       {/* <Text>-</Text> */}
     </View>

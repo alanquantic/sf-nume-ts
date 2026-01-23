@@ -64,21 +64,19 @@ export default function SynastryPinnaclePage() {
     return <NoConsultantSelected />;
   }
 
-  if (!activePartnerData || !selectedPartnersAsPersons || selectedPartnersAsPersons.length < 2) {
+  // Verificar que hay datos de pareja válidos con al menos 2 miembros
+  const hasValidPartnerData = activePartnerData
+    && selectedPartnersAsPersons
+    && Array.isArray(selectedPartnersAsPersons)
+    && selectedPartnersAsPersons.length >= 2;
+
+  if (!hasValidPartnerData) {
     return (
       <div className="page-content bg-cover pb-10">
         <SelectPartner />
         <div className="col-span-12 text-center mt-8">
           <strong>{t('sinastry.selectPartnerWithMembersMinimum')}</strong>
         </div>
-      </div>
-    );
-  }
-
-  if (selectedPartnersAsPersons.length < 2) {
-    return (
-      <div className="col-span-12 text-center mt-8">
-        <strong>Selecciona un grupo de parejas con al menos 2 miembros para ver la sinastría</strong>
       </div>
     );
   }
