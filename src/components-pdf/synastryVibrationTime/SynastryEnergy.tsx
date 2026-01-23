@@ -23,8 +23,8 @@ export default function SynastryEnergy({ synastry, date }: { synastry: Synastry,
     <View style={energy.container}>
       <View>
         <Text style={[energy.text, { top: 30, left: 30 }]}>
-          {synastry.getLifeStage(currentYear)}
-          {synastry.getLifeStageISK(currentYear)}
+          {synastry.calcLifeStage(synastry.getLifeStageNumber(currentMonth, currentYear))}
+          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(currentMonth, currentYear))}
         </Text>
       </View>
       <View>
