@@ -102,8 +102,8 @@ export default function SynastryTimeCycle({ synastry, date }: { synastry: Synast
             {synastry.getLifeStageNumber(date.month, date.year)}
           </Text>
           <Text style={cycle.circle}>
-            {synastry.getLifeStage(date.year)}
-            {synastry.getLifeStageISK(date.year)}
+            {synastry.calcLifeStage(synastry.getLifeStageNumber(date.month, date.year))}
+            {synastry.calcLifeStageISK(synastry.getLifeStageNumber(date.month, date.year))}
           </Text>
         </View>
         <View style={cycle.item}>
