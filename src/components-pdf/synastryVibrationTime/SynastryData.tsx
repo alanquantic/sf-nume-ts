@@ -52,7 +52,6 @@ export const data = StyleSheet.create({
 export default function SynastryData({ synastry, date, horizontal }: SynastryDataProps) {
   const { consultant, partner } = synastry;
   const yearMet = synastry.getYearMeet();
-  console.log(yearMet);
 
   if (horizontal) {
     return (
