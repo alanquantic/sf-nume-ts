@@ -65,9 +65,9 @@ export default function SynastryPinnaclePage() {
   }
 
   // Verificar que hay datos de pareja válidos con al menos 2 miembros
-  const hasValidPartnerData = activePartnerData 
-    && selectedPartnersAsPersons 
-    && Array.isArray(selectedPartnersAsPersons) 
+  const hasValidPartnerData = activePartnerData
+    && selectedPartnersAsPersons
+    && Array.isArray(selectedPartnersAsPersons)
     && selectedPartnersAsPersons.length >= 2;
 
   if (!hasValidPartnerData) {
