@@ -39,7 +39,7 @@ export default function CreateNumeric({ consultant }: { consultant: Person }) {
         </View>
         <View style={[pinnacleName.circle, { left: 85 }]}>
           <Text>
-            {consultant.calcSoulNumber()}
+            {consultant.getSoulCheck()}
             {consultant.calcSoulNumberISK()}
           </Text>
         </View>
