@@ -108,7 +108,8 @@
     "version": "Software Version",
     "licenseNumberArithmax": "License Number",
     "expirationDate": "Expiration Date",
-    "licenseType": "License Type"
+    "licenseType": "License Type",
+    "changelog": "Changelog"
   },
   "settings": {
     "haveProblem": "Have a problem?",

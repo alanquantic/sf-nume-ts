@@ -124,6 +124,7 @@ function Navbar() {
     consultationDate,
     activePartnerData,
     activeGroup,
+    selectedMonthReport,
   } = useConsult();
 
   useEffect(() => {
@@ -187,6 +188,7 @@ function Navbar() {
     if (groupPath === 'group') {
       groupConsult = new Group(selectedGroup, activeGroup?.lastInit ?? 0);
     }
+    console.log('selectedMonthReport', selectedMonthReport);
 
     const blob = await pdf((
       <PDF
@@ -198,7 +200,7 @@ function Navbar() {
         logoURL={logo}
         groupConsult={groupConsult}
         newDate={consultationDate}
-        month={calculationDate.month}
+        month={selectedMonthReport}
         synastry={synastryObject}
         partnerYear={activePartnerData?.yearMeet ?? 0}
         groupYear={activeGroup?.lastInit ?? 0}
@@ -373,7 +375,7 @@ function Navbar() {
         synastry: [],
         groupConsult: [],
         newDate: new Date(),
-        month: new Date().getMonth(),
+        month: selectedMonthReport || calculationDate.month,
         createNameObj: activeConsultant?.createNames,
       };
 
@@ -425,7 +427,7 @@ function Navbar() {
             synastry={synastryObject}
             logoURL={logo}
             groupConsult={groupConsult}
-            month={calculationDate.month}
+            month={selectedMonthReport || calculationDate.month}
             partnerYear={activePartnerData?.yearMeet ?? 0}
             groupYear={activeGroup?.lastInit ?? 0}
             locale={t('locale') as string}

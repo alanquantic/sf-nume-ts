@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 
 import SectionTitle from '@/components/SectionTitle';
+import ChangelogDisplay from '@/components/dashboard/settings/ChangelogDisplay';
 import SettingsForm from '@/components/dashboard/settings/SettingsForm';
 import { useAuth } from '@/context/AuthProvider';
 import { formatDate, licenseTypes } from '@/utils/constants';
@@ -23,37 +24,42 @@ function SettingsPage() {
             </div>
           </div>
         </div>
-        <div className="col-span-5">
-          <div>
-            <SectionTitle
-              title={t('sidebar.myAccount')}
-            />
-            <div className="section-wrap px-2 py-5">
-              <p className="text-13 font-bold text-gray-400">
-                {t('sidebar.version')}
-                :
-                {' '}
-                <span className="text-13 text-black">{userAuth?.app_version}</span>
-              </p>
-              <p className="text-13 font-bold text-gray-400">
-                {t('sidebar.licenseNumberArithmax')}
-                :
-                {' '}
-                <span className="text-13 text-black">{userAuth?.license.id}</span>
-              </p>
-              <p className="text-13 font-bold text-gray-400">
-                {t('sidebar.expirationDate')}
-                :
-                {' '}
-                <span className="text-13 text-black">{userAuth?.license.expirationDate ? formatDate({ date: userAuth?.license.expirationDate, format: 'long', locale: t('locale') as string }) : 'N/A'}</span>
-              </p>
-              <p className="text-13 font-bold text-gray-400">
-                {t('sidebar.licenseType')}
-                :
-                {' '}
-                <span className="text-13 text-black">{licenseTypes(userAuth?.license?.licenseId || '')}</span>
-              </p>
+        <div className="col-span-12 grid grid-cols-2 gap-4">
+          <div className="col-span-1">
+            <div>
+              <SectionTitle
+                title={t('sidebar.myAccount')}
+              />
+              <div className="section-wrap px-2 py-5">
+                <p className="text-13 font-bold text-gray-400">
+                  {t('sidebar.version')}
+                  :
+                  {' '}
+                  <span className="text-13 text-black">{userAuth?.app_version}</span>
+                </p>
+                <p className="text-13 font-bold text-gray-400">
+                  {t('sidebar.licenseNumberArithmax')}
+                  :
+                  {' '}
+                  <span className="text-13 text-black">{userAuth?.license.id}</span>
+                </p>
+                <p className="text-13 font-bold text-gray-400">
+                  {t('sidebar.expirationDate')}
+                  :
+                  {' '}
+                  <span className="text-13 text-black">{userAuth?.license.expirationDate ? formatDate({ date: userAuth?.license.expirationDate, format: 'long', locale: t('locale') as string }) : 'N/A'}</span>
+                </p>
+                <p className="text-13 font-bold text-gray-400">
+                  {t('sidebar.licenseType')}
+                  :
+                  {' '}
+                  <span className="text-13 text-black">{licenseTypes(userAuth?.license?.licenseId || '')}</span>
+                </p>
+              </div>
             </div>
+          </div>
+          <div className="col-span-1">
+            <ChangelogDisplay />
           </div>
         </div>
       </div>
