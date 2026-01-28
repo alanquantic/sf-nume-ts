@@ -13,6 +13,8 @@ export interface ConsultContextInterface {
   selectConsultationDate: (consultationDate: Date) => void;
   consultationDate: Date; // Fecha de Consulta en formato Date
   calculationDate: { day: number; month: number; year: number }; // Fecha de Consulta en formato { day: number; month: number; year: number }
+  selectedMonthReport: number;
+  setSelectedMonthReport: (month: number) => void;
   calculationYear: number; // Año de Consulta
   // Partner management
   activePartner: Person | null;
@@ -80,6 +82,8 @@ const createDefaultValues = (): ConsultContextInterface => ({
   // Partners from selected group as Person objects
   selectedPartnersAsPersons: [],
   setSelectedPartnersAsPersons: () => null,
+  selectedMonthReport: 0,
+  setSelectedMonthReport: () => null,
 });
 
 export const authContextDefaults = createDefaultValues();

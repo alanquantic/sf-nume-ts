@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import {
-  useCallback, useMemo, useReducer, useState,
+  useCallback, useEffect, useMemo, useReducer, useState,
 } from 'react';
 
 import { ConsultContext, ConsultContextInterface } from './ConsultContext';
@@ -21,6 +21,8 @@ const INITIAL_STATE = {
   activeGroup: null,
   isEditingGroup: false,
   setIsEditingGroup: () => null,
+  selectedMonthReport: 0,
+  setSelectedMonthReport: () => null,
 };
 
 function ConsultProvider({ children }: any) {
@@ -30,7 +32,7 @@ function ConsultProvider({ children }: any) {
   const [consultationDate, setConsultationDate] = useState<Date>(new Date());
   const [activePartner, setActivePartner] = useState<Person | null>(null);
   const [partnersAvailable, setPartnersAvailable] = useState<Api.Partner[]>([]);
-
+  const [selectedMonthReport, setSelectedMonthReport] = useState<number>(0);
   // Memoize calculationDate to prevent unnecessary recalculations
   const calculationDate = useMemo(() => ({
     day: Number(format(consultationDate, 'dd')),
@@ -43,6 +45,13 @@ function ConsultProvider({ children }: any) {
     () => Number(format(consultationDate, 'yyyy')),
     [consultationDate],
   );
+
+  // Initialize selectedMonthReport with current month if not set
+  useEffect(() => {
+    if (selectedMonthReport === 0 && calculationDate.month > 0) {
+      setSelectedMonthReport(calculationDate.month);
+    }
+  }, [calculationDate.month, selectedMonthReport]);
 
   // Group management state
   const [groupsAvailable, setGroupsAvailable] = useState<Api.GroupData[]>([]);
@@ -331,6 +340,8 @@ function ConsultProvider({ children }: any) {
     selectConsultationDate: setConsultationDate,
     calculationDate,
     calculationYear,
+    selectedMonthReport,
+    setSelectedMonthReport,
     handleIsEditingConsultant,
     activePartner,
     selectActivePartner,
@@ -365,6 +376,8 @@ function ConsultProvider({ children }: any) {
     consultationDate,
     calculationDate,
     calculationYear,
+    selectedMonthReport,
+    setSelectedMonthReport,
     handleIsEditingConsultant,
     activePartner,
     selectActivePartner,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { capitalize } from 'lodash';
@@ -16,14 +16,23 @@ type SingleMonthsProps = {
 };
 
 function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
-  const { consultant, calculationDate } = useConsult();
-  const [selectedMonth, setSelectedMonth] = useState(month);
+  const {
+    consultant, calculationDate, selectedMonthReport, setSelectedMonthReport,
+  } = useConsult();
   const { t } = useTranslation();
+  const [selectedMonth, setSelectedMonth] = useState(selectedMonthReport || month);
+
+  // Sincronizar selectedMonth con selectedMonthReport del contexto cuando cambia
+  useEffect(() => {
+    if (selectedMonthReport > 0 && selectedMonthReport !== selectedMonth) {
+      setSelectedMonth(selectedMonthReport);
+    }
+  }, [selectedMonthReport, selectedMonth]);
 
   if (!consultant) return null;
   const u = new Universal();
 
-  const personalMonth = { ...calculationDate, month: selectedMonth };
+  const personalMonth = { ...calculationDate, month: showMonthSelector ? selectedMonth : month };
 
   const week = {
     one: (calculationDate.day >= 1 && calculationDate.day <= 7),
@@ -32,8 +41,8 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
     four: (calculationDate.day >= 22),
   };
   const currentMonth = calculationDate.month === personalMonth.month;
-  const daysInMonthSingle = consultant.getAllDaysInMonth(selectedMonth, calculationDate.year);
-  const daysCustomSingle = consultant.getDaysOfWeekCustom(selectedMonth, calculationDate.year);
+  const daysInMonthSingle = consultant.getAllDaysInMonth(personalMonth.month, calculationDate.year);
+  const daysCustomSingle = consultant.getDaysOfWeekCustom(personalMonth.month, calculationDate.year);
 
   const isToday = (day:number) => {
     const style = (day === calculationDate.day && currentMonth) && 'bg-red-80';
@@ -54,7 +63,10 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
   };
 
   const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log('event.target.value', event.target.value);
+    console.log('parseInt(event.target.value, 10)', parseInt(event.target.value, 10));
     setSelectedMonth(parseInt(event.target.value, 10));
+    setSelectedMonthReport(parseInt(event.target.value, 10));
   };
 
   return (
@@ -83,11 +95,11 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
                 </select>
               </div>
             </div>
-            <div className="text-sm text-white font-bold px-2">{t('monthCalendar.personalYear')}</div>
+            <div className="text-sm text-white font-bold px-2">{t('monthCalendar.personalMonth')}</div>
             <div className=" px-2">
               <CircleNumber size="sm" appearance="purple-30" border="main">
-                {consultant.calcPersonalMonth(calculationDate)}
-                {consultant.calcPersonalMonthISK(calculationDate)}
+                {consultant.calcPersonalMonth({ ...calculationDate, month: selectedMonth })}
+                {consultant.calcPersonalMonthISK({ ...calculationDate, month: selectedMonth })}
               </CircleNumber>
             </div>
             <div className="text-white font-bold text-xl px-2"> / </div>
@@ -97,7 +109,7 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
                 {u.calcUniversalMonthISK({ ...calculationDate, month: selectedMonth })}
               </CircleNumber>
             </div>
-            <div className="text-sm text-white font-bold px-2">{t('monthCalendar.universalYear')}</div>
+            <div className="text-sm text-white font-bold px-2">{t('monthCalendar.universalMonth')}</div>
 
           </div>
           <div className="text-2xl col-start-6 col-end-8 flex justify-center items-center bg-purple-50 font-bold text-white">
@@ -112,13 +124,13 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
       {!showMonthSelector && (
       <div className="grid">
         <div className="col-start-1 col-end-6 text-2xl flex justify-center bg-main text-white font-bold p-2">
-          {capitalize(getMonthName(personalMonth.month))}
+          {capitalize(getMonthName(month))}
           {' '}
-          {consultant.calcPersonalMonth(personalMonth)}
-          {consultant.calcPersonalMonthISK(personalMonth)}
+          {consultant.calcPersonalMonth({ ...calculationDate, month })}
+          {consultant.calcPersonalMonthISK({ ...calculationDate, month })}
           /
-          {u.calcUniversalMonth(personalMonth)}
-          {u.calcUniversalMonthISK(personalMonth)}
+          {u.calcUniversalMonth({ ...calculationDate, month })}
+          {u.calcUniversalMonthISK({ ...calculationDate, month })}
         </div>
         <div className="text-xl col-start-6 col-end-8 flex justify-center bg-purple-50 p-2 text-white">
           {t('annualCalendar.quarter')}
@@ -202,11 +214,11 @@ function SingleMonth({ month, showMonthSelector = false }: SingleMonthsProps) {
                 {day}
                 <br />
                 <span className="text-xl flex justify-center text-black font-bold">
-                  {consultant.calcPersonalDay({ ...calculationDate, month, day })}
-                  {consultant.calcPersonalDayISK({ ...calculationDate, month, day })}
+                  {consultant.calcPersonalDay({ ...calculationDate, month: personalMonth.month, day })}
+                  {consultant.calcPersonalDayISK({ ...calculationDate, month: personalMonth.month, day })}
                   /
-                  {u.calcUniversalDay({ ...calculationDate, month, day })}
-                  {u.calcUniversalDayISK({ ...calculationDate, month, day })}
+                  {u.calcUniversalDay({ ...calculationDate, month: personalMonth.month, day })}
+                  {u.calcUniversalDayISK({ ...calculationDate, month: personalMonth.month, day })}
                 </span>
               </div>
             ))}
