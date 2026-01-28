@@ -5,7 +5,7 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
-## [3.0.1] - 2024-12-XX
+## [3.0.1] - 2026-01-28
 
 ### Añadido
 - **Sincronización de mes seleccionado para reportes PDF**: Implementada funcionalidad para guardar el mes seleccionado en el componente `SingleMonth` y utilizarlo al generar reportes PDF desde el Navbar.

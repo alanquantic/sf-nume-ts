@@ -15,12 +15,10 @@ interface ChangelogEntry {
 
 function ChangelogDisplay() {
   const { t } = useTranslation();
-
-  // Datos del changelog - en el futuro se puede leer del archivo CHANGELOG.md
   const changelogData: ChangelogEntry[] = [
     {
       version: '3.0.1',
-      date: '2024-12-XX',
+      date: '2026-01-28',
       changes: {
         fixed: [
           'Corrección del número maestro en el reporte personal de creación de nombre',
@@ -31,15 +29,8 @@ function ChangelogDisplay() {
   ];
 
   const formatChangelogDate = (dateString: string) => {
-    if (dateString.includes('XX')) {
-      return dateString.replace('XX', 'Diciembre');
-    }
-    try {
-      const date = new Date(dateString);
-      return formatDate({ date, format: 'long', locale: t('locale') as string });
-    } catch {
-      return dateString;
-    }
+    const date = new Date(dateString);
+    return formatDate({ date, format: 'long', locale: t('locale') as string });
   };
 
   return (
