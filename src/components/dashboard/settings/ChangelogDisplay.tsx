@@ -17,6 +17,19 @@ function ChangelogDisplay() {
   const { t } = useTranslation();
   const changelogData: ChangelogEntry[] = [
     {
+      version: '3.0.2',
+      date: '2026-02-11',
+      changes: {
+        fixed: [
+          'Corrección en la edad de relación en la tabla del destino de pareja: ahora muestra los años desde que se conocieron correctamente',
+        ],
+        added: [
+          'Sección de registro de cambios en la página de configuración para ver las novedades de cada versión',
+          'El mes seleccionado en el calendario mensual ahora se guarda correctamente al generar reportes PDF',
+        ],
+      },
+    },
+    {
       version: '3.0.1',
       date: '2026-01-28',
       changes: {
