@@ -11,6 +11,7 @@ interface SynastryDestinyTableProps {
   tableP: any[];
   date: SplittedDate;
   slice: number;
+  yearMeet: number;
 }
 export const pinnacleName = StyleSheet.create({
   container: {
@@ -40,7 +41,7 @@ export const pinnacleName = StyleSheet.create({
 });
 
 export default function SynastryDestinityTable({
-  table, start, consultant, startP, partner, tableP, date, slice = 0,
+  table, start, consultant, startP, partner, tableP, date, slice = 0, yearMeet,
 }: SynastryDestinyTableProps) {
   const singleC = consultant.getSingle();
   const singleP = partner.getSingle();
@@ -371,7 +372,7 @@ export default function SynastryDestinityTable({
                   width: 19, borderRight: borderRightConfig(i, item), height: 15, backgroundColor: bkConfigFull(i + start, '#e5e5e5'),
                 }]}
                 >
-                  <Text>{reduceNumber(i + start + i + startP)}</Text>
+                  <Text>{consultant.getYearOfBirth() + i + start - yearMeet}</Text>
                 </View>
                 <View style={[pinnacleName.item, {
                   width: 19, borderRight: borderRightConfig(i, item), height: 15, backgroundColor: bkConfigFull(i + start, '#ffffff'),

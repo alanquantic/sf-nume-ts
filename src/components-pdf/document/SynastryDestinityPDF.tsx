@@ -52,6 +52,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           tableP={partnerTable1}
           startP={0 + ageMeetP}
           slice={0}
+          yearMeet={partnerYear}
         />
         <SynastryDestinityTable
           date={date}
@@ -62,6 +63,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           partner={synastry.partner}
           tableP={partnerTable2}
           startP={11 + ageMeetP}
+          yearMeet={partnerYear}
         />
       </>),
   }, {
@@ -78,6 +80,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           tableP={partnerTable3}
           startP={22 + ageMeetP}
           slice={0}
+          yearMeet={partnerYear}
         />
         <SynastryDestinityTable
           date={date}
@@ -88,6 +91,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           partner={synastry.partner}
           tableP={partnerTable4}
           startP={33 + ageMeetP}
+          yearMeet={partnerYear}
         />
       </>),
   }, {
@@ -104,6 +108,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           tableP={partnerTable5}
           startP={44 + ageMeetP}
           slice={0}
+          yearMeet={partnerYear}
         />
         <SynastryDestinityTable
           date={date}
@@ -114,6 +119,7 @@ export default function SynastryDestinityPDF({ synastry, date, partnerYear }: { 
           partner={synastry.partner}
           tableP={partnerTable6}
           startP={55 + ageMeetP}
+          yearMeet={partnerYear}
         />
       </>
     ),

@@ -23,6 +23,7 @@ interface SinastryDestinyTableComponent {
   partner: any;
   tableP: any[];
   startP: number;
+  yearMeet: number;
   currentYearRef?: React.RefObject<HTMLDivElement> | null;
 }
 
@@ -33,6 +34,7 @@ function SinastryDestinyTable({
   partner,
   tableP,
   startP,
+  yearMeet,
   currentYearRef = null,
 }: SinastryDestinyTableComponent) {
   const [binomActive, setBinomActive] = useState(false);
@@ -267,7 +269,7 @@ function SinastryDestinyTable({
                 calculationDate.year === consultant.getYearOfBirth() + i + start ? 'bg-red-80' : 'bg-gold-15'
               }`}
               >
-                {reduceNumber(i + start + i + startP)}
+                {consultant.getYearOfBirth() + i + start - yearMeet}
               </div>
               <div className={`h-12 w-7 text-xs border-b border-r border-gray-400 flex flex-col ${
                 calculationDate.year === consultant.getYearOfBirth() + i + start ? 'bg-red-80' : 'bg-gold-15'
@@ -502,6 +504,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable1P2}
                   startP={0 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
                 <SinastryDestinyTable
@@ -511,6 +514,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable2P2}
                   startP={11 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
                 <SinastryDestinyTable
@@ -520,6 +524,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable3P2}
                   startP={22 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
                 <SinastryDestinyTable
@@ -529,6 +534,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable4P2}
                   startP={33 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
                 <SinastryDestinyTable
@@ -538,6 +544,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable5P2}
                   startP={44 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
                 <SinastryDestinyTable
@@ -547,6 +554,7 @@ export default function SinastryDestinyTablePage() {
                   partner={person2}
                   tableP={synastryTable6P2}
                   startP={55 + ageMeetP2}
+                  yearMeet={yearMeet}
                   currentYearRef={currentYearRef}
                 />
               </>

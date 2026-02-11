@@ -5,6 +5,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [3.0.2] - 2026-02-11
+
+### Corregido
+- Corrección en la edad de relación en la tabla del destino de pareja: ahora muestra los años desde que se conocieron correctamente
+
+### Añadido
+- Sección de registro de cambios en la página de configuración para ver las novedades de cada versión
+- El mes seleccionado en el calendario mensual ahora se guarda correctamente al generar reportes PDF
+
+---
+
 ## [3.0.1] - 2026-01-28
 
 ### Añadido
