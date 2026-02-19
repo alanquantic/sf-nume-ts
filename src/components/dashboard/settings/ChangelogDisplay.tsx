@@ -17,6 +17,15 @@ function ChangelogDisplay() {
   const { t } = useTranslation();
   const changelogData: ChangelogEntry[] = [
     {
+      version: '3.0.3',
+      date: '2026-02-19',
+      changes: {
+        fixed: [
+          'Corrección en el cálculo de los meses personales en los reportes de las secciones de grupos',
+        ],
+      },
+    },
+    {
       version: '3.0.2',
       date: '2026-02-11',
       changes: {
@@ -51,7 +60,7 @@ function ChangelogDisplay() {
       <SectionTitle
         title={t('sidebar.changelog') || 'Registro de Cambios'}
       />
-      <div className="section-wrap px-2 py-5 max-h-96 overflow-y-auto">
+      <div className="section-wrap px-2 py-5 max-h-96" style={{ overflowY: 'scroll' }}>
         {changelogData.map((entry) => (
           <div key={entry.version} className="mb-4 pb-4 border-b border-gray-200 last:border-b-0">
             <div className="flex items-center justify-between mb-2">
