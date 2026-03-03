@@ -169,7 +169,9 @@
       "successSaveMessage": "The partner has been saved correctly.",
       "errorSave": "Error",
       "pleaseWait": "Please wait while the partner is being saved.",
-      "accept": "Accept"
+      "accept": "Accept",
+      "useConsultant": "Use Consultant",
+      "reset": "Reset"
     },
     "group": {
       "selectTitle": "Select Group",
@@ -726,6 +728,8 @@
     "nameLabel": "Name:",
     "pinnacleLabel": "Pinnacle:",
     "returnLabel": "Return:",
+    "useConsultant": "Use Consultant",
+    "reset": "Reset",
     "validation": {
       "nameRequired": "Group name is required.",
       "dateRequired": "Group creation date is required.",

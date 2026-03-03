@@ -56,6 +56,7 @@ export default function PartnerForm({
     handleInputChange,
     setFormError,
     reset,
+    updateValues,
   } = useForm(initialForm);
 
   const isFormValid = () => {
@@ -168,6 +169,14 @@ export default function PartnerForm({
       setIsLoading(false);
     }
   };
+  const handleUseConsultant = () => {
+    updateValues({
+      names: activeConsultant.names || '',
+      lastName: activeConsultant.lastName || '',
+      scdLastName: activeConsultant.scdLastName || '',
+      date: activeConsultant.date ? activeConsultant.date.toString() : '',
+    });
+  };
 
   return (
     <form className="block w-full mt-3" onSubmit={handleOnSubmit}>
@@ -231,7 +240,7 @@ export default function PartnerForm({
         </div>
       </div>
 
-      <div className="flex w-full mt-3">
+      <div className="flex w-full mt-3 items-center">
         <div className="form-group w-1/2">
           <p className="font-bold mb-1">
             {t('forms.birthDate')}
@@ -248,6 +257,14 @@ export default function PartnerForm({
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.date) && (
             <span className="form-error">{formStatus.validationMsgs.date}</span>
           )}
+        </div>
+        <div className=" w-1/2 flex-row!">
+          <button type="button" className="btn-conf w-64 rounded-full" onClick={handleUseConsultant}>
+            {t('modal.partner.useConsultant')}
+          </button>
+          <button type="button" className="btn-cancel w-32 rounded-full" onClick={reset}>
+            {t('modal.partner.reset')}
+          </button>
         </div>
       </div>
 

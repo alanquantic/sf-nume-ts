@@ -169,7 +169,9 @@
       "successSaveMessage": "La pareja ha sido guardada correctamente.",
       "errorSave": "Error",
       "pleaseWait": "Por favor espera mientras se guarda la pareja.",
-      "accept": "Aceptar"
+      "accept": "Aceptar",
+      "useConsultant": "Usar Consultante",
+      "reset": "Limpiar"
     },
     "group": {
       "selectTitle": "Seleccionar Grupo",
@@ -728,6 +730,8 @@
     "nameLabel": "Nombre:",
     "pinnacleLabel": "Pináculo:",
     "returnLabel": "Retorno:",
+    "useConsultant": "Usar Consultante",
+    "reset": "Limpiar",
     "validation": {
       "nameRequired": "Debe ingresar el nombre del grupo.",
       "dateRequired": "Debe ingresar la fecha de creación del grupo.",
