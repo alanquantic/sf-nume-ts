@@ -17,6 +17,15 @@ function ChangelogDisplay() {
   const { t } = useTranslation();
   const changelogData: ChangelogEntry[] = [
     {
+      version: '3.0.4',
+      date: '2026-03-03',
+      changes: {
+        fixed: [
+          'Añadida la funcionalidad de usar el consultante en el formulario de creación de grupos y parejas',
+        ],
+      },
+    },
+    {
       version: '3.0.3',
       date: '2026-02-19',
       changes: {

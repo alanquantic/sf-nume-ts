@@ -59,6 +59,7 @@ export default function GroupMemberForm({
     date,
     dateInit,
     handleInputChange,
+    updateValues,
     setFormError,
     reset,
   } = useForm(initialForm);
@@ -212,6 +213,14 @@ export default function GroupMemberForm({
     }
   };
 
+  const handleUseConsultant = () => {
+    updateValues({
+      name: activeConsultant.names || '',
+      lastName: activeConsultant.lastName || '',
+      scdLastName: activeConsultant.scdLastName || '',
+      date: activeConsultant.date ? activeConsultant.date.toString() : '',
+    });
+  };
   return (
     <form className="block w-full mt-3" onSubmit={handleOnSubmit}>
       <h2 className="flex justify-center items-center text-xl font-bold">
@@ -315,6 +324,14 @@ export default function GroupMemberForm({
             <span className="form-error">{formStatus.validationMsgs.dateInit}</span>
           )}
         </div>
+      </div>
+      <div className="flex w-full mt-3 items-center">
+        <button type="button" className="btn-conf w-64 rounded-full" onClick={handleUseConsultant}>
+          {t('group.useConsultant')}
+        </button>
+        <button type="button" className="btn-cancel w-32 rounded-full" onClick={reset}>
+          {t('group.reset')}
+        </button>
       </div>
 
       <div className="flex w-full mt-3 justify-center">

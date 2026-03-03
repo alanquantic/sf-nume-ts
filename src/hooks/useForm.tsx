@@ -5,10 +5,10 @@ const useForm = <T extends Object>(initialState: T) => {
   const [formError, setFormError] = useState('');
 
   const handleInputChange = (target: EventTarget & HTMLInputElement | EventTarget & HTMLSelectElement | EventTarget & HTMLTextAreaElement | { name: string, value: unknown }) => {
-    setValues({
-      ...values,
+    setValues((prev) => ({
+      ...prev,
       [target.name]: target.value,
-    });
+    }));
   };
 
   const reset = () => {
