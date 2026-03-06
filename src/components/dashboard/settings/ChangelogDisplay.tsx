@@ -17,6 +17,15 @@ function ChangelogDisplay() {
   const { t } = useTranslation();
   const changelogData: ChangelogEntry[] = [
     {
+      version: '3.0.5',
+      date: '2026-03-06',
+      changes: {
+        fixed: [
+          'Corrección en la descripción de los puentes por etapas',
+        ],
+      },
+    },
+    {
       version: '3.0.4',
       date: '2026-03-03',
       changes: {
