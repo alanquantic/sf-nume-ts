@@ -23,8 +23,23 @@ import useConsultants from '@/hooks/useConsultants';
 import Person, { AnnualReturn as AnnualReturnPerson } from '@/resources/Person';
 import { PDFPageConfig } from '@/types/pdf.types';
 import { pdf } from '@react-pdf/renderer';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
+
+type EntityType = 'person' | 'company' | 'productionName';
+
+const ANNUAL_RETURN_DEFAULT: AnnualReturnPerson = {
+  yearToCalculate: 0,
+  age: 0,
+  A: '',
+  B: '',
+  C: '',
+  D: '',
+  E: '',
+  F: '',
+  G: '',
+  H: '',
+};
 
 function CreateNamePage() {
   const { t } = useTranslation();
@@ -38,45 +53,30 @@ function CreateNamePage() {
   const handleConsultants = useConsultants();
   const addConsultantAsync = makeConsultant();
 
-  // Estados para los inputs (no se actualizan automáticamente)
   const [inputName, setInputName] = useState<string>('');
-  const [inputDate, setInputDate] = useState<string>(new Date().toLocaleDateString('es-ES'));
-  const [isPerson, setIsPerson] = useState<boolean>(true);
+  const [inputDate, setInputDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const [entityType, setEntityType] = useState<EntityType>('person');
   const [inputLastName, setInputLastName] = useState<string>('');
   const [inputScdLastName, setInputScdLastName] = useState<string>('');
+  const isPerson = entityType === 'person';
 
-  // Estados para los cálculos (se actualizan solo al hacer clic en "Calcular")
   const [hasCalculated, setHasCalculated] = useState(false);
 
-  // Estados para nombres guardados
   const [selectedSavedName, setSelectedSavedName] = useState<string>('');
   const [checkN, setcheckN] = useState(false);
   const [checkP, setcheckP] = useState(false);
   const [checkBreakdown, setcheckBreakdown] = useState(false);
 
-  // Estado Person
   const [createNameObj, setCreateNameObj] = useState<Person>(new Person({
     id: '',
     name: '',
     lastName: '',
     scdLastName: '',
-    birthDate: new Date().toLocaleDateString('es-ES'),
+    birthDate: format(new Date(), 'yyyy-MM-dd'),
   }));
-  const annualReturnDefault = {
-    yearToCalculate: 0,
-    age: 0,
-    A: '',
-    B: '',
-    C: '',
-    D: '',
-    E: '',
-    F: '',
-    G: '',
-    H: '',
-  };
-  const [annualReturnPastYear, setAnnualReturnPastYear] = useState<AnnualReturnPerson>(annualReturnDefault);
-  const [annualReturnCurrent, setAnnualReturnCurrent] = useState<AnnualReturnPerson>(annualReturnDefault);
-  const [annualReturnNextYear, setAnnualReturnNextYear] = useState<AnnualReturnPerson>(annualReturnDefault);
+  const [annualReturnPastYear, setAnnualReturnPastYear] = useState<AnnualReturnPerson>(ANNUAL_RETURN_DEFAULT);
+  const [annualReturnCurrent, setAnnualReturnCurrent] = useState<AnnualReturnPerson>(ANNUAL_RETURN_DEFAULT);
+  const [annualReturnNextYear, setAnnualReturnNextYear] = useState<AnnualReturnPerson>(ANNUAL_RETURN_DEFAULT);
 
   // Limpiar variables de cálculo cuando cambia el consultor
   useEffect(() => {
@@ -85,12 +85,11 @@ function CreateNamePage() {
       setSelectedSavedName('');
       setcheckN(false);
       setcheckP(false);
-      // Limpiar también los campos de entrada
       setInputName('');
       setInputLastName('');
       setInputScdLastName('');
-      setInputDate(new Date().toLocaleDateString('es-ES'));
-      setIsPerson(true);
+      setInputDate(format(new Date(), 'yyyy-MM-dd'));
+      setEntityType('person');
     }
   }, [activeConsultant?.id]);
 
@@ -106,25 +105,18 @@ function CreateNamePage() {
   };
 
   const isValid = () => {
-    const valid = /^[a-zA-Z ñÑ]+$/;
-    if (inputName === '' || !valid.test(inputName)) return false;
+    const personValid = /^[a-zA-Z ñÑ]+$/;
+    const entityValid = /^[a-zA-Z ñÑ.]+$/;
+    const nameRegex = isPerson ? personValid : entityValid;
+    if (inputName === '' || !nameRegex.test(inputName)) return false;
     if (!inputDate) return false;
-    if ((inputLastName === '' && isPerson) || (isPerson && !valid.test(inputLastName))) return false;
-    if ((inputScdLastName === '' && isPerson) || (isPerson && !valid.test(inputScdLastName))) return false;
+    if ((inputLastName === '' && isPerson) || (isPerson && !personValid.test(inputLastName))) return false;
+    if ((inputScdLastName === '' && isPerson) || (isPerson && !personValid.test(inputScdLastName))) return false;
     return true;
   };
 
-  // Solo mostrar error de validación si el usuario ha intentado calcular o si hay datos inválidos
-  if ((!isValid() && hasCalculated)) {
-    return (
-      <div className="col-span-12 text-center font-bold">{t('createName.invalidData')}</div>
-    );
-  }
-  // Función para manejar cambios en inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      name, value, checked,
-    } = e.target;
+    const { name, value } = e.target;
     if (name === 'name') {
       setInputName(value);
     } else if (name === 'lastName') {
@@ -132,31 +124,28 @@ function CreateNamePage() {
     } else if (name === 'scdLastName') {
       setInputScdLastName(value);
     } else if (name === 'date') {
-      // Crear fecha sin problemas de zona horaria
       setInputDate(value);
-    } else if (name === 'isPerson') {
-      setIsPerson(checked);
     }
-    // Resetear cálculos cuando se cambian los inputs
     setHasCalculated(false);
   };
 
-  // Función para calcular
   const handleCalculate = () => {
     if (!isValid()) {
       return;
     }
-    setCreateNameObj(new Person({
+    const cleanedName = isPerson ? inputName : inputName.replace(/\./g, '');
+    const newPerson = new Person({
       id: consultant.id,
-      name: inputName,
+      name: cleanedName,
       lastName: isPerson ? inputLastName : '',
       scdLastName: isPerson ? inputScdLastName : '',
-      birthDate: format(parse(inputDate, 'yyyy-MM-dd', new Date()), 'yyyy-MM-dd'),
-    }));
+      birthDate: inputDate,
+    });
+    setCreateNameObj(newPerson);
     setHasCalculated(true);
-    setAnnualReturnPastYear(createNameObj?.annualReturn({ ...calculationDate, year: calculationDate.year - 1 }) || null);
-    setAnnualReturnCurrent(createNameObj?.annualReturn({ ...calculationDate, year: calculationDate.year }) || null);
-    setAnnualReturnNextYear(createNameObj?.annualReturn({ ...calculationDate, year: calculationDate.year + 1 }) || null);
+    setAnnualReturnPastYear(newPerson.annualReturn({ ...calculationDate, year: calculationDate.year - 1 }));
+    setAnnualReturnCurrent(newPerson.annualReturn({ ...calculationDate, year: calculationDate.year }));
+    setAnnualReturnNextYear(newPerson.annualReturn({ ...calculationDate, year: calculationDate.year + 1 }));
   };
 
   // Función para guardar
@@ -253,7 +242,7 @@ function CreateNamePage() {
 
         // Crear fecha sin problemas de zona horaria
         setInputDate(savedName.birthDate);
-        setIsPerson(savedName.isPerson ?? true); // Usar true como valor por defecto si no existe
+        setEntityType(savedName.isPerson !== false ? 'person' : 'company');
         setHasCalculated(false); // Resetear cálculos para que el usuario haga clic en "Calcular"
       }
     }
@@ -470,8 +459,13 @@ function CreateNamePage() {
                     value={inputName}
                     onChange={handleInputChange}
                     className="rounded"
-                    placeholder="No uses acentos o caracteres especiales"
+                    placeholder={isPerson ? 'Ej: Juan Carlos' : 'Ej: GRUPO INDUSTRIAL S.A. DE C.V.'}
                   />
+                  <div className="mt-1 px-2 py-1.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">
+                    {isPerson
+                      ? 'No uses acentos ni caracteres especiales. Solo letras y espacios. Ej: Maria de los Angeles'
+                      : 'No uses acentos ni caracteres especiales. Se permiten puntos (.) pero se eliminan al calcular. Ej: GRUPO INDUSTRIAL S.A. DE C.V.'}
+                  </div>
                 </div>
                 <div className="form-group w-1/3">
                   <p className="font-bold mb-1">
@@ -541,9 +535,9 @@ function CreateNamePage() {
                       type="radio"
                       name="entityType"
                       value="person"
-                      checked={isPerson}
+                      checked={entityType === 'person'}
                       onChange={() => {
-                        setIsPerson(true);
+                        setEntityType('person');
                         setHasCalculated(false);
                       }}
                       className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
@@ -561,9 +555,9 @@ function CreateNamePage() {
                       type="radio"
                       name="entityType"
                       value="company"
-                      checked={!isPerson}
+                      checked={entityType === 'company'}
                       onChange={() => {
-                        setIsPerson(false);
+                        setEntityType('company');
                         setHasCalculated(false);
                       }}
                       className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
@@ -579,10 +573,10 @@ function CreateNamePage() {
                       id="isRealiceName-radio"
                       type="radio"
                       name="entityType"
-                      value="realiceName"
-                      checked={!isPerson}
+                      value="productionName"
+                      checked={entityType === 'productionName'}
                       onChange={() => {
-                        setIsPerson(false);
+                        setEntityType('productionName');
                         setHasCalculated(false);
                       }}
                       className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
@@ -651,7 +645,7 @@ function CreateNamePage() {
                 }}
               />
               <div className="pinnacle-wrap px-8 py-3">
-                <PinnacleCreateName isVerificationActive={checkP} size="sm" consultant={createNameObj || null} />
+                <PinnacleCreateName isVerificationActive={checkP} size="sm" consultant={createNameObj} />
               </div>
             </div>
 

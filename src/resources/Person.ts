@@ -562,7 +562,7 @@ class Person {
       nameValues += val;
       namev += val2;
     });
-    return reduceNumber(nameValues + namev);
+    return reduceNumberForSub(nameValues + namev);
   }
 
   /**
@@ -601,7 +601,7 @@ class Person {
       });
       sln += val;
     });
-    return reduceNumber(n + ln + sln);
+    return reduceNumberForSub(n + ln + sln);
   }
 
   /**
@@ -619,7 +619,7 @@ class Person {
       });
       nameValues += val;
     });
-    return reduceNumber(nameValues);
+    return reduceNumberForSub(nameValues);
   }
 
   /**

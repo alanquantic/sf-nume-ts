@@ -17,6 +17,20 @@ function ChangelogDisplay() {
   const { t } = useTranslation();
   const changelogData: ChangelogEntry[] = [
     {
+      version: '3.0.6',
+      date: '2026-03-25',
+      changes: {
+        added: [
+          'Página de creación de nombres con formulario para persona, empresa y nombre artístico',
+          'Gestión de nombres guardados: guardar, seleccionar y eliminar',
+          'Generación de reporte PDF desde la página de creación de nombres',
+        ],
+        changed: [
+          'Las funciones de verificación getSoulCheck, getNameCheck y getExpressionSoulCheck ahora reducen completamente los números maestros (11→2, 22→4)',
+        ],
+      },
+    },
+    {
       version: '3.0.5',
       date: '2026-03-06',
       changes: {
