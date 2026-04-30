@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { MdEdit } from 'react-icons/md';
 
 import { ConsultContext } from '@/context/ConsultContext';
-import add_user_group from '../../assets/icons/add_user_group.svg';
 import c_delete from '../../assets/icons/c_delete.svg';
 import GroupForm from './GroupForm';
 import GroupMemberList from './GroupMemberList';
@@ -90,9 +89,13 @@ export default function GroupFormInLine({
         {/* Group Selection */}
         <div className="flex items-center justify-between">
           <div className="flex items-center flex-1">
-            <button type="button" onClick={editGroup}>
-              <img src={add_user_group} className="w-6 h-6 mr-3 text-gray-400" alt="add_user_group" />
-              <MdEdit className="text-gray-400 mr-2" />
+            <button
+              type="button"
+              onClick={editGroup}
+              disabled={!currentActiveGroup?.id}
+              className="btn-save text-sm mr-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t('group.editGroup')}
             </button>
             <p className="font-bold text-sm mr-3">{t('group.groupOf')}</p>
             <select

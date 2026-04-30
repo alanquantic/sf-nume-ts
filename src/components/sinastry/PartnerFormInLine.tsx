@@ -253,9 +253,13 @@ export default function PartnerFormInLine({
         {/* Group Selection */}
         <div className="flex items-center justify-between">
           <div className="flex items-center flex-1">
-            <button type="button" onClick={editGroup} disabled={!currentActivePartnerData}>
-              <img src={add_user_main} className="w-6 h-6 mr-3 text-gray-400" alt="add_user_main" />
-              <MdEdit className="text-gray-400 mr-2" />
+            <button
+              type="button"
+              onClick={editGroup}
+              disabled={!currentActivePartnerData}
+              className="btn-save text-sm mr-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t('modal.partner.editPartner')}
             </button>
             <p className="font-bold text-sm mr-3">{t('modal.partner.data')}</p>
             <select
