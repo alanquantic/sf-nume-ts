@@ -126,7 +126,7 @@ export default function GroupMemberForm({
       if (yearInitString.length !== 4) {
         validationMsgs = { ...validationMsgs, dateInit: t('group.validation.yearMustBe4Digits') };
         isValid = false;
-      } else if (Number.isNaN(yearInit) || yearInit < 1900 || yearInit > new Date().getFullYear()) {
+      } else if (Number.isNaN(yearInit) || yearInit > new Date().getFullYear()) {
         validationMsgs = { ...validationMsgs, dateInit: t('group.validation.invalidYearOrOutOfRange') };
         isValid = false;
       }
@@ -317,7 +317,6 @@ export default function GroupMemberForm({
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={handleYearChange}
             value={dateInit}
-            min="1900"
             max={new Date().getFullYear()}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.dateInit) && (
