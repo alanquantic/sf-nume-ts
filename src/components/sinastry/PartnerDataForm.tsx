@@ -86,7 +86,7 @@ export default function PartnerDataForm({
       isValid = false;
     }
 
-    if (!yearMeet || yearMeet < 1900 || yearMeet > new Date().getFullYear()) {
+    if (!yearMeet || yearMeet > new Date().getFullYear()) {
       validationMsgs = { ...validationMsgs, yearMeet: t('validation.invalidYear') };
       isValid = false;
     }
@@ -201,7 +201,6 @@ export default function PartnerDataForm({
             id="partnerData-yearMeet"
             type="number"
             name="yearMeet"
-            min="1900"
             max={new Date().getFullYear()}
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
