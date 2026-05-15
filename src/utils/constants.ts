@@ -89,7 +89,7 @@ export const sanitize = (text: string) => {
 export const isValidDate = (date: string) => {
   if (!date) return false;
   if (getYear(new Date(date)) > 2100) return false;
-  if (getYear(new Date(date)) < 1800) return false;
+  if (getYear(new Date(date)) < 1000) return false;
   return true;
 };
 
