@@ -101,7 +101,7 @@ function TimeCurve({ isPartner, isVerificationActive }: { isPartner: boolean, is
         <div className="col-start-1 col-end-7 row-start-7 text-center text-13 h-6 border-b-3 border-purple-35 lifePathDuration flex items-end justify-center">
           {(!isPartner)
             ? t('pinnacle.timeCurve.fromBirthToX', {
-              age: consultant.calcDoubleLifeStageDuration(1) - consultant.getYearOfBirth(),
+              age: consultant.calcLifeStageDuration(1) - consultant.getYearOfBirth(),
             })
             : `${consultant.getYearTimeCurve()} - ${consultant.calcLifeStageDuration(1)}`}
         </div>
