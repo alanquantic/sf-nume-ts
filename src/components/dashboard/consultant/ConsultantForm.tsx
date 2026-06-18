@@ -21,7 +21,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
   const { consultant } = useConsult();
 
   const {
-    handleIsEditingConsultant, isEditingConsultant,
+    handleIsEditingConsultant, isEditingConsultant, activeConsultant,
   } = useConsult();
   const {
     names, lastName, scdLastName, date, nationality, gender, company, email, phone,
@@ -64,28 +64,23 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
       return;
     }
     setFormError('');
-    const id = Math.random().toString(36).substring(2, 9);
-    const newConsultant: Api.Consultant = {
-      id,
-      notes: {},
-      company,
-      date,
-      email,
-      gender,
-      group: [],
-      groupData,
-      createNames: [],
-      lastName,
-      names,
-      nationality,
-      partner: [],
-      partnerData,
-      phone,
-      scdLastName,
-    };
     setIsLoading(true);
     if (isEditingConsultant) {
-      const consultantToEdit = handleConsultants.updateConsultant(consultant?.id || '', newConsultant);
+      const editedConsultant: Api.Consultant = {
+        ...(activeConsultant || {}),
+        id: consultant?.id || '',
+        company,
+        date,
+        email,
+        gender,
+        groupData,
+        lastName,
+        names,
+        nationality,
+        phone,
+        scdLastName,
+      };
+      const consultantToEdit = handleConsultants.updateConsultant(consultant?.id || '', editedConsultant);
       addConsultantAsync.mutateAsync(consultantToEdit).then(() => {
         Swal.fire({
           title: t('forms.success') as string,
@@ -101,6 +96,24 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
         setIsLoading(false);
       });
     } else {
+      const newConsultant: Api.Consultant = {
+        id: Math.random().toString(36).substring(2, 9),
+        notes: {},
+        company,
+        date,
+        email,
+        gender,
+        group: [],
+        groupData,
+        createNames: [],
+        lastName,
+        names,
+        nationality,
+        partner: [],
+        partnerData,
+        phone,
+        scdLastName,
+      };
       const consultantsList = handleConsultants.addConsultant(newConsultant);
       addConsultantAsync.mutateAsync(consultantsList).then(() => {
         Swal.fire({
