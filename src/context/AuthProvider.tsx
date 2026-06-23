@@ -1,11 +1,11 @@
 import { AxiosError } from 'axios';
+import { isBefore } from 'date-fns';
 import toast from 'react-hot-toast';
 import { initReactQueryAuth } from 'react-query-auth';
 
 import axios from '@/api/axios';
 import LoaderComponent from '@/components/LoaderComponent';
 import storage from '@/utils/storage';
-import { isBefore } from 'date-fns';
 
 interface ApiErrorResponse {
   success: boolean;
@@ -14,10 +14,43 @@ interface ApiErrorResponse {
   };
 }
 
+type LoginCredentialsDTO = {
+  username: string;
+  password: string;
+};
+
+const EMPTY_LICENSE: Api.License = {
+  id: 0,
+  status: 'inactive',
+  expirationDate: null,
+  licenseId: null,
+};
+
+const EMPTY_COMPANY: Api.Company = {
+  direction: null,
+  logo: null,
+  name: null,
+  phone: null,
+  website: null,
+};
+
+const EMPTY_GUEST_SESSION: Api.GuestSession = {
+  guestEnergyPartner: {
+    name: '',
+    guestPartner: [],
+    guestMeetYear: 0,
+  },
+  guestEnergyGroup: {
+    name: '',
+    guestGroup: [],
+    guestYearGroup: 0,
+  },
+};
+
 const ERROR_MESSAGES: Record<string, string> = {
-  MEMBERSHIP_REQUIRED_OR_INACTIVE: 'Este usuario no tiene membresía activa. Por favor, active su membresía para continuar.',
-  MEMBERSHIP_EXPIRED: 'Su membresía ha expirado. Por favor, renueve su membresía para acceder al sistema.',
-  INVALID_CREDENTIALS: 'Las credenciales ingresadas son incorrectas. Por favor, verifique su usuario y contraseña.',
+  MEMBERSHIP_REQUIRED_OR_INACTIVE: 'Este usuario no tiene membresia activa. Por favor, active su membresia para continuar.',
+  MEMBERSHIP_EXPIRED: 'Su membresia ha expirado. Por favor, renueve su membresia para acceder al sistema.',
+  INVALID_CREDENTIALS: 'Las credenciales ingresadas son incorrectas. Por favor, verifique su usuario y contrasena.',
 };
 
 function handleAuthError(error: unknown): void {
@@ -25,7 +58,7 @@ function handleAuthError(error: unknown): void {
 
   if (axiosError.response?.data?.data?.msg) {
     const errorCode = axiosError.response.data.data.msg;
-    const errorMessage = ERROR_MESSAGES[errorCode] || 'Ha ocurrido un error durante el inicio de sesión. Por favor, intente nuevamente.';
+    const errorMessage = ERROR_MESSAGES[errorCode] || 'Ha ocurrido un error durante el inicio de sesion. Por favor, intente nuevamente.';
 
     toast.error(errorMessage, {
       duration: 5000,
@@ -39,7 +72,7 @@ function handleAuthError(error: unknown): void {
       },
     });
   } else if (axiosError.message === 'Network Error') {
-    toast.error('No se pudo conectar con el servidor. Por favor, verifique su conexión a internet.', {
+    toast.error('No se pudo conectar con el servidor. Por favor, verifique su conexion a internet.', {
       duration: 5000,
       position: 'top-right',
       style: {
@@ -51,7 +84,7 @@ function handleAuthError(error: unknown): void {
       },
     });
   } else {
-    toast.error('Ha ocurrido un error inesperado. Por favor, intente nuevamente más tarde.', {
+    toast.error('Ha ocurrido un error inesperado. Por favor, intente nuevamente mas tarde.', {
       duration: 5000,
       position: 'top-right',
       style: {
@@ -65,40 +98,98 @@ function handleAuthError(error: unknown): void {
   }
 }
 
-async function handleUserResponse(response: Api.UserResponse) {
-  storage.setToken(response.token);
-  return response;
+function mapAuthSession(session: Api.AuthSession): Api.FrontendSession {
+  return {
+    user: session.user,
+    company: {
+      name: session.user.companyName,
+      direction: session.user.companyDirection,
+      phone: session.user.companyPhone,
+      website: session.user.companyWebsite,
+      logo: session.user.companyLogo,
+    },
+    consultants: [],
+    guests: EMPTY_GUEST_SESSION,
+    license: session.license || EMPTY_LICENSE,
+    app_version: session.app_version,
+  };
 }
 
-const getUser = (): Promise<Api.UserResponse> => axios.post('/wp-json/app/v3/auth/me');
+function mapMeResponse(response: Api.MeResponse | Api.AuthUser): Api.FrontendSession {
+  if ('user' in response) {
+    return mapAuthSession(response);
+  }
+
+  return mapAuthSession({
+    user: response,
+    license: EMPTY_LICENSE,
+    app_version: null,
+  });
+}
+
+function isLicenseExpired(license: Api.License | null | undefined): boolean {
+  if (!license || !license.expirationDate) {
+    return false;
+  }
+
+  return license.status === 'expired' || isBefore(new Date(license.expirationDate), new Date());
+}
+
+async function handleLoginResponse(response: Api.LoginResponse) {
+  storage.setToken(response.token);
+  return mapAuthSession(response);
+}
+
+const getUser = (): Promise<Api.MeResponse | Api.AuthUser> => axios.get('/auth/me');
+
+const loginWithUsernameAndPassword = (data: LoginCredentialsDTO): Promise<Api.LoginResponse> => axios.post('/auth/login', data);
 
 async function loadUser() {
-  if (storage.getToken()) {
-    const data = await getUser();
-    const isExpired = isBefore(data.license.expirationDate, new Date());
-    if ((data.license.status as unknown as string) === 'expired' || isExpired) {
-      storage.clearToken();
-      window.location.assign(window.location.origin as unknown as string);
-      return null;
-    }
-    return data;
+  if (!storage.getToken()) {
+    return null as unknown as Api.FrontendSession;
   }
-  return null as unknown as Api.UserResponse;
+
+  const data = await getUser();
+  const session = mapMeResponse(data);
+
+  if (isLicenseExpired(session.license)) {
+    storage.clearToken();
+    window.location.assign(window.location.origin as unknown as string);
+    return null;
+  }
+
+  return {
+    ...session,
+    company: session.company || EMPTY_COMPANY,
+    license: session.license || EMPTY_LICENSE,
+    guests: session.guests || EMPTY_GUEST_SESSION,
+    consultants: session.consultants || [],
+  };
 }
-
-type LoginCredentialsDTO = {
-  username: string;
-  password: string;
-};
-
-const loginWithEmailAndPassword = (data: LoginCredentialsDTO): Promise<Api.UserResponse> => axios.post('/wp-json/app/v3/auth/login', data);
 
 async function loginFn(data: LoginCredentialsDTO) {
   try {
-    const response = await loginWithEmailAndPassword(data);
-    const user = await handleUserResponse(response);
+    const response = await loginWithUsernameAndPassword(data);
+    const session = await handleLoginResponse(response);
 
-    toast.success('Inicio de sesión exitoso. Bienvenido al sistema.', {
+    if (isLicenseExpired(session.license)) {
+      storage.clearToken();
+      toast.error(ERROR_MESSAGES.MEMBERSHIP_EXPIRED, {
+        duration: 5000,
+        position: 'top-right',
+        style: {
+          background: '#EF4444',
+          color: '#fff',
+          padding: '16px',
+          borderRadius: '8px',
+          maxWidth: '500px',
+        },
+      });
+      window.location.assign(window.location.origin as unknown as string);
+      return null as unknown as Api.FrontendSession;
+    }
+
+    toast.success('Inicio de sesion exitoso. Bienvenido al sistema.', {
       duration: 3000,
       position: 'top-right',
       style: {
@@ -109,7 +200,7 @@ async function loginFn(data: LoginCredentialsDTO) {
       },
     });
 
-    return user;
+    return session;
   } catch (error) {
     handleAuthError(error);
     throw error;
@@ -117,9 +208,9 @@ async function loginFn(data: LoginCredentialsDTO) {
 }
 
 async function registerFn(data: LoginCredentialsDTO) {
-  const response = await loginWithEmailAndPassword(data);
-  const user = await handleUserResponse(response);
-  return user;
+  const response = await loginWithUsernameAndPassword(data);
+  const session = await handleLoginResponse(response);
+  return session;
 }
 
 async function logoutFn() {
@@ -137,4 +228,4 @@ const authConfig = {
   },
 };
 
-export const { AuthProvider, useAuth } = initReactQueryAuth<Api.UserResponse | null, unknown, LoginCredentialsDTO>(authConfig);
+export const { AuthProvider, useAuth } = initReactQueryAuth<Api.FrontendSession | null, unknown, LoginCredentialsDTO>(authConfig);
