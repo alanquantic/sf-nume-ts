@@ -1,11 +1,18 @@
-import makeConsultant from '@/api/useConsultant';
+import { useCreatePartner, useUpdatePartner } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
 import { isValidDate } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import add_user_main from '../../assets/icons/add_user_main.svg';
+
+const toDateInputValue = (value?: string | null) => {
+  if (!value) {
+    return '';
+  }
+
+  return value.includes('T') ? value.slice(0, 10) : value;
+};
 
 type FormStatus = {
   displayValidations: boolean;
@@ -33,8 +40,8 @@ export default function PartnerForm({
   partnerToEdit,
 }: PartnerFormProps): JSX.Element {
   const { handleIsEditingConsultant, updateConsultantPartners, activePartnerData } = useConsult();
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const createPartnerMutation = useCreatePartner();
+  const updatePartnerMutation = useUpdatePartner();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
@@ -45,7 +52,7 @@ export default function PartnerForm({
     names: isEditing && partnerToEdit ? partnerToEdit.names : '',
     lastName: isEditing && partnerToEdit ? partnerToEdit.lastName : '',
     scdLastName: isEditing && partnerToEdit ? partnerToEdit.scdLastName : '',
-    date: isEditing && partnerToEdit ? partnerToEdit.date : '',
+    date: isEditing && partnerToEdit ? toDateInputValue(partnerToEdit.date) : '',
   };
 
   const {
@@ -101,6 +108,17 @@ export default function PartnerForm({
     isFormValid();
   }, [names, lastName, scdLastName, date]);
 
+  useEffect(() => {
+    if (isEditing && partnerToEdit) {
+      updateValues({
+        names: partnerToEdit.names || '',
+        lastName: partnerToEdit.lastName || '',
+        scdLastName: partnerToEdit.scdLastName || '',
+        date: toDateInputValue(partnerToEdit.date),
+      });
+    }
+  }, [isEditing, partnerToEdit]);
+
   const closeForm = () => {
     setIsAddFormActive(false);
     handleIsEditingConsultant(false);
@@ -119,21 +137,28 @@ export default function PartnerForm({
     setIsLoading(true);
 
     try {
-      const newPartner: Api.Partner = {
-        id: isEditing && partnerToEdit ? partnerToEdit.id : Math.random().toString(36).substring(2, 9),
-        names: names.trim(),
-        lastName: lastName.trim(),
-        scdLastName: scdLastName.trim(),
-        date: date.toString(),
+      const payload = {
+        names: (names || '').trim(),
+        lastName: (lastName || '').trim(),
+        scdLastName: (scdLastName || '').trim(),
+        date: date?.toString() || '',
       };
 
-      // Si hay un PartnerData activo, agregar el partner al grupo
       if (activePartnerData) {
+        const savedPartner = isEditing && partnerToEdit
+          ? await updatePartnerMutation.mutateAsync({
+            partnerId: partnerToEdit.id,
+            partner: payload,
+          })
+          : await createPartnerMutation.mutateAsync({
+            partnerDataId: activePartnerData.id,
+            partner: payload,
+          });
         const updatedPartnerData: Api.PartnerData = {
           ...activePartnerData,
           partner: isEditing && partnerToEdit
-            ? activePartnerData.partner?.map((p: Api.Partner) => (p.id === partnerToEdit.id ? newPartner : p)) || []
-            : [...(activePartnerData.partner || []), newPartner],
+            ? activePartnerData.partner?.map((p: Api.Partner) => (p.id === partnerToEdit.id ? savedPartner : p)) || []
+            : [...(activePartnerData.partner || []), savedPartner],
         };
 
         const updatedConsultant: Api.Consultant = {
@@ -141,25 +166,10 @@ export default function PartnerForm({
           partnerData: activeConsultant.partnerData?.map((p: Api.PartnerData) => (p.id === activePartnerData.id ? updatedPartnerData : p)) || [],
         };
 
-        const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-        await addConsultantAsync.mutateAsync(consultantsList);
-
         // Actualizar inmediatamente el contexto con el consultor actualizado
         updateConsultantPartners(updatedConsultant);
       } else {
-        // Fallback: agregar al array partner del consultor (compatibilidad)
-        const updatedConsultant: Api.Consultant = {
-          ...activeConsultant,
-          partner: isEditing && partnerToEdit
-            ? activeConsultant.partner?.map((p:Api.Partner) => (p.id === partnerToEdit.id ? newPartner : p)) || []
-            : [...(activeConsultant.partner || []), newPartner],
-        };
-
-        const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-        await addConsultantAsync.mutateAsync(consultantsList);
-
-        // Actualizar inmediatamente el contexto con el consultor actualizado
-        updateConsultantPartners(updatedConsultant);
+        throw new Error('No active partner data selected');
       }
 
       closeForm();
@@ -174,7 +184,7 @@ export default function PartnerForm({
       names: activeConsultant.names || '',
       lastName: activeConsultant.lastName || '',
       scdLastName: activeConsultant.scdLastName || '',
-      date: activeConsultant.date ? activeConsultant.date.toString() : '',
+      date: toDateInputValue(activeConsultant.date),
     });
   };
 
@@ -197,7 +207,7 @@ export default function PartnerForm({
             name="names"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={names}
+            value={names || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.names) && (
             <span className="form-error">{formStatus.validationMsgs.names}</span>
@@ -215,7 +225,7 @@ export default function PartnerForm({
             name="lastName"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={lastName}
+            value={lastName || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.lastName) && (
             <span className="form-error">{formStatus.validationMsgs.lastName}</span>
@@ -232,7 +242,7 @@ export default function PartnerForm({
             name="scdLastName"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={scdLastName}
+            value={scdLastName || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.scdLastName) && (
             <span className="form-error">{formStatus.validationMsgs.scdLastName}</span>
@@ -252,7 +262,7 @@ export default function PartnerForm({
             name="date"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={date}
+            value={date || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.date) && (
             <span className="form-error">{formStatus.validationMsgs.date}</span>

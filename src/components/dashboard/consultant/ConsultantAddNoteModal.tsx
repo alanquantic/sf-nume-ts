@@ -1,6 +1,5 @@
-import makeConsultant from '@/api/useConsultant';
+import { useUpsertConsultantNote } from '@/api/consultants';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
 import { pageNameBySlug } from '@/utils/constants';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -11,11 +10,18 @@ type ConsultantAddNoteModalProps = {
   setIsOpen: (isOpen: boolean) => void;
 };
 
+function getNotesByDate(notes?: Api.Consultant['notes']): Api.NotesByDate {
+  if (!notes || Array.isArray(notes)) {
+    return {};
+  }
+
+  return notes;
+}
+
 function ConsultantAddNoteModal({ isOpen, setIsOpen }: ConsultantAddNoteModalProps) {
   const location = useLocation();
   const { activeConsultant, updateConsultantPartners } = useConsult();
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const upsertNoteMutation = useUpsertConsultantNote();
 
   const [content, setContent] = useState('');
   const pathSlug = (() => {
@@ -38,18 +44,24 @@ function ConsultantAddNoteModal({ isOpen, setIsOpen }: ConsultantAddNoteModalPro
     if (!activeConsultant) return;
     if (!content.trim()) return;
 
-    const existingNotes = activeConsultant.notes || {};
+    const existingNotes = getNotesByDate(activeConsultant.notes);
     const dateNotes = existingNotes[todayKey] || {};
     const updatedDateNotes = { ...dateNotes, [pathSlug]: content.trim() };
-    const updatedNotes = { ...existingNotes, [todayKey]: updatedDateNotes } as Api.Consultant['notes'];
+    const updatedNotes: Api.NotesByDate = { ...existingNotes, [todayKey]: updatedDateNotes };
 
     const updatedConsultant: Api.Consultant = {
       ...activeConsultant,
       notes: updatedNotes,
     };
 
-    const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-    await addConsultantAsync.mutateAsync(consultantsList);
+    await upsertNoteMutation.mutateAsync({
+      consultantId: activeConsultant.id,
+      note: {
+        dateKey: todayKey,
+        pathKey: pathSlug,
+        value: content.trim(),
+      },
+    });
 
     // Update context immediately
     updateConsultantPartners(updatedConsultant);

@@ -9,13 +9,15 @@ import NotesModal from './NotesModal';
 type ConsultantNotesModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  notes: Record<string, Record<string, string>>;
+  notes?: Api.NotesByDate | Api.Note[];
 };
 
 function ConsultantNotesModal({ isOpen, setIsOpen, notes }: ConsultantNotesModalProps) {
   const { t } = useTranslation();
 
-  if (!notes) {
+  const notesByDate = !notes || Array.isArray(notes) ? null : notes;
+
+  if (!notesByDate) {
     return (
       <NotesModal
         size="large"
@@ -31,7 +33,7 @@ function ConsultantNotesModal({ isOpen, setIsOpen, notes }: ConsultantNotesModal
   }
 
   // Convertir las notas a un array y ordenar por fecha (más recientes primero)
-  const notesArray = Object.entries(notes).map(([date, noteContent]) => ({
+  const notesArray = Object.entries(notesByDate).map(([date, noteContent]) => ({
     date,
     content: noteContent,
   }));
@@ -92,5 +94,9 @@ function ConsultantNotesModal({ isOpen, setIsOpen, notes }: ConsultantNotesModal
     </NotesModal>
   );
 }
+
+ConsultantNotesModal.defaultProps = {
+  notes: undefined,
+};
 
 export default ConsultantNotesModal;

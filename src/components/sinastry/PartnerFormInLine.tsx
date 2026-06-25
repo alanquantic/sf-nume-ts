@@ -3,9 +3,8 @@ import {
 } from 'react';
 import { MdEdit } from 'react-icons/md';
 
-import makeConsultant from '@/api/useConsultant';
+import { useDeletePartner } from '@/api/partner-data';
 import { ConsultContext } from '@/context/ConsultContext';
-import useConsultants from '@/hooks/useConsultants';
 import Person from '@/resources/Person';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
@@ -36,8 +35,7 @@ export default function PartnerFormInLine({
     isEditingPartnerData,
     handleIsEditingPartnerData,
   } = useContext(ConsultContext);
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const deletePartnerMutation = useDeletePartner();
 
   const { t } = useTranslation();
 
@@ -154,11 +152,12 @@ export default function PartnerFormInLine({
           },
         });
 
+        await deletePartnerMutation.mutateAsync(partnerId);
+        if (!currentActivePartnerData) {
+          return;
+        }
         const updatedPartnerData: Api.PartnerData = {
-          id: currentActivePartnerData?.id || '',
-          name: currentActivePartnerData?.name || '',
-          date: currentActivePartnerData?.date || '',
-          yearMeet: currentActivePartnerData?.yearMeet || 0,
+          ...currentActivePartnerData,
           partner: currentActivePartnerData?.partner?.filter((p: Api.Partner) => p.id !== partnerId) || [],
         };
 
@@ -167,10 +166,6 @@ export default function PartnerFormInLine({
           partnerData: activeConsultant.partnerData?.map((p) => (p.id === currentActivePartnerData?.id ? updatedPartnerData : p)) || [],
         };
 
-        const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-        await addConsultantAsync.mutateAsync(consultantsList);
-
-        // Actualizar el contexto con el consultor actualizado
         updateConsultantPartners(updatedConsultant);
 
         Swal.fire(
@@ -313,7 +308,7 @@ export default function PartnerFormInLine({
                 <MdEdit className="text-gray-400 mr-2" />
                 <p className="font-bold text-sm mr-3">{t('forms.name')}</p>
                 <input
-                  value={currentActivePartnerData.name}
+                  value={currentActivePartnerData.name || ''}
                   type="text"
                   className="border rounded px-3 py-2 flex-1"
                   readOnly
@@ -324,7 +319,7 @@ export default function PartnerFormInLine({
                 <MdEdit className="text-gray-400 mr-2" />
                 <p className="font-bold text-sm mr-3">{t('forms.createdAt')}</p>
                 <input
-                  value={currentActivePartnerData.date}
+                  value={currentActivePartnerData.date || ''}
                   type="text"
                   className="border rounded px-3 py-2 flex-1"
                   readOnly
@@ -351,7 +346,7 @@ export default function PartnerFormInLine({
                 <MdEdit className="text-gray-400 mr-2" />
                 <p className="font-bold text-sm mr-3">{t('forms.yearMeet')}</p>
                 <input
-                  value={currentActivePartnerData.yearMeet}
+                  value={currentActivePartnerData.yearMeet || ''}
                   type="text"
                   className="border rounded px-3 py-2 flex-1"
                   readOnly
@@ -409,11 +404,11 @@ export default function PartnerFormInLine({
             {currentActivePartnerData.partner.map((partner) => {
               const partnerPerson = new Person({
                 id: partner.id,
-                name: partner.names,
-                lastName: partner.lastName,
-                scdLastName: partner.scdLastName,
-                birthDate: partner.date,
-                yearMet: currentActivePartnerData.yearMeet,
+                name: partner.names || '',
+                lastName: partner.lastName || '',
+                scdLastName: partner.scdLastName || '',
+                birthDate: partner.date || '',
+                yearMet: currentActivePartnerData.yearMeet || undefined,
               });
 
               return (

@@ -132,8 +132,6 @@ declare namespace Api {
   interface FrontendSession {
     app_version: string | null;
     company: Company;
-    consultants: Consultant[];
-    guests: GuestSession;
     license: License;
     user: AuthUser;
   }

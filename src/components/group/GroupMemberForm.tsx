@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import makeConsultant from '@/api/useConsultant';
+import { useCreateGroupMember, useUpdateGroupMember } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
 import { isValidDate } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
@@ -37,8 +36,8 @@ export default function GroupMemberForm({
   memberToEdit,
 }: GroupMemberFormProps): JSX.Element {
   const { updateConsultantGroups } = useConsult();
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const createGroupMemberMutation = useCreateGroupMember();
+  const updateGroupMemberMutation = useUpdateGroupMember();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
@@ -165,19 +164,27 @@ export default function GroupMemberForm({
     setIsLoading(true);
 
     try {
-      const newMember: Api.GroupMember = {
-        id: isEditing && memberToEdit ? memberToEdit.id : Math.random().toString(36).substring(2, 9),
-        name: name.trim(),
-        lastName: lastName.trim(),
-        scdLastName: scdLastName.trim(),
-        date: date.toString(),
+      const payload = {
+        name: (name || '').trim(),
+        lastName: (lastName || '').trim(),
+        scdLastName: (scdLastName || '').trim(),
+        date: date?.toString() || '',
         dateInit: dateInit || new Date().getFullYear(),
       };
+      const savedMember = isEditing && memberToEdit
+        ? await updateGroupMemberMutation.mutateAsync({
+          memberId: memberToEdit.id,
+          member: payload,
+        })
+        : await createGroupMemberMutation.mutateAsync({
+          groupDataId: activeGroup.id,
+          member: payload,
+        });
 
       // Calcular todos los dateInit de los miembros actualizados para obtener el más reciente
       const updatedMembers = isEditing && memberToEdit
-        ? activeGroup.members?.map((m: Api.GroupMember) => (m.id === memberToEdit.id ? newMember : m)) || []
-        : [...(activeGroup.members || []), newMember];
+        ? activeGroup.members?.map((m: Api.GroupMember) => (m.id === memberToEdit.id ? savedMember : m)) || []
+        : [...(activeGroup.members || []), savedMember];
 
       // Encontrar el dateInit más reciente de todos los miembros
       const allDateInits = updatedMembers
@@ -199,10 +206,6 @@ export default function GroupMemberForm({
         groupData: activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === activeGroup.id ? updatedGroup : g)) || [],
       };
 
-      const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-      await addConsultantAsync.mutateAsync(consultantsList);
-
-      // Actualizar inmediatamente el contexto con el consultor actualizado
       updateConsultantGroups(updatedConsultant);
 
       closeForm();
@@ -245,7 +248,7 @@ export default function GroupMemberForm({
             name="name"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={name}
+            value={name || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.name) && (
             <span className="form-error">{formStatus.validationMsgs.name}</span>
@@ -263,7 +266,7 @@ export default function GroupMemberForm({
             name="lastName"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={lastName}
+            value={lastName || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.lastName) && (
             <span className="form-error">{formStatus.validationMsgs.lastName}</span>
@@ -278,7 +281,7 @@ export default function GroupMemberForm({
             name="scdLastName"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={scdLastName}
+            value={scdLastName || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.scdLastName) && (
             <span className="form-error">{formStatus.validationMsgs.scdLastName}</span>
@@ -298,7 +301,7 @@ export default function GroupMemberForm({
             name="date"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={date}
+            value={date || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.date) && (
             <span className="form-error">{formStatus.validationMsgs.date}</span>
@@ -316,7 +319,7 @@ export default function GroupMemberForm({
             name="dateInit"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={handleYearChange}
-            value={dateInit}
+            value={dateInit || ''}
             max={new Date().getFullYear()}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.dateInit) && (

@@ -47,7 +47,7 @@ function GroupAnnualCalendar() {
     );
   }
 
-  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
   const u = new Universal();
   const allMonths = getAllMonths();
 

@@ -55,7 +55,7 @@ export default function GroupVibrationTimePage() {
     );
   }
 
-  const groupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const groupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
 
   return (
     <div className="page-content bg-cover">

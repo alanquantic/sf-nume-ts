@@ -34,19 +34,6 @@ const EMPTY_COMPANY: Api.Company = {
   website: null,
 };
 
-const EMPTY_GUEST_SESSION: Api.GuestSession = {
-  guestEnergyPartner: {
-    name: '',
-    guestPartner: [],
-    guestMeetYear: 0,
-  },
-  guestEnergyGroup: {
-    name: '',
-    guestGroup: [],
-    guestYearGroup: 0,
-  },
-};
-
 const ERROR_MESSAGES: Record<string, string> = {
   MEMBERSHIP_REQUIRED_OR_INACTIVE: 'Este usuario no tiene membresia activa. Por favor, active su membresia para continuar.',
   MEMBERSHIP_EXPIRED: 'Su membresia ha expirado. Por favor, renueve su membresia para acceder al sistema.',
@@ -108,8 +95,6 @@ function mapAuthSession(session: Api.AuthSession): Api.FrontendSession {
       website: session.user.companyWebsite,
       logo: session.user.companyLogo,
     },
-    consultants: [],
-    guests: EMPTY_GUEST_SESSION,
     license: session.license || EMPTY_LICENSE,
     app_version: session.app_version,
   };
@@ -162,8 +147,6 @@ async function loadUser() {
     ...session,
     company: session.company || EMPTY_COMPANY,
     license: session.license || EMPTY_LICENSE,
-    guests: session.guests || EMPTY_GUEST_SESSION,
-    consultants: session.consultants || [],
   };
 }
 

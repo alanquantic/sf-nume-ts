@@ -1,16 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import Select, { SingleValue } from 'react-select';
 
-import { useAuth } from '@/context/AuthProvider';
 import useConsult from '@/hooks/useConsult';
+import useConsultants from '@/hooks/useConsultants';
 
 function ConsultantPicker() {
-  const { user } = useAuth();
+  const { consultants } = useConsultants();
   const { consultant, selectConsultant } = useConsult();
   const { t } = useTranslation();
-  if (user?.consultants.length === 0) return null;
+  if (consultants.length === 0) return null;
 
-  const options = user?.consultants.map(({
+  const options = consultants.map(({
     id, names, lastName, scdLastName,
   }) => ({
     value: id,
@@ -19,7 +19,7 @@ function ConsultantPicker() {
 
   const handleChange = (selectedOption: SingleValue<{ value: string | undefined, label: string }>) => {
     if (selectedOption?.value === undefined) return;
-    const newConsultant = user?.consultants.find((c) => c.id === selectedOption?.value);
+    const newConsultant = consultants.find((c) => c.id === selectedOption?.value);
     if (!newConsultant) return;
     selectConsultant(newConsultant);
   };

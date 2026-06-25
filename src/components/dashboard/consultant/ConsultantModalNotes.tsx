@@ -4,14 +4,14 @@ import { formatDate } from '@/utils/constants';
 import ConsultantContentNotes from './ConsultantContentNotes';
 
 type ConsultantModalNotesProps = {
-  item?: Record<string, Record<string, string>>;
+  item?: Api.NotesByDate | Api.Note[];
 };
 
 function ConsultantModalNotes(modalNote: ConsultantModalNotesProps) {
   const { item: itemNote } = modalNote;
   const { t } = useTranslation();
 
-  if (!itemNote) return <div>{t('consultant.notes.noNotes')}</div>;
+  if (!itemNote || Array.isArray(itemNote)) return <div>{t('consultant.notes.noNotes')}</div>;
   const pages = Object.entries(itemNote).map((items) => items);
 
   return (

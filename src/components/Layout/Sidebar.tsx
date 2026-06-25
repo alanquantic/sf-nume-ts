@@ -22,7 +22,7 @@ function Sidebar() {
     <div className="app-sidebar">
       <div className="overflow-y-auto">
         <div className="mt-3 flex items-center py-2 px-3">
-          <img src={avatar} className="rounded-full object-contain w-12 h-12" alt="profile" />
+          <img src={avatar || undefined} className="rounded-full object-contain w-12 h-12" alt="profile" />
           <div className="flex flex-col ml-3">
             <label className="font-bold text-main-700 text-sm">{`${firstName} ${lastName}`}</label>
             <label className="text-green-600 text-sm flex items-center">

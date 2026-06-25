@@ -2,7 +2,7 @@
   "files.eol": "\n",
   "editor.tabSize": 2,
   "eslint.options": {
-    "overrideConfigFile": ".eslintrc"
+    "overrideConfigFile": ".eslintrc.cjs"
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",

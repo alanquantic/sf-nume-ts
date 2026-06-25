@@ -1,10 +1,17 @@
-import makeConsultant from '@/api/useConsultant';
+import { useCreatePartnerData, useUpdatePartnerData } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import add_user_main from '../../assets/icons/add_user_main.svg';
+
+const toDateInputValue = (value?: string | null) => {
+  if (!value) {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  return value.includes('T') ? value.slice(0, 10) : value;
+};
 
 type FormStatus = {
   displayValidations: boolean;
@@ -32,8 +39,8 @@ export default function PartnerDataForm({
   partnerDataToEdit,
 }: PartnerDataFormProps): JSX.Element {
   const { handleIsEditingConsultant, updateConsultantPartners } = useConsult();
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const createPartnerDataMutation = useCreatePartnerData();
+  const updatePartnerDataMutation = useUpdatePartnerData();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
@@ -42,7 +49,9 @@ export default function PartnerDataForm({
 
   const initialForm = {
     name: isEditing && partnerDataToEdit ? partnerDataToEdit.name : '',
-    date: isEditing && partnerDataToEdit ? partnerDataToEdit.date : new Date().toISOString().split('T')[0],
+    date: isEditing && partnerDataToEdit
+      ? toDateInputValue(partnerDataToEdit.date)
+      : new Date().toISOString().split('T')[0],
     yearMeet: isEditing && partnerDataToEdit ? partnerDataToEdit.yearMeet : new Date().getFullYear(),
   };
 
@@ -61,7 +70,7 @@ export default function PartnerDataForm({
     if (isEditing && partnerDataToEdit) {
       updateValues({
         name: partnerDataToEdit.name || '',
-        date: partnerDataToEdit.date || new Date().toISOString().split('T')[0],
+        date: toDateInputValue(partnerDataToEdit.date),
         yearMeet: partnerDataToEdit.yearMeet || new Date().getFullYear(),
       });
     }
@@ -116,25 +125,36 @@ export default function PartnerDataForm({
     setIsLoading(true);
 
     try {
-      const newPartnerData: Api.PartnerData = {
-        id: isEditing && partnerDataToEdit ? partnerDataToEdit.id : Math.random().toString(36).substring(2, 9),
-        name,
-        date: date.toString(),
+      const payload = {
+        name: name || '',
+        date: date?.toString() || '',
         yearMeet: yearMeet || new Date().getFullYear(),
-        partner: isEditing && partnerDataToEdit ? partnerDataToEdit.partner || [] : [],
       };
+      const savedPartnerData = isEditing && partnerDataToEdit
+        ? await updatePartnerDataMutation.mutateAsync({
+          partnerDataId: partnerDataToEdit.id,
+          partnerData: payload,
+        })
+        : await createPartnerDataMutation.mutateAsync({
+          consultantId: activeConsultant.id,
+          partnerData: payload,
+        });
 
+      // Actualizar inmediatamente el contexto con el consultor actualizado
       const updatedConsultant: Api.Consultant = {
         ...activeConsultant,
         partnerData: isEditing && partnerDataToEdit
-          ? activeConsultant.partnerData?.map((p: Api.PartnerData) => (p.id === partnerDataToEdit.id ? newPartnerData : p)) || []
-          : [...(activeConsultant.partnerData || []), newPartnerData],
+          ? activeConsultant.partnerData?.map((p: Api.PartnerData) => (
+            p.id === partnerDataToEdit.id
+              ? {
+                ...partnerDataToEdit,
+                ...savedPartnerData,
+                partner: partnerDataToEdit.partner || [],
+              }
+              : p
+          )) || []
+          : [...(activeConsultant.partnerData || []), { ...savedPartnerData, partner: [] }],
       };
-
-      const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-      await addConsultantAsync.mutateAsync(consultantsList);
-
-      // Actualizar inmediatamente el contexto con el consultor actualizado
       updateConsultantPartners(updatedConsultant);
 
       closeForm();
@@ -164,7 +184,7 @@ export default function PartnerDataForm({
             name="name"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={name}
+            value={name || ''}
             placeholder={t('modal.partner.namePlaceholder') || undefined}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.name) && (
@@ -183,7 +203,7 @@ export default function PartnerDataForm({
             name="date"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={date}
+            value={date || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.date) && (
             <span className="form-error">{formStatus.validationMsgs.date}</span>
@@ -204,7 +224,7 @@ export default function PartnerDataForm({
             max={new Date().getFullYear()}
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={yearMeet}
+            value={yearMeet || ''}
             placeholder={t('placeholders.yearExample') as string}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.yearMeet) && (

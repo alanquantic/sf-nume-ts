@@ -1,12 +1,12 @@
 /* eslint-disable import/order */
 import useConsult from '@/hooks/useConsult';
+import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
 import countries from '@/resources/countries.json';
 import { useEffect, useState } from 'react';
 
-import makeConsultant from '@/api/useConsultant';
+import { useCreateConsultant, useUpdateConsultant } from '@/api/consultants';
 import { useAuth } from '@/context/AuthProvider';
-import useConsultants from '@/hooks/useConsultants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 
@@ -15,19 +15,18 @@ const FORM_STATUS_INITIAL_STATE: FormStatus = { displayValidations: false, isVal
 
 function ConsultantForm({ initialForm }: { initialForm: any }) {
   const { t } = useTranslation();
-  const addConsultantAsync = makeConsultant();
-  const handleConsultants = useConsultants();
+  const createConsultantMutation = useCreateConsultant();
+  const updateConsultantMutation = useUpdateConsultant();
   const [isLoading, setIsLoading] = useState(false);
   const { consultant } = useConsult();
+  const { user: userAuth } = useAuth();
 
   const {
-    handleIsEditingConsultant, isEditingConsultant, activeConsultant,
+    handleIsEditingConsultant, isEditingConsultant, activeConsultant, selectActiveConsultant, selectConsultant,
   } = useConsult();
   const {
     names, lastName, scdLastName, date, nationality, gender, company, email, phone,
     handleInputChange, formError, setFormError, reset,
-    groupData,
-    partnerData,
   } = useForm(initialForm);
 
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
@@ -73,21 +72,23 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
         date,
         email,
         gender,
-        groupData,
         lastName,
         names,
         nationality,
         phone,
         scdLastName,
       };
-      const consultantToEdit = handleConsultants.updateConsultant(consultant?.id || '', editedConsultant);
-      addConsultantAsync.mutateAsync(consultantToEdit).then(() => {
+      updateConsultantMutation.mutateAsync({
+        consultantId: consultant?.id || '',
+        consultant: editedConsultant,
+      }).then((savedConsultant) => {
         Swal.fire({
           title: t('forms.success') as string,
           icon: 'success',
           confirmButtonText: t('forms.confirm') as string,
         });
         handleIsEditingConsultant(false);
+        selectActiveConsultant(savedConsultant);
         setFormStatus(FORM_STATUS_INITIAL_STATE);
         reset();
       }).catch((err) => {
@@ -98,30 +99,25 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
     } else {
       const newConsultant: Api.Consultant = {
         id: Math.random().toString(36).substring(2, 9),
-        notes: {},
         company,
         date,
         email,
         gender,
-        group: [],
-        groupData,
-        createNames: [],
         lastName,
         names,
         nationality,
-        partner: [],
-        partnerData,
         phone,
         scdLastName,
+        userId: userAuth?.user.id,
       };
-      const consultantsList = handleConsultants.addConsultant(newConsultant);
-      addConsultantAsync.mutateAsync(consultantsList).then(() => {
+      createConsultantMutation.mutateAsync(newConsultant).then((savedConsultant) => {
         Swal.fire({
           title: t('forms.success') as string,
           icon: 'success',
           confirmButtonText: t('forms.confirm') as string,
         });
         handleIsEditingConsultant(false);
+        selectConsultant(savedConsultant);
         setFormStatus(FORM_STATUS_INITIAL_STATE);
         reset();
       }).catch((err) => {
@@ -314,8 +310,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
 
 function ConsultantFormWrapper() {
   const { isEditingConsultant, consultant } = useConsult();
-  const { user: userAuth } = useAuth();
-  const users = userAuth?.consultants;
+  const { consultants: users } = useConsultants();
   const consultantData = Array.isArray(users) ? users.find((element) => element.id === consultant?.id) : null;
 
   const initialForm = {
