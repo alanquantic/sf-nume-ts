@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCreateGroupMember, useUpdateGroupMember } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 import add_user_group from '../../assets/icons/add_user_group.svg';
@@ -47,7 +47,7 @@ export default function GroupMemberForm({
     name: isEditing && memberToEdit ? memberToEdit.name : '',
     lastName: isEditing && memberToEdit ? memberToEdit.lastName : '',
     scdLastName: isEditing && memberToEdit ? memberToEdit.scdLastName : '',
-    date: isEditing && memberToEdit ? memberToEdit.date : '',
+    date: isEditing && memberToEdit ? toDateInputValue(memberToEdit.date) : '',
     dateInit: isEditing && memberToEdit ? memberToEdit.dateInit : new Date().getFullYear(),
   };
 
@@ -221,7 +221,7 @@ export default function GroupMemberForm({
       name: activeConsultant.names || '',
       lastName: activeConsultant.lastName || '',
       scdLastName: activeConsultant.scdLastName || '',
-      date: activeConsultant.date ? activeConsultant.date.toString() : '',
+      date: toDateInputValue(activeConsultant.date),
     });
   };
   return (

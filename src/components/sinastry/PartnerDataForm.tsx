@@ -1,17 +1,10 @@
 import { useCreatePartnerData, useUpdatePartnerData } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
+import { toDateInputValue } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import add_user_main from '../../assets/icons/add_user_main.svg';
-
-const toDateInputValue = (value?: string | null) => {
-  if (!value) {
-    return new Date().toISOString().split('T')[0];
-  }
-
-  return value.includes('T') ? value.slice(0, 10) : value;
-};
 
 type FormStatus = {
   displayValidations: boolean;
@@ -51,7 +44,7 @@ export default function PartnerDataForm({
     name: isEditing && partnerDataToEdit ? partnerDataToEdit.name : '',
     date: isEditing && partnerDataToEdit
       ? toDateInputValue(partnerDataToEdit.date)
-      : new Date().toISOString().split('T')[0],
+      : toDateInputValue(new Date()),
     yearMeet: isEditing && partnerDataToEdit ? partnerDataToEdit.yearMeet : new Date().getFullYear(),
   };
 

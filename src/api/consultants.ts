@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from '@/api/axios';
 import { MutationConfig } from '@/api/react-query';
 import { useAuth } from '@/context/AuthProvider';
+import { normalizeDateOnlyValue } from '@/utils/constants';
 
 type BackendPartnerData = Omit<Api.PartnerData, 'partner'> & {
   partner?: Api.Partner[];
@@ -34,17 +35,33 @@ function mapNotesToLegacyShape(notes?: Api.Note[]): Api.NotesByDate {
 function mapConsultant(consultant: BackendConsultant): Api.Consultant {
   return {
     ...consultant,
+    date: normalizeDateOnlyValue(consultant.date),
     notes: Array.isArray(consultant.notes)
       ? mapNotesToLegacyShape(consultant.notes)
       : consultant.notes,
-    partner: consultant.partners || consultant.partner || [],
+    partner: (consultant.partners || consultant.partner || []).map((partner) => ({
+      ...partner,
+      date: normalizeDateOnlyValue(partner.date),
+    })),
     partnerData: (consultant.partnerData || []).map((partnerData) => ({
       ...partnerData,
-      partner: partnerData.partners || partnerData.partner || [],
+      date: normalizeDateOnlyValue(partnerData.date),
+      partner: (partnerData.partners || partnerData.partner || []).map((partner) => ({
+        ...partner,
+        date: normalizeDateOnlyValue(partner.date),
+      })),
     })),
     groupData: (consultant.groupData || []).map((groupData) => ({
       ...groupData,
-      members: groupData.members || [],
+      date: normalizeDateOnlyValue(groupData.date),
+      members: (groupData.members || []).map((member) => ({
+        ...member,
+        date: normalizeDateOnlyValue(member.date),
+      })),
+    })),
+    createNames: (consultant.createNames || []).map((createName) => ({
+      ...createName,
+      birthDate: normalizeDateOnlyValue(createName.birthDate),
     })),
   };
 }

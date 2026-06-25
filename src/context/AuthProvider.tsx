@@ -5,6 +5,7 @@ import { initReactQueryAuth } from 'react-query-auth';
 
 import axios from '@/api/axios';
 import LoaderComponent from '@/components/LoaderComponent';
+import { normalizeDateOnlyValue } from '@/utils/constants';
 import storage from '@/utils/storage';
 
 interface ApiErrorResponse {
@@ -38,6 +39,18 @@ const ERROR_MESSAGES: Record<string, string> = {
   MEMBERSHIP_REQUIRED_OR_INACTIVE: 'Este usuario no tiene membresia activa. Por favor, active su membresia para continuar.',
   MEMBERSHIP_EXPIRED: 'Su membresia ha expirado. Por favor, renueve su membresia para acceder al sistema.',
   INVALID_CREDENTIALS: 'Las credenciales ingresadas son incorrectas. Por favor, verifique su usuario y contrasena.',
+};
+
+type BackendMeLicense = {
+  id?: number | null;
+  status?: string | number | null;
+  expirationDate?: string | null;
+  licenseId?: string | null;
+  planId?: string | null;
+};
+
+type BackendMeUser = Api.AuthUser & {
+  license?: BackendMeLicense | null;
 };
 
 function handleAuthError(error: unknown): void {
@@ -87,7 +100,10 @@ function handleAuthError(error: unknown): void {
 
 function mapAuthSession(session: Api.AuthSession): Api.FrontendSession {
   return {
-    user: session.user,
+    user: {
+      ...session.user,
+      birthDate: normalizeDateOnlyValue(session.user.birthDate),
+    },
     company: {
       name: session.user.companyName,
       direction: session.user.companyDirection,
@@ -100,14 +116,33 @@ function mapAuthSession(session: Api.AuthSession): Api.FrontendSession {
   };
 }
 
+function normalizeLicense(license?: BackendMeLicense | null): Api.License {
+  if (!license) {
+    return EMPTY_LICENSE;
+  }
+
+  const normalizedStatus = typeof license.status === 'number'
+    ? (license.status === 1 ? 'active' : 'inactive')
+    : (license.status || 'inactive');
+
+  return {
+    id: license.id || 0,
+    status: normalizedStatus as Api.LicenseStatus,
+    expirationDate: license.expirationDate || null,
+    licenseId: license.licenseId || license.planId || null,
+  };
+}
+
 function mapMeResponse(response: Api.MeResponse | Api.AuthUser): Api.FrontendSession {
   if ('user' in response) {
     return mapAuthSession(response);
   }
 
+  const backendUser = response as BackendMeUser;
+
   return mapAuthSession({
-    user: response,
-    license: EMPTY_LICENSE,
+    user: backendUser,
+    license: normalizeLicense(backendUser.license),
     app_version: null,
   });
 }

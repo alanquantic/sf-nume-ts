@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useCreateGroupData, useUpdateGroupData } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import add_user_group from '../../assets/icons/add_user_group.svg';
 
 type FormStatus = {
@@ -43,7 +43,7 @@ export default function GroupForm({
   const initialForm = {
     name: isEditing && groupToEdit ? groupToEdit.name : '',
     description: isEditing && groupToEdit ? groupToEdit.description : '',
-    date: isEditing && groupToEdit ? groupToEdit.date : new Date().toISOString().split('T')[0],
+    date: isEditing && groupToEdit ? toDateInputValue(groupToEdit.date) : toDateInputValue(new Date()),
   };
 
   const {

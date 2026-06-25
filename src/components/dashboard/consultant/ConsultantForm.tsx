@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { useCreateConsultant, useUpdateConsultant } from '@/api/consultants';
 import { useAuth } from '@/context/AuthProvider';
+import { toDateInputValue } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 
@@ -41,10 +42,6 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
       validationMsgs = { ...validationMsgs, lastName: t('forms.required') };
       isValid = false;
     }
-    if (scdLastName === '') {
-      validationMsgs = { ...validationMsgs, scdLastName: t('forms.required') };
-      isValid = false;
-    }
     if (date === '') {
       validationMsgs = { ...validationMsgs, date: t('forms.required') };
       isValid = false;
@@ -65,9 +62,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
     setFormError('');
     setIsLoading(true);
     if (isEditingConsultant) {
-      const editedConsultant: Api.Consultant = {
-        ...(activeConsultant || {}),
-        id: consultant?.id || '',
+      const editedConsultant: Partial<Api.Consultant> = {
         company,
         date,
         email,
@@ -165,7 +160,6 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
         <div className="form-group w-1/3">
           <p className="font-bold mb-1">
             {t('forms.maternalSurname')}
-            <span className="text-red-800">*</span>
           </p>
           <input
             type="text"
@@ -317,7 +311,7 @@ function ConsultantFormWrapper() {
     names: (isEditingConsultant && consultant) ? consultantData?.names : '',
     lastName: (isEditingConsultant && consultant) ? consultantData?.lastName : '',
     scdLastName: (isEditingConsultant && consultant) ? consultantData?.scdLastName : '',
-    date: (isEditingConsultant && consultant) ? consultantData?.date : '',
+    date: (isEditingConsultant && consultant) ? toDateInputValue(consultantData?.date) : '',
     nationality: (isEditingConsultant && consultant) ? consultantData?.nationality : '',
     gender: (isEditingConsultant && consultant) ? consultantData?.gender : '',
     company: (isEditingConsultant && consultant) ? consultantData?.company : '',

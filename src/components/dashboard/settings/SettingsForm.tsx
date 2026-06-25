@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import makeProfile from '@/api/useProfileUpdate';
 import { useAuth } from '@/context/AuthProvider';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 
@@ -27,7 +27,7 @@ function SettingsForm() {
     scdLastName: profile?.scdLastName || '',
     email: profile?.email || '',
     phone: profile?.phone || '',
-    birthDate: profile?.birthDate || '',
+    birthDate: toDateInputValue(profile?.birthDate) || '',
     direction: company?.direction || '',
     logo: company?.logo || '',
     name: company?.name || '',

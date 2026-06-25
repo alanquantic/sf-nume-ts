@@ -1,18 +1,10 @@
 import { useCreatePartner, useUpdatePartner } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import add_user_main from '../../assets/icons/add_user_main.svg';
-
-const toDateInputValue = (value?: string | null) => {
-  if (!value) {
-    return '';
-  }
-
-  return value.includes('T') ? value.slice(0, 10) : value;
-};
 
 type FormStatus = {
   displayValidations: boolean;
