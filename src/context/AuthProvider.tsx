@@ -22,6 +22,7 @@ type LoginCredentialsDTO = {
 
 const EMPTY_LICENSE: Api.License = {
   id: 0,
+  userId: 0,
   status: 'inactive',
   expirationDate: null,
   licenseId: null,
@@ -43,6 +44,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 type BackendMeLicense = {
   id?: number | null;
+  userId?: number | null;
   status?: string | number | null;
   expirationDate?: string | null;
   licenseId?: string | null;
@@ -127,6 +129,7 @@ function normalizeLicense(license?: BackendMeLicense | null): Api.License {
 
   return {
     id: license.id || 0,
+    userId: license.userId || 0,
     status: normalizedStatus as Api.LicenseStatus,
     expirationDate: license.expirationDate || null,
     licenseId: license.licenseId || license.planId || null,

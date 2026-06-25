@@ -27,7 +27,7 @@ function Sidebar() {
             <label className="font-bold text-main-700 text-sm">{`${firstName} ${lastName}`}</label>
             <label className="text-green-600 text-sm flex items-center">
               <VscCircleFilled size={24} className="-ml-2" />
-              {t('sidebar.licenseNumber', { number: userAuth?.license?.id })}
+              {t('sidebar.licenseNumber', { number: userAuth?.license?.userId })}
             </label>
           </div>
         </div>
