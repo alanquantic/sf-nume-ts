@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import axios from '@/api/axios';
@@ -159,9 +160,14 @@ export function useGuestEnergyQuery(config?: any) {
 export function useGuestEnergySession(config?: any) {
   const query = useGuestEnergyQuery(config);
 
+  const guestSession = useMemo(
+    () => mapGuestEnergyToLegacySession(query.data || null),
+    [query.data],
+  );
+
   return {
     ...query,
-    guestSession: mapGuestEnergyToLegacySession(query.data || null),
+    guestSession,
   };
 }
 

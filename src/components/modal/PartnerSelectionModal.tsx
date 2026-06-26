@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import makeGuestEnergy from '@/api/useGuestEnergy';
 import MyModal from '@/components/MyModal';
 import useEnergy from '@/hooks/useEnergy';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import Swal from 'sweetalert2';
 
 type PartnerSelectionModalProps = {
@@ -32,20 +32,46 @@ function PartnerSelectionModal({
     name: '',
     birthDate: '',
   });
+
+  const guestMeetYear = guestPartnerProps?.guestMeetYear || 0;
+  const guestName = guestPartnerProps?.name || '';
+  const guestPartnerOneName = guestPartnerProps?.guestPartner?.[0]?.names || '';
+  const guestPartnerOneBirthDate = toDateInputValue(guestPartnerProps?.guestPartner?.[0]?.date);
+  const guestPartnerTwoName = guestPartnerProps?.guestPartner?.[1]?.names || '';
+  const guestPartnerTwoBirthDate = toDateInputValue(guestPartnerProps?.guestPartner?.[1]?.date);
+
   useEffect(() => {
-    if (guestPartnerProps) {
-      setYearMeet(guestPartnerProps.guestMeetYear || 0);
-      setName(guestPartnerProps.name || '');
-      setPartnerOne({
-        name: guestPartnerProps.guestPartner?.[0]?.names || '',
-        birthDate: guestPartnerProps.guestPartner?.[0]?.date || '',
-      });
-      setPartnerTwo({
-        name: guestPartnerProps.guestPartner?.[1]?.names || '',
-        birthDate: guestPartnerProps.guestPartner?.[1]?.date || '',
-      });
+    if (!isOpen) {
+      return;
     }
-  }, [guestPartnerProps]);
+
+    setYearMeet((prev) => (prev === guestMeetYear ? prev : guestMeetYear));
+    setName((prev) => (prev === guestName ? prev : guestName));
+    setPartnerOne((prev) => (
+      prev.name === guestPartnerOneName && prev.birthDate === guestPartnerOneBirthDate
+        ? prev
+        : {
+          name: guestPartnerOneName,
+          birthDate: guestPartnerOneBirthDate,
+        }
+    ));
+    setPartnerTwo((prev) => (
+      prev.name === guestPartnerTwoName && prev.birthDate === guestPartnerTwoBirthDate
+        ? prev
+        : {
+          name: guestPartnerTwoName,
+          birthDate: guestPartnerTwoBirthDate,
+        }
+    ));
+  }, [
+    isOpen,
+    guestMeetYear,
+    guestName,
+    guestPartnerOneName,
+    guestPartnerOneBirthDate,
+    guestPartnerTwoName,
+    guestPartnerTwoBirthDate,
+  ]);
 
   // IMPORTANTE: El return debe estar DESPUÉS de TODOS los hooks
 
