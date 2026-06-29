@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import MyModal from '@/components/MyModal';
-import { useAuth } from '@/context/AuthProvider';
 import useConsult from '@/hooks/useConsult';
+import useConsultants from '@/hooks/useConsultants';
 import { formatDate } from '@/utils/constants';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,7 @@ import LastConsult from './LastConsult';
 function ConsultantProfile() {
   const { consultant } = useConsult();
   const [showModal, setShowModal] = useState(false);
-  const { user: userAuth } = useAuth();
-  const users = userAuth?.consultants;
+  const { consultants: users } = useConsultants();
   const { t } = useTranslation();
 
   if (!consultant) {

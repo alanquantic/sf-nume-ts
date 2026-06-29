@@ -21,6 +21,18 @@ axios.interceptors.request.use(authRequestInterceptor);
 axios.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    const status = error?.response?.status;
+    const requestUrl = error?.config?.url as string | undefined;
+    const isAuthRoute = requestUrl?.includes('/auth/login');
+
+    if (status === 401 && !isAuthRoute) {
+      storage.clearToken();
+
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.assign(window.location.origin);
+      }
+    }
+
     console.error(error);
     return Promise.reject(error);
   },

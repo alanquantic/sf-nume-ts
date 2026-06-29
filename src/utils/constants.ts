@@ -35,6 +35,26 @@ export function parseLocalDate(dateValue: string | Date): Date {
   );
 }
 
+export function toDateInputValue(value?: string | Date | null): string {
+  if (!value) {
+    return '';
+  }
+
+  if (value instanceof Date) {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  return value.includes('T') ? value.slice(0, 10) : value;
+}
+
+export function normalizeDateOnlyValue(value?: string | Date | null): string | null {
+  const normalizedValue = toDateInputValue(value);
+  return normalizedValue || null;
+}
+
 export function formatDate(opts: { date: Date | string, format: 'short' | 'long', locale?: string }) {
   const locale = opts.locale || 'es-MX';
   const date = parseLocalDate(opts.date);

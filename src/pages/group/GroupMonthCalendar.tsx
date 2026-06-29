@@ -47,7 +47,7 @@ export default function GroupMonthCalendarPage() {
     );
   }
 
-  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
   const u = new Universal();
   return (
     <div className="page-content bg-cover pb-10">

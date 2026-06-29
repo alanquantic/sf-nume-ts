@@ -39,6 +39,7 @@ declare namespace Api {
 
   interface License {
     id: number;
+    userId: number,
     status: LicenseStatus;
     expirationDate: string | null;
     licenseId: string | null;
@@ -132,8 +133,6 @@ declare namespace Api {
   interface FrontendSession {
     app_version: string | null;
     company: Company;
-    consultants: Consultant[];
-    guests: GuestSession;
     license: License;
     user: AuthUser;
   }

@@ -47,7 +47,7 @@ export default function GroupAnnualReturnsPage() {
   }
 
   // Crear el objeto Group solo si tenemos datos válidos
-  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
 
   const now = calculationDate.year;
 

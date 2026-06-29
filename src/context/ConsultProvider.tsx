@@ -166,8 +166,8 @@ function ConsultProvider({ children }: any) {
         name: sanitizeName(partner.names || ''),
         lastName: sanitizeName(partner.lastName || ''),
         scdLastName: sanitizeName(partner.scdLastName || ''),
-        birthDate: partner.date,
-        yearMet: updatedPartnerData.yearMeet,
+        birthDate: partner.date || '',
+        yearMet: updatedPartnerData.yearMeet || undefined,
       }));
       setSelectedPartnersAsPersons(partnersAsPersons);
 
@@ -223,8 +223,8 @@ function ConsultProvider({ children }: any) {
             name: sanitizeName(partner.names || ''),
             lastName: sanitizeName(partner.lastName || ''),
             scdLastName: sanitizeName(partner.scdLastName || ''),
-            birthDate: partner.date,
-            yearMet: updatedActivePartnerData.yearMeet,
+            birthDate: partner.date || '',
+            yearMet: updatedActivePartnerData.yearMeet || undefined,
           }));
           setSelectedPartnersAsPersons(partnersAsPersons);
         } else {
@@ -268,7 +268,7 @@ function ConsultProvider({ children }: any) {
             name: sanitizeName(member.name || ''),
             lastName: sanitizeName(member.lastName || ''),
             scdLastName: sanitizeName(member.scdLastName || ''),
-            birthDate: member.date,
+            birthDate: member.date || '',
           }));
           setSelectedGroup(membersPerson as Person[]);
         }
@@ -295,7 +295,7 @@ function ConsultProvider({ children }: any) {
         name: sanitizeName(member.name || ''),
         lastName: sanitizeName(member.lastName || ''),
         scdLastName: sanitizeName(member.scdLastName || ''),
-        birthDate: member.date,
+        birthDate: member.date || '',
       }));
       setSelectedGroup(membersPerson as Person[]);
     }

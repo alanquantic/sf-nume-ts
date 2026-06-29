@@ -1,13 +1,12 @@
-import { useAuth } from '@/context/AuthProvider';
+import { useConsultantsQuery } from '@/api/consultants';
 import useConsult from '@/hooks/useConsult';
 
 const useConsultants = () => {
-  const { user } = useAuth();
   const { selectConsultant } = useConsult();
-  const consultants = user?.consultants ?? [];
+  const { data } = useConsultantsQuery();
+  const consultants = data ?? [];
 
   const addConsultant = (newConsultant: Api.Consultant): Api.Consultant[] => {
-    // Seleccionar el nuevo consultant como activo
     selectConsultant(newConsultant);
     return [...consultants, newConsultant];
   };
