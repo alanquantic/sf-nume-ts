@@ -7,6 +7,8 @@ import {
   getDate,
   getDaysInMonth,
   getMonth,
+  isValid,
+  parseISO,
   getYear,
   parse,
 } from 'date-fns';
@@ -99,6 +101,26 @@ class Person {
 
   private memoizedValues: Map<string, any> = new Map();
 
+  private static parseBirthDate(value: string): Date {
+    if (!value) {
+      return new Date('2000-01-01');
+    }
+
+    const normalizedValue = value.includes('T') ? value.slice(0, 10) : value;
+    const parsed = parse(normalizedValue, 'yyyy-MM-dd', new Date());
+
+    if (isValid(parsed)) {
+      return parsed;
+    }
+
+    const isoParsed = parseISO(value);
+    if (isValid(isoParsed)) {
+      return isoParsed;
+    }
+
+    return new Date('2000-01-01');
+  }
+
   constructor({
     id, name, lastName, scdLastName, birthDate, yearMet,
   }: PersonProps) {
@@ -106,7 +128,7 @@ class Person {
     this.name = name;
     this.lastName = lastName;
     this.scdLastName = scdLastName;
-    this.birthDate = parse(birthDate, 'yyyy-MM-dd', new Date());
+    this.birthDate = Person.parseBirthDate(birthDate);
     this.NOW = new Date();
     this.fullName = `${name} ${lastName} ${scdLastName}`;
     this.nameView = name;

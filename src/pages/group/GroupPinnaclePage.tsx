@@ -145,7 +145,7 @@ export default function GroupPinnaclePage() {
   }
 
   // Crear el objeto Group solo si tenemos datos válidos
-  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
   const annualReturn = GroupPerson.annualReturn(calculationDate.year);
   const colors = [
     'bg-lime-600',

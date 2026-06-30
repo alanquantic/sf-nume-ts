@@ -5,6 +5,8 @@ import makeGuestEnergy from '@/api/useGuestEnergy';
 import MyModal from '@/components/MyModal';
 import useEnergy from '@/hooks/useEnergy';
 import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 
 type GroupSelectionModalProps = {
   isOpen: boolean;
@@ -27,6 +29,7 @@ function GroupSelectionModal({
   const {
     selectActiveGuestGroup,
   } = useEnergy();
+  const runOnce = useSubmitGuard();
 
   const [name, setName] = useState('');
   const [guestYear, setGuestYear] = useState(0);
@@ -77,12 +80,12 @@ function GroupSelectionModal({
     }
   }, [guestGroupProps]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const validGroupMembers: Api.GroupMember[] = groupMembers
       .filter((member) => member.name !== '' && member.date !== '')
       .map((member) => ({
-        id: Math.random().toString(36).substring(2, 9),
+        id: uuidv4(),
         name: member.name,
         lastName: '',
         scdLastName: '',
@@ -101,8 +104,9 @@ function GroupSelectionModal({
       guestYearGroup: guestYear,
     };
 
-    try {
-      await updateGuestEnergy.mutateAsync(guestEnergyGroup).then(() => {
+    runOnce(async () => {
+      try {
+        await updateGuestEnergy.mutateAsync(guestEnergyGroup);
         selectActiveGuestGroup({ guestGroup: validGroupMembers, guestYearGroup: guestYear, name });
         setIsOpen(false);
         Swal.fire({
@@ -111,15 +115,15 @@ function GroupSelectionModal({
           icon: 'success',
           confirmButtonText: t('modal.group.accept') as string,
         });
-      });
-    } catch (err) {
-      Swal.fire({
-        title: t('modal.group.errorSave') as string,
-        text: err instanceof Error ? err.message : t('modal.group.unknownError') as string,
-        icon: 'error',
-        confirmButtonText: t('modal.group.accept') as string,
-      });
-    }
+      } catch (err) {
+        Swal.fire({
+          title: t('modal.group.errorSave') as string,
+          text: err instanceof Error ? err.message : t('modal.group.unknownError') as string,
+          icon: 'error',
+          confirmButtonText: t('modal.group.accept') as string,
+        });
+      }
+    });
   };
 
   return (
@@ -229,6 +233,7 @@ function GroupSelectionModal({
           <button
             type="submit"
             className="btn"
+            disabled={updateGuestEnergy.isLoading}
           >
             {t('modal.group.save')}
           </button>

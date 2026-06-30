@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { MdEdit } from 'react-icons/md';
 import Swal from 'sweetalert2';
 
-import makeConsultant from '@/api/useConsultant';
+import { useDeleteGroupMember } from '@/api/group-data';
 import { ConsultContext } from '@/context/ConsultContext';
-import useConsultants from '@/hooks/useConsultants';
 import Person from '@/resources/Person';
 import add_user_group from '../../assets/icons/add_user_group.svg';
 import c_delete from '../../assets/icons/c_delete.svg';
@@ -17,8 +16,7 @@ type GroupMemberListProps = {
 
 export default function GroupMemberList({ activeGroup }: GroupMemberListProps) {
   const { activeConsultant, updateConsultantGroups, groupsAvailable } = useContext(ConsultContext);
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const deleteGroupMemberMutation = useDeleteGroupMember();
   const { t } = useTranslation();
 
   // Obtener la versión más actualizada del grupo desde el contexto
@@ -63,6 +61,7 @@ export default function GroupMemberList({ activeGroup }: GroupMemberListProps) {
           },
         });
 
+        await deleteGroupMemberMutation.mutateAsync(memberId);
         const updatedGroup: Api.GroupData = {
           ...currentActiveGroup,
           members: currentActiveGroup.members?.filter((m) => m.id !== memberId) || [],
@@ -73,11 +72,6 @@ export default function GroupMemberList({ activeGroup }: GroupMemberListProps) {
           groupData: activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === currentActiveGroup.id ? updatedGroup : g)) || [],
         };
 
-        // Persistir cambios en la base de datos
-        const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-        await addConsultantAsync.mutateAsync(consultantsList);
-
-        // Actualizar el contexto con el consultor actualizado
         updateConsultantGroups(updatedConsultant);
 
         // Cerrar loading y mostrar mensaje de éxito
@@ -106,10 +100,10 @@ export default function GroupMemberList({ activeGroup }: GroupMemberListProps) {
 
   const convertMemberToPerson = (member: Api.GroupMember): Person => new Person({
     id: member.id,
-    name: member.name,
-    lastName: member.lastName,
-    scdLastName: member.scdLastName,
-    birthDate: member.date,
+    name: member.name || '',
+    lastName: member.lastName || '',
+    scdLastName: member.scdLastName || '',
+    birthDate: member.date || '',
   });
 
   if (isAddMemberActive) {

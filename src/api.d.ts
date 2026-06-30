@@ -6,47 +6,79 @@ declare namespace Api {
     success?: boolean;
   }
 
+  type LicenseStatus = 'active' | 'inactive' | 'expired';
+
   interface Company {
-    direction: string;
-    logo: string;
-    name: string;
-    phone: string;
-    website: string;
+    direction: string | null;
+    logo: string | null;
+    name: string | null;
+    phone: string | null;
+    website: string | null;
   }
+
+  interface AuthUser {
+    avatar: string | null;
+    birthDate: string | null;
+    country: string | null;
+    email: string | null; // Technical identifier; do not assume it is a real email.
+    firstName: string | null;
+    gender: string | null;
+    id: number;
+    lastName: string | null;
+    phone: string | null;
+    scdLastName: string | null;
+    companyName: string | null;
+    companyDirection: string | null;
+    companyPhone: string | null;
+    companyWebsite: string | null;
+    companyLogo: string | null;
+    devices: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  interface License {
+    id: number;
+    userId: number,
+    status: LicenseStatus;
+    expirationDate: string | null;
+    licenseId: string | null;
+  }
+
+  interface AuthSession {
+    user: AuthUser;
+    license: License;
+    app_version: string | null;
+  }
+
+  interface LoginResponse extends AuthSession {
+    token: string;
+  }
+
+  interface MeResponse extends AuthSession {}
 
   interface Consultant {
     id: string;
-    notes?: NotesByDate;
-    company?: string;
-    date?: Date;
-    email?: string;
-    gender?: string;
-    group?: unknown[];
+    userId?: number;
+    notes?: NotesByDate | Note[];
+    company?: string | null;
+    date?: string | null;
+    email?: string | null;
+    gender?: string | null;
+    group?: unknown[] | unknown | null;
     groupData?: GroupData[];
-    lastName?: string;
+    lastName?: string | null;
     createNames?: CreateName[];
-    names?: string;
-    nationality?: string;
+    names?: string | null;
+    nationality?: string | null;
+    // Legacy field kept temporarily for migration compatibility.
     partner?: Partner[];
     partnerData?: PartnerData[];
-    phone?: string;
-    scdLastName?: string;
-    guestEnergyPartner?: GuestEnergyPartner;
-    guestEnergyGroup?: GuestEnergyGroup;
-  }
-  interface User {
-    avatar: string;
-    birthDate: Date;
-    country: string;
-    email: string;
-    firstName: string;
-    gender: string;
-    id: number;
-    lastName: string;
-    phone: string;
-    scdLastName: string;
+    phone?: string | null;
+    scdLastName?: string | null;
   }
 
+  // Legacy UI shape used by the current guest-energy screens.
   interface GuestEnergyPartner {
     name: string;
     guestPartner: Partner[];
@@ -59,26 +91,50 @@ declare namespace Api {
     guestYearGroup: number;
   }
 
-  interface Guest {
+  interface GuestSession {
     guestEnergyPartner: GuestEnergyPartner;
     guestEnergyGroup: GuestEnergyGroup;
   }
 
-  interface License {
+  interface GuestRecord {
     id: number;
-    status: 0 | 1;
-    expirationDate: string;
-    licenseId: string;
+    userId: number;
+    partnerName: string | null;
+    partnerMeetYear: number | null;
+    groupName: string | null;
+    groupYear: number | null;
   }
 
-  interface UserResponse {
-    app_version: string;
+  interface GuestPartnerRecord {
+    id: string;
+    guestId: number;
+    names: string | null;
+    lastName: string | null;
+    scdLastName: string | null;
+    date: string | null;
+  }
+
+  interface GuestGroupMemberRecord {
+    id: string;
+    guestId: number;
+    name: string | null;
+    lastName: string | null;
+    scdLastName: string | null;
+    date: string | null;
+    dateInit: number | null;
+  }
+
+  interface GuestEnergy {
+    guest: GuestRecord;
+    guestPartners: GuestPartnerRecord[];
+    guestGroupMembers: GuestGroupMemberRecord[];
+  }
+
+  interface FrontendSession {
+    app_version: string | null;
     company: Company;
-    consultants: Consultant[];
-    guests: Guest;
     license: License;
-    token: string;
-    user: User;
+    user: AuthUser;
   }
 
   interface ProfileUser {
@@ -95,43 +151,57 @@ declare namespace Api {
   }
   interface PartnerData {
     id: string;
-    name:string;
-    date: string;
-    yearMeet: number;
+    consultantId?: string;
+    name: string | null;
+    date: string | null;
+    yearMeet: number | null;
     partner?: Partner[];
   }
 
   interface Partner {
     id: string;
-    names: string;
-    lastName: string;
-    scdLastName: string;
-    date: string;
+    partnerDataId?: string;
+    names: string | null;
+    lastName: string | null;
+    scdLastName: string | null;
+    date: string | null;
   }
   interface GroupData {
     id: string;
-    name: string;
-    description: string;
-    date: string;
+    consultantId?: string;
+    name: string | null;
+    description: string | null;
+    date: string | null;
     members?: GroupMember[];
-    lastInit: number;
+    lastInit: number | null;
   }
   interface GroupMember {
     id: string;
-    name: string;
-    lastName: string;
-    scdLastName: string;
-    date: string;
-    dateInit: number;
+    groupDataId?: string;
+    name: string | null;
+    lastName: string | null;
+    scdLastName: string | null;
+    date: string | null;
+    dateInit: number | null;
   }
   interface CreateName {
     id: string;
-    name: string;
-    lastName: string;
-    scdLastName: string;
-    birthDate: string;
-    isPerson: boolean;
+    consultantId?: string;
+    name: string | null;
+    lastName: string | null;
+    scdLastName: string | null;
+    birthDate: string | null;
+    isPerson: boolean | null;
   }
+
+  interface Note {
+    id: number;
+    consultantId: string;
+    dateKey: string;
+    pathKey: string;
+    value: string | null;
+  }
+
   type NotesContentByPath = Record<string, string>; // e.g., { "camino": "...", "nombre": "..." }
   type NotesByDate = Record<string, NotesContentByPath>; // e.g., { "2025-9-15": { ... } }
 }

@@ -4,7 +4,7 @@ import ConsultantList from '@/components/dashboard/consultant/ConsultantList';
 import ConsultantNotesModal from '@/components/dashboard/consultant/ConsultantNotesModal';
 import ConsultantProfile from '@/components/dashboard/consultant/ConsultantProfile';
 import SectionTitle from '@/components/SectionTitle';
-import { useAuth } from '@/context/AuthProvider';
+import useConsultants from '@/hooks/useConsultants';
 import useConsult from '@/hooks/useConsult';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,13 +13,17 @@ function ConsultantPage() {
   const [searchString, setSearchString] = useState('');
   const [showNotesModal, setShowNotesModal] = useState(false);
   const { consultant } = useConsult();
-  const { user: userAuth } = useAuth();
+  const { consultants: users } = useConsultants();
   const { t } = useTranslation();
 
   // Obtener las notas del consultor actual
-  const users = userAuth?.consultants;
   const consultantInfo = (consultant && Array.isArray(users)) ? users.find((element) => element.id === consultant?.id) : null;
   const consultantNotes = consultantInfo?.notes;
+  const hasConsultantNotes = Boolean(
+    consultantNotes
+    && !Array.isArray(consultantNotes)
+    && Object.keys(consultantNotes).length > 0,
+  );
 
   return (
     <div className="page-content bg-cover">
@@ -79,7 +83,7 @@ function ConsultantPage() {
           />
           <div className="section-wrap px-2 py-7">
             {/* Botón para ver notas */}
-            {consultantNotes && Object.keys(consultantNotes).length > 0 && (
+            {hasConsultantNotes && (
               <div className="mb-4">
                 <button
                   type="button"
@@ -104,7 +108,7 @@ function ConsultantPage() {
       <ConsultantNotesModal
         isOpen={showNotesModal}
         setIsOpen={setShowNotesModal}
-        notes={consultantNotes || {}}
+        notes={consultantNotes}
       />
 
     </div>

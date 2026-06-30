@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 
 import NoConsultantSelected from '@/components/NoConsultantSelected';
 
-import makeConsultant from '@/api/useConsultant';
+import { useCreateCreateName, useDeleteCreateName } from '@/api/create-names';
 import CreateNamePDF from '@/components-pdf/document/CreateNamePDF';
 import PDF from '@/components-pdf/document/PDF';
 import SectionTitle from '@/components/SectionTitle';
@@ -19,7 +19,7 @@ import PinnacleCreateName from '@/components/personal/createName/PinnacleCreateN
 import AnnualReturn from '@/components/personal/vibrationTime/AnnualReturn';
 import { useAuth } from '@/context/AuthProvider';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import Person, { AnnualReturn as AnnualReturnPerson } from '@/resources/Person';
 import { PDFPageConfig } from '@/types/pdf.types';
 import { pdf } from '@react-pdf/renderer';
@@ -45,13 +45,14 @@ function CreateNamePage() {
   const { t } = useTranslation();
   const { user: userAuth } = useAuth();
   const {
-    consultant, activeConsultant, calculationDate, selectActiveConsultant, consultationDate,
+    consultant, activeConsultant, calculationDate, updateConsultantPartners, consultationDate,
   } = useConsult();
   const {
     firstName, lastName, scdLastName, birthDate,
   } = userAuth?.user ?? {};
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const createCreateNameMutation = useCreateCreateName();
+  const deleteCreateNameMutation = useDeleteCreateName();
+  const runOnce = useSubmitGuard();
 
   const [inputName, setInputName] = useState<string>('');
   const [inputDate, setInputDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
@@ -149,36 +150,30 @@ function CreateNamePage() {
   };
 
   // Función para guardar
-  const handleSave = async () => {
+  const handleSave = () => runOnce(async () => {
     try {
       if (!activeConsultant || !isValid()) {
         return;
       }
 
       // Crear el nuevo nombre a guardar
-      const newCreateName: Api.CreateName = {
-        id: `createName_${Date.now()}`, // Generar ID único
+      const newCreateNamePayload = {
         name: inputName,
         lastName: inputLastName,
         scdLastName: inputScdLastName,
-        birthDate: inputDate, // Usar función segura
+        birthDate: inputDate,
         isPerson,
       };
-
-      // Actualizar el consultor con el nuevo nombre
-      const updatedConsultant: Api.Consultant = {
-        ...activeConsultant,
-        createNames: [...(activeConsultant.createNames || []), newCreateName],
-      };
-
-      // Actualizar la lista de consultores
-      const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-
-      // Guardar en el servidor
-      await addConsultantAsync.mutateAsync(consultantsList);
+      const savedCreateName = await createCreateNameMutation.mutateAsync({
+        consultantId: activeConsultant.id,
+        createName: newCreateNamePayload,
+      });
 
       // Actualizar el contexto para reflejar los cambios inmediatamente
-      selectActiveConsultant(updatedConsultant);
+      updateConsultantPartners({
+        ...activeConsultant,
+        createNames: [...(activeConsultant.createNames || []), savedCreateName],
+      });
 
       // Mostrar mensaje de éxito con SweetAlert
       Swal.fire({
@@ -196,7 +191,7 @@ function CreateNamePage() {
         confirmButtonText: t('createName.acceptButton') as string,
       });
     }
-  };
+  });
 
   // Función para manejar selección de nombre guardado
   const handleSavedNameSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -210,12 +205,12 @@ function CreateNamePage() {
         if (savedName.isPerson) {
           // Si ya tiene lastName y scdLastName separados, usarlos
           if (savedName.lastName && savedName.scdLastName) {
-            setInputName(savedName.name);
-            setInputLastName(savedName.lastName);
-            setInputScdLastName(savedName.scdLastName);
+            setInputName(savedName.name || '');
+            setInputLastName(savedName.lastName || '');
+            setInputScdLastName(savedName.scdLastName || '');
           } else {
             // Si no, intentar separar el nombre completo
-            const nameParts = savedName.name.trim().split(' ');
+            const nameParts = (savedName.name || '').trim().split(' ');
             if (nameParts.length >= 3) {
               // Asumir que el primer elemento es el nombre, los dos últimos son apellidos
               setInputName(nameParts[0]);
@@ -228,20 +223,20 @@ function CreateNamePage() {
               setInputScdLastName('');
             } else {
               // Solo nombre
-              setInputName(savedName.name);
+              setInputName(savedName.name || '');
               setInputLastName('');
               setInputScdLastName('');
             }
           }
         } else {
           // Si no es persona, usar el nombre completo como está
-          setInputName(savedName.name);
+          setInputName(savedName.name || '');
           setInputLastName('');
           setInputScdLastName('');
         }
 
         // Crear fecha sin problemas de zona horaria
-        setInputDate(savedName.birthDate);
+        setInputDate(savedName.birthDate || format(new Date(), 'yyyy-MM-dd'));
         setEntityType(savedName.isPerson !== false ? 'person' : 'company');
         setHasCalculated(false); // Resetear cálculos para que el usuario haga clic en "Calcular"
       }
@@ -286,20 +281,13 @@ function CreateNamePage() {
       });
 
       if (result.isConfirmed) {
-        // Actualizar el consultor removiendo el nombre
-        const updatedConsultant: Api.Consultant = {
-          ...activeConsultant,
-          createNames: activeConsultant.createNames?.filter((name: Api.CreateName) => name.id !== id) || [],
-        };
-
-        // Actualizar la lista de consultores
-        const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-
-        // Guardar en el servidor
-        await addConsultantAsync.mutateAsync(consultantsList);
+        await deleteCreateNameMutation.mutateAsync(id);
 
         // Actualizar el contexto para reflejar los cambios inmediatamente
-        selectActiveConsultant(updatedConsultant);
+        updateConsultantPartners({
+          ...activeConsultant,
+          createNames: activeConsultant.createNames?.filter((name: Api.CreateName) => name.id !== id) || [],
+        });
 
         // Limpiar selección
         setSelectedSavedName('');
@@ -384,13 +372,13 @@ function CreateNamePage() {
                       {createNames.map((savedName: Api.CreateName) => (
                         <option key={savedName.id} value={savedName.id} className="py-2">
                           {savedName.isPerson
-                            ? `${savedName.name} ${savedName.lastName} ${savedName.scdLastName}`.trim()
-                            : savedName.name}
+                            ? `${savedName.name || ''} ${savedName.lastName || ''} ${savedName.scdLastName || ''}`.trim()
+                            : (savedName.name || '')}
                           {' '}
                           •
                           {' '}
                           {(() => {
-                            const [year, month, day] = savedName.birthDate.split('-').map(Number);
+                            const [year, month, day] = (savedName.birthDate || format(new Date(), 'yyyy-MM-dd')).split('-').map(Number);
                             const date = new Date(year, month - 1, day);
                             return date.toLocaleDateString('es-ES', {
                               year: 'numeric',
@@ -603,7 +591,7 @@ function CreateNamePage() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={!isValid() || !hasCalculated}
+                  disabled={!isValid() || !hasCalculated || createCreateNameMutation.isLoading}
                   className={`btn-save !bg-main-50 ${(!isValid() || !hasCalculated) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {t('createName.save')}

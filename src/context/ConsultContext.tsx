@@ -30,7 +30,6 @@ export interface ConsultContextInterface {
   setIsEditingGroup: (isEditing: boolean) => void;
   selectActiveGroup: (group: Api.GroupData, groupYear: number) => void;
   setSelectedGroup: (group: Person[]) => void;
-  createGroup: (groupData: Omit<Api.GroupData, 'id' | 'members'>) => void;
   updateConsultantGroups: (consultant: Api.Consultant) => void;
 
   // PartnerData management (nuevo - grupos de parejas)
@@ -39,7 +38,6 @@ export interface ConsultContextInterface {
   partnerDataAvailable: Api.PartnerData[];
   isEditingPartnerData: boolean;
   handleIsEditingPartnerData: (isEditing: boolean) => void;
-  createPartnerData: (partnerData: Omit<Api.PartnerData, 'id' | 'partner'>) => void;
   // Partners from selected group as Person objects
   selectedPartnersAsPersons: Person[];
   setSelectedPartnersAsPersons: (partners: Person[]) => void;
@@ -70,7 +68,6 @@ const createDefaultValues = (): ConsultContextInterface => ({
   groupsAvailable: [],
   activeGroup: null,
   selectActiveGroup: () => null,
-  createGroup: () => null,
   updateConsultantGroups: () => null,
   // PartnerData management defaults
   activePartnerData: null,
@@ -78,7 +75,6 @@ const createDefaultValues = (): ConsultContextInterface => ({
   partnerDataAvailable: [],
   isEditingPartnerData: false,
   handleIsEditingPartnerData: () => null,
-  createPartnerData: () => null,
   // Partners from selected group as Person objects
   selectedPartnersAsPersons: [],
   setSelectedPartnersAsPersons: () => null,

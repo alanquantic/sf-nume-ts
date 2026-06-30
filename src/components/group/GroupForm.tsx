@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import makeConsultant from '@/api/useConsultant';
+import { useCreateGroupData, useUpdateGroupData } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
-import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import add_user_group from '../../assets/icons/add_user_group.svg';
 
 type FormStatus = {
@@ -34,17 +34,18 @@ export default function GroupForm({
   groupToEdit,
 }: GroupFormProps): JSX.Element {
   const { handleIsEditingConsultant, updateConsultantGroups } = useConsult();
-  const handleConsultants = useConsultants();
-  const addConsultantAsync = makeConsultant();
+  const createGroupDataMutation = useCreateGroupData();
+  const updateGroupDataMutation = useUpdateGroupData();
   const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
+  const runOnce = useSubmitGuard();
 
   const initialForm = {
     name: isEditing && groupToEdit ? groupToEdit.name : '',
     description: isEditing && groupToEdit ? groupToEdit.description : '',
-    date: isEditing && groupToEdit ? groupToEdit.date : new Date().toISOString().split('T')[0],
+    date: isEditing && groupToEdit ? toDateInputValue(groupToEdit.date) : toDateInputValue(new Date()),
   };
 
   const {
@@ -99,38 +100,43 @@ export default function GroupForm({
       return;
     }
 
-    setFormError('');
-    setIsLoading(true);
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
 
-    try {
-      const newGroup: Api.GroupData = {
-        id: isEditing && groupToEdit ? groupToEdit.id : Math.random().toString(36).substring(2, 9),
-        name: name.trim(),
-        description: description.trim(),
-        date: date.toString(),
-        members: isEditing && groupToEdit ? groupToEdit.members || [] : [],
-        lastInit: new Date().getFullYear(),
-      };
+      try {
+        const payload = {
+          name: (name || '').trim(),
+          description: (description || '').trim(),
+          date: date?.toString() || '',
+          lastInit: new Date().getFullYear(),
+        };
+        const savedGroup = isEditing && groupToEdit
+          ? await updateGroupDataMutation.mutateAsync({
+            groupDataId: groupToEdit.id,
+            groupData: payload,
+          })
+          : await createGroupDataMutation.mutateAsync({
+            consultantId: activeConsultant.id,
+            groupData: payload,
+          });
 
-      const updatedConsultant: Api.Consultant = {
-        ...activeConsultant,
-        groupData: isEditing && groupToEdit
-          ? activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === groupToEdit.id ? newGroup : g)) || []
-          : [...(activeConsultant.groupData || []), newGroup],
-      };
+        // Actualizar inmediatamente el contexto con el consultor actualizado
+        const updatedConsultant: Api.Consultant = {
+          ...activeConsultant,
+          groupData: isEditing && groupToEdit
+            ? activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === groupToEdit.id ? { ...groupToEdit, ...savedGroup, members: groupToEdit.members || [] } : g)) || []
+            : [...(activeConsultant.groupData || []), { ...savedGroup, members: [] }],
+        };
+        updateConsultantGroups(updatedConsultant);
 
-      const consultantsList = handleConsultants.updateConsultant(activeConsultant.id, updatedConsultant);
-      await addConsultantAsync.mutateAsync(consultantsList);
-
-      // Actualizar inmediatamente el contexto con el consultor actualizado
-      updateConsultantGroups(updatedConsultant);
-
-      closeForm();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : t('group.errors.saveGroup') || '');
-    } finally {
-      setIsLoading(false);
-    }
+        closeForm();
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : t('group.errors.saveGroup') || '');
+      } finally {
+        setIsLoading(false);
+      }
+    });
   };
 
   return (
@@ -152,7 +158,7 @@ export default function GroupForm({
             name="name"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={name}
+            value={name || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.name) && (
             <span className="form-error">{formStatus.validationMsgs.name}</span>
@@ -170,7 +176,7 @@ export default function GroupForm({
             name="date"
             className="rounded border-[#C4C4C4] border w-11/12"
             onChange={(e) => handleInputChange(e.target)}
-            value={date}
+            value={date || ''}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.date) && (
             <span className="form-error">{formStatus.validationMsgs.date}</span>
@@ -188,7 +194,7 @@ export default function GroupForm({
             name="description"
             className="rounded border-[#C4C4C4] border w-full"
             onChange={(e) => handleInputChange(e.target)}
-            value={description}
+            value={description || ''}
             rows={3}
           />
           {(formStatus?.displayValidations && formStatus?.validationMsgs?.description) && (

@@ -1,17 +1,20 @@
-import axios from '@/api/axios';
-import makeMutation from '@/hooks/makeMutation';
+import { useSaveGuestEnergy } from '@/api/guest-energy';
+import { useAuth } from '@/context/AuthProvider';
 
-async function postGuestEnergy(guestEnergy: Api.GuestEnergyPartner | Api.GuestEnergyGroup) {
-  const isPartner = 'guestPartner' in guestEnergy;
+function makeGuestEnergy() {
+  const { user } = useAuth();
+  const userId = user?.user?.id;
+  const mutation = useSaveGuestEnergy();
 
-  const payload = {
-    guestEnergyPartner: isPartner ? guestEnergy : null,
-    guestEnergyGroup: !isPartner ? guestEnergy : null,
+  return {
+    ...mutation,
+    mutateAsync: (guestEnergy: Api.GuestEnergyPartner | Api.GuestEnergyGroup) => (
+      mutation.mutateAsync({
+        userId: userId as number,
+        guestEnergy,
+      })
+    ),
   };
-  const res = await axios.post('/wp-json/app/v3/energy', payload);
-  return res;
 }
-
-const makeGuestEnergy = makeMutation(['add-guest-energy'], postGuestEnergy, ['auth-user']);
 
 export default makeGuestEnergy;

@@ -197,7 +197,7 @@ function Navbar() {
         profile={profile}
         date={calculationDate}
         sidebar={sidebar}
-        logoURL={logo}
+        logoURL={logo || undefined}
         groupConsult={groupConsult}
         newDate={consultationDate}
         month={selectedMonthReport}
@@ -425,7 +425,7 @@ function Navbar() {
             newDate={consultationDate}
             sidebar={sidebar}
             synastry={synastryObject}
-            logoURL={logo}
+            logoURL={logo || undefined}
             groupConsult={groupConsult}
             month={selectedMonthReport || calculationDate.month}
             partnerYear={activePartnerData?.yearMeet ?? 0}

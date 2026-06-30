@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import makeProfile from '@/api/useProfileUpdate';
 import { useAuth } from '@/context/AuthProvider';
 import useForm from '@/hooks/useForm';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 
@@ -22,17 +22,17 @@ function SettingsForm() {
   const { t } = useTranslation();
 
   const initialForm = {
-    firstName: profile?.firstName,
-    lastName: profile?.lastName,
-    scdLastName: profile?.scdLastName,
-    email: profile?.email,
-    phone: profile?.phone,
-    birthDate: profile?.birthDate,
-    direction: company?.direction,
-    logo: company?.logo,
-    name: company?.name,
-    phoneCompany: company?.phone,
-    website: company?.website,
+    firstName: profile?.firstName || '',
+    lastName: profile?.lastName || '',
+    scdLastName: profile?.scdLastName || '',
+    email: profile?.email || '',
+    phone: profile?.phone || '',
+    birthDate: toDateInputValue(profile?.birthDate) || '',
+    direction: company?.direction || '',
+    logo: company?.logo || '',
+    name: company?.name || '',
+    phoneCompany: company?.phone || '',
+    website: company?.website || '',
   };
   const {
     firstName, lastName, scdLastName, birthDate, direction, logo, name, phone, phoneCompany, website, email, handleInputChange, setFormError, reset,
@@ -78,15 +78,15 @@ function SettingsForm() {
 
     const newProfile: Api.ProfileUser = {
       names: firstName,
-      lastName,
-      scdLastName,
-      date: birthDate?.toString(),
-      tel: phone,
-      address: direction,
-      logoURL: logo,
-      company: name,
-      phone: phoneCompany,
-      webSite: website,
+      lastName: lastName || undefined,
+      scdLastName: scdLastName || undefined,
+      date: birthDate?.toString() || undefined,
+      tel: phone || undefined,
+      address: direction || undefined,
+      logoURL: typeof logo === 'string' && logo ? logo : undefined,
+      company: name || undefined,
+      phone: phoneCompany || undefined,
+      webSite: website || undefined,
     };
 
     setIsLoading(true);
@@ -122,7 +122,7 @@ function SettingsForm() {
                 name="firstName"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={firstName}
+                value={firstName || ''}
               />
               {(formStatus?.displayValidations && formStatus?.validationMsgs?.firstName) && <p className="mt-1 p-1 text-red-50 bg-red-600 rounded-sm">{formStatus.validationMsgs.firstName}</p>}
             </div>
@@ -137,7 +137,7 @@ function SettingsForm() {
                 name="lastName"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={lastName}
+                value={lastName || ''}
               />
               {(formStatus?.displayValidations && formStatus?.validationMsgs?.lastName) && <p className="mt-1 p-1 text-red-50 bg-red-600 rounded-sm">{formStatus.validationMsgs.lastName}</p>}
             </div>
@@ -152,7 +152,7 @@ function SettingsForm() {
                 name="scdLastName"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={scdLastName}
+                value={scdLastName || ''}
               />
               {(formStatus?.displayValidations && formStatus?.validationMsgs?.scdLastName) && <p className="mt-1 p-1 text-red-50 bg-red-600 rounded-sm">{formStatus.validationMsgs.scdLastName}</p>}
             </div>
@@ -170,7 +170,7 @@ function SettingsForm() {
                 name="birthDate"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={birthDate?.toString()}
+                value={birthDate?.toString() || ''}
               />
               {(formStatus?.displayValidations && formStatus?.validationMsgs?.birthDate) && <p className="mt-1 p-1 text-red-50 bg-red-600 rounded-sm">{formStatus.validationMsgs.birthDate}</p>}
             </div>
@@ -184,7 +184,7 @@ function SettingsForm() {
                 name="phone"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={phone}
+                value={phone || ''}
               />
             </div>
             <div className="form-group w-1/3">
@@ -197,7 +197,7 @@ function SettingsForm() {
                 name="email"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={email}
+                value={email || ''}
                 disabled
               />
             </div>
@@ -220,7 +220,7 @@ function SettingsForm() {
                 name="name"
                 className="rounded  border-[#C4C4C4]  border w-11/12"
                 onChange={(e) => handleInputChange(e.target)}
-                value={name}
+                value={name || ''}
               />
             </div>
             <div className="flex w-full mb-5">
@@ -234,7 +234,7 @@ function SettingsForm() {
                   name="direction"
                   className="rounded  border-[#C4C4C4]  border w-11/12"
                   onChange={(e) => handleInputChange(e.target)}
-                  value={direction}
+                  value={direction || ''}
                 />
               </div>
               <div className="form-group w-1/2">
@@ -247,7 +247,7 @@ function SettingsForm() {
                   name="phoneCompany"
                   className="rounded  border-[#C4C4C4]  border w-11/12"
                   onChange={(e) => handleInputChange(e.target)}
-                  value={phoneCompany}
+                  value={phoneCompany || ''}
                 />
               </div>
             </div>
@@ -262,7 +262,7 @@ function SettingsForm() {
                   name="website"
                   className="rounded  border-[#C4C4C4]  border w-11/12"
                   onChange={(e) => handleInputChange(e.target)}
-                  value={website}
+                  value={website || ''}
                 />
               </div>
               <div className="form-group w-1/2">
