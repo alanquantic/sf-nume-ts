@@ -1,7 +1,7 @@
 import { useUpsertConsultantNote } from '@/api/consultants';
 import useConsult from '@/hooks/useConsult';
 import { pageNameBySlug } from '@/utils/constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import NotesModal from './NotesModal';
 
@@ -35,10 +35,18 @@ function ConsultantAddNoteModal({ isOpen, setIsOpen }: ConsultantAddNoteModalPro
   const todayKey = (() => {
     const now = new Date();
     const y = now.getFullYear();
-    const m = now.getMonth() + 1; // 1-12 without leading zero to match legacy
-    const d = now.getDate();
-    return `${y}-${m}-${d}`; // e.g., 2025-9-15
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`; // canonical zero-padded, e.g., 2025-09-15
   })();
+
+  // Pre-fill with the existing note for today + this page so that saving edits
+  // it instead of silently overwriting it (the backend upserts on date+path).
+  useEffect(() => {
+    if (!isOpen) return;
+    const existing = getNotesByDate(activeConsultant?.notes)[todayKey]?.[pathSlug] || '';
+    setContent(existing);
+  }, [isOpen, activeConsultant, todayKey, pathSlug]);
 
   const handleSave = async () => {
     if (!activeConsultant) return;

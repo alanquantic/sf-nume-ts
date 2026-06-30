@@ -15,17 +15,28 @@ type BackendConsultant = Omit<Api.Consultant, 'notes' | 'partnerData' | 'partner
   partners?: Api.Partner[];
 };
 
+// Canonicalize date keys to zero-padded YYYY-MM-DD so legacy ("2025-01-15") and
+// app-written ("2025-9-15") notes collapse into the same per-day bucket instead
+// of duplicating it.
+export function normalizeDateKey(dateKey: string): string {
+  const parts = dateKey.split('-');
+  if (parts.length !== 3) return dateKey;
+  const [year, month, day] = parts;
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 function mapNotesToLegacyShape(notes?: Api.Note[]): Api.NotesByDate {
   if (!notes?.length) {
     return {};
   }
 
   return notes.reduce<Api.NotesByDate>((acc, note) => {
-    if (!acc[note.dateKey]) {
-      acc[note.dateKey] = {};
+    const dateKey = normalizeDateKey(note.dateKey);
+    if (!acc[dateKey]) {
+      acc[dateKey] = {};
     }
 
-    acc[note.dateKey][note.pathKey] = note.value ?? '';
+    acc[dateKey][note.pathKey] = note.value ?? '';
     return acc;
   }, {});
 }
