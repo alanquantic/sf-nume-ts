@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useCreateGroupMember, useUpdateGroupMember } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
@@ -41,6 +42,7 @@ export default function GroupMemberForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
+  const runOnce = useSubmitGuard();
   const { t } = useTranslation();
 
   const initialForm = {
@@ -160,60 +162,62 @@ export default function GroupMemberForm({
       return;
     }
 
-    setFormError('');
-    setIsLoading(true);
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
 
-    try {
-      const payload = {
-        name: (name || '').trim(),
-        lastName: (lastName || '').trim(),
-        scdLastName: (scdLastName || '').trim(),
-        date: date?.toString() || '',
-        dateInit: dateInit || new Date().getFullYear(),
-      };
-      const savedMember = isEditing && memberToEdit
-        ? await updateGroupMemberMutation.mutateAsync({
-          memberId: memberToEdit.id,
-          member: payload,
-        })
-        : await createGroupMemberMutation.mutateAsync({
-          groupDataId: activeGroup.id,
-          member: payload,
-        });
+      try {
+        const payload = {
+          name: (name || '').trim(),
+          lastName: (lastName || '').trim(),
+          scdLastName: (scdLastName || '').trim(),
+          date: date?.toString() || '',
+          dateInit: Number(dateInit) || new Date().getFullYear(),
+        };
+        const savedMember = isEditing && memberToEdit
+          ? await updateGroupMemberMutation.mutateAsync({
+            memberId: memberToEdit.id,
+            member: payload,
+          })
+          : await createGroupMemberMutation.mutateAsync({
+            groupDataId: activeGroup.id,
+            member: payload,
+          });
 
-      // Calcular todos los dateInit de los miembros actualizados para obtener el más reciente
-      const updatedMembers = isEditing && memberToEdit
-        ? activeGroup.members?.map((m: Api.GroupMember) => (m.id === memberToEdit.id ? savedMember : m)) || []
-        : [...(activeGroup.members || []), savedMember];
+        // Calcular todos los dateInit de los miembros actualizados para obtener el más reciente
+        const updatedMembers = isEditing && memberToEdit
+          ? activeGroup.members?.map((m: Api.GroupMember) => (m.id === memberToEdit.id ? savedMember : m)) || []
+          : [...(activeGroup.members || []), savedMember];
 
-      // Encontrar el dateInit más reciente de todos los miembros
-      const allDateInits = updatedMembers
-        .map((m: Api.GroupMember) => m.dateInit)
-        .filter((year): year is number => typeof year === 'number' && year > 0);
+        // Encontrar el dateInit más reciente de todos los miembros
+        const allDateInits = updatedMembers
+          .map((m: Api.GroupMember) => m.dateInit)
+          .filter((year): year is number => typeof year === 'number' && year > 0);
 
-      const mostRecentYear = allDateInits.length > 0
-        ? Math.max(...allDateInits)
-        : (dateInit || new Date().getFullYear());
+        const mostRecentYear = allDateInits.length > 0
+          ? Math.max(...allDateInits)
+          : (Number(dateInit) || new Date().getFullYear());
 
-      const updatedGroup: Api.GroupData = {
-        ...activeGroup,
-        lastInit: mostRecentYear,
-        members: updatedMembers,
-      };
+        const updatedGroup: Api.GroupData = {
+          ...activeGroup,
+          lastInit: mostRecentYear,
+          members: updatedMembers,
+        };
 
-      const updatedConsultant: Api.Consultant = {
-        ...activeConsultant,
-        groupData: activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === activeGroup.id ? updatedGroup : g)) || [],
-      };
+        const updatedConsultant: Api.Consultant = {
+          ...activeConsultant,
+          groupData: activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === activeGroup.id ? updatedGroup : g)) || [],
+        };
 
-      updateConsultantGroups(updatedConsultant);
+        updateConsultantGroups(updatedConsultant);
 
-      closeForm();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : t('group.errors.errorSavingMember') || '');
-    } finally {
-      setIsLoading(false);
-    }
+        closeForm();
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : t('group.errors.errorSavingMember') || '');
+      } finally {
+        setIsLoading(false);
+      }
+    });
   };
 
   const handleUseConsultant = () => {

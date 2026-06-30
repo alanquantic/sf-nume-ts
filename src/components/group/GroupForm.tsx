@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useCreateGroupData, useUpdateGroupData } from '@/api/group-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import { isValidDate, toDateInputValue } from '@/utils/constants';
 import add_user_group from '../../assets/icons/add_user_group.svg';
 
@@ -39,6 +40,7 @@ export default function GroupForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
+  const runOnce = useSubmitGuard();
 
   const initialForm = {
     name: isEditing && groupToEdit ? groupToEdit.name : '',
@@ -98,41 +100,43 @@ export default function GroupForm({
       return;
     }
 
-    setFormError('');
-    setIsLoading(true);
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
 
-    try {
-      const payload = {
-        name: (name || '').trim(),
-        description: (description || '').trim(),
-        date: date?.toString() || '',
-        lastInit: new Date().getFullYear(),
-      };
-      const savedGroup = isEditing && groupToEdit
-        ? await updateGroupDataMutation.mutateAsync({
-          groupDataId: groupToEdit.id,
-          groupData: payload,
-        })
-        : await createGroupDataMutation.mutateAsync({
-          consultantId: activeConsultant.id,
-          groupData: payload,
-        });
+      try {
+        const payload = {
+          name: (name || '').trim(),
+          description: (description || '').trim(),
+          date: date?.toString() || '',
+          lastInit: new Date().getFullYear(),
+        };
+        const savedGroup = isEditing && groupToEdit
+          ? await updateGroupDataMutation.mutateAsync({
+            groupDataId: groupToEdit.id,
+            groupData: payload,
+          })
+          : await createGroupDataMutation.mutateAsync({
+            consultantId: activeConsultant.id,
+            groupData: payload,
+          });
 
-      // Actualizar inmediatamente el contexto con el consultor actualizado
-      const updatedConsultant: Api.Consultant = {
-        ...activeConsultant,
-        groupData: isEditing && groupToEdit
-          ? activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === groupToEdit.id ? { ...groupToEdit, ...savedGroup, members: groupToEdit.members || [] } : g)) || []
-          : [...(activeConsultant.groupData || []), { ...savedGroup, members: [] }],
-      };
-      updateConsultantGroups(updatedConsultant);
+        // Actualizar inmediatamente el contexto con el consultor actualizado
+        const updatedConsultant: Api.Consultant = {
+          ...activeConsultant,
+          groupData: isEditing && groupToEdit
+            ? activeConsultant.groupData?.map((g: Api.GroupData) => (g.id === groupToEdit.id ? { ...groupToEdit, ...savedGroup, members: groupToEdit.members || [] } : g)) || []
+            : [...(activeConsultant.groupData || []), { ...savedGroup, members: [] }],
+        };
+        updateConsultantGroups(updatedConsultant);
 
-      closeForm();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : t('group.errors.saveGroup') || '');
-    } finally {
-      setIsLoading(false);
-    }
+        closeForm();
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : t('group.errors.saveGroup') || '');
+      } finally {
+        setIsLoading(false);
+      }
+    });
   };
 
   return (

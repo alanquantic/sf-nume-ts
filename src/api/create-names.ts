@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from 'react-query';
 
 import { getConsultantsQueryKey } from '@/api/consultants';
 import { useAuth } from '@/context/AuthProvider';
+import { normalizeDateOnlyValue } from '@/utils/constants';
 
 import axios from './axios';
 
@@ -12,7 +13,8 @@ async function createCreateName({
   consultantId: string;
   createName: Omit<Api.CreateName, 'id' | 'consultantId'>;
 }) {
-  return axios.post<Api.CreateName>(`/create-names/${consultantId}`, createName) as unknown as Api.CreateName;
+  const response = await axios.post<Api.CreateName>(`/create-names/${consultantId}`, createName) as unknown as Api.CreateName;
+  return { ...response, birthDate: normalizeDateOnlyValue(response.birthDate) };
 }
 
 async function updateCreateName({
@@ -22,7 +24,8 @@ async function updateCreateName({
   createNameId: string;
   createName: Partial<Api.CreateName>;
 }) {
-  return axios.put<Api.CreateName>(`/create-names/${createNameId}`, createName) as unknown as Api.CreateName;
+  const response = await axios.put<Api.CreateName>(`/create-names/${createNameId}`, createName) as unknown as Api.CreateName;
+  return { ...response, birthDate: normalizeDateOnlyValue(response.birthDate) };
 }
 
 async function deleteCreateName(createNameId: string) {

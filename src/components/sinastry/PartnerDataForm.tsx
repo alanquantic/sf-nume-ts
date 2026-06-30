@@ -1,6 +1,7 @@
 import { useCreatePartnerData, useUpdatePartnerData } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import { toDateInputValue } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +38,7 @@ export default function PartnerDataForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
+  const runOnce = useSubmitGuard();
 
   const { t } = useTranslation();
 
@@ -106,7 +108,7 @@ export default function PartnerDataForm({
     reset();
   };
 
-  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formStatus.isValid) {
@@ -114,48 +116,50 @@ export default function PartnerDataForm({
       return;
     }
 
-    setFormError('');
-    setIsLoading(true);
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
 
-    try {
-      const payload = {
-        name: name || '',
-        date: date?.toString() || '',
-        yearMeet: yearMeet || new Date().getFullYear(),
-      };
-      const savedPartnerData = isEditing && partnerDataToEdit
-        ? await updatePartnerDataMutation.mutateAsync({
-          partnerDataId: partnerDataToEdit.id,
-          partnerData: payload,
-        })
-        : await createPartnerDataMutation.mutateAsync({
-          consultantId: activeConsultant.id,
-          partnerData: payload,
-        });
+      try {
+        const payload = {
+          name: name || '',
+          date: date?.toString() || '',
+          yearMeet: Number(yearMeet) || new Date().getFullYear(),
+        };
+        const savedPartnerData = isEditing && partnerDataToEdit
+          ? await updatePartnerDataMutation.mutateAsync({
+            partnerDataId: partnerDataToEdit.id,
+            partnerData: payload,
+          })
+          : await createPartnerDataMutation.mutateAsync({
+            consultantId: activeConsultant.id,
+            partnerData: payload,
+          });
 
-      // Actualizar inmediatamente el contexto con el consultor actualizado
-      const updatedConsultant: Api.Consultant = {
-        ...activeConsultant,
-        partnerData: isEditing && partnerDataToEdit
-          ? activeConsultant.partnerData?.map((p: Api.PartnerData) => (
-            p.id === partnerDataToEdit.id
-              ? {
-                ...partnerDataToEdit,
-                ...savedPartnerData,
-                partner: partnerDataToEdit.partner || [],
-              }
-              : p
-          )) || []
-          : [...(activeConsultant.partnerData || []), { ...savedPartnerData, partner: [] }],
-      };
-      updateConsultantPartners(updatedConsultant);
+        // Actualizar inmediatamente el contexto con el consultor actualizado
+        const updatedConsultant: Api.Consultant = {
+          ...activeConsultant,
+          partnerData: isEditing && partnerDataToEdit
+            ? activeConsultant.partnerData?.map((p: Api.PartnerData) => (
+              p.id === partnerDataToEdit.id
+                ? {
+                  ...partnerDataToEdit,
+                  ...savedPartnerData,
+                  partner: partnerDataToEdit.partner || [],
+                }
+                : p
+            )) || []
+            : [...(activeConsultant.partnerData || []), { ...savedPartnerData, partner: [] }],
+        };
+        updateConsultantPartners(updatedConsultant);
 
-      closeForm();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : t('errors.savePartnerGroup') as string);
-    } finally {
-      setIsLoading(false);
-    }
+        closeForm();
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : t('errors.savePartnerGroup') as string);
+      } finally {
+        setIsLoading(false);
+      }
+    });
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useCreatePartner, useUpdatePartner } from '@/api/partner-data';
 import useConsult from '@/hooks/useConsult';
 import useForm from '@/hooks/useForm';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import { isValidDate, toDateInputValue } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +38,7 @@ export default function PartnerForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
+  const runOnce = useSubmitGuard();
 
   const { t } = useTranslation();
 
@@ -125,51 +127,53 @@ export default function PartnerForm({
       return;
     }
 
-    setFormError('');
-    setIsLoading(true);
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
 
-    try {
-      const payload = {
-        names: (names || '').trim(),
-        lastName: (lastName || '').trim(),
-        scdLastName: (scdLastName || '').trim(),
-        date: date?.toString() || '',
-      };
-
-      if (activePartnerData) {
-        const savedPartner = isEditing && partnerToEdit
-          ? await updatePartnerMutation.mutateAsync({
-            partnerId: partnerToEdit.id,
-            partner: payload,
-          })
-          : await createPartnerMutation.mutateAsync({
-            partnerDataId: activePartnerData.id,
-            partner: payload,
-          });
-        const updatedPartnerData: Api.PartnerData = {
-          ...activePartnerData,
-          partner: isEditing && partnerToEdit
-            ? activePartnerData.partner?.map((p: Api.Partner) => (p.id === partnerToEdit.id ? savedPartner : p)) || []
-            : [...(activePartnerData.partner || []), savedPartner],
+      try {
+        const payload = {
+          names: (names || '').trim(),
+          lastName: (lastName || '').trim(),
+          scdLastName: (scdLastName || '').trim(),
+          date: date?.toString() || '',
         };
 
-        const updatedConsultant: Api.Consultant = {
-          ...activeConsultant,
-          partnerData: activeConsultant.partnerData?.map((p: Api.PartnerData) => (p.id === activePartnerData.id ? updatedPartnerData : p)) || [],
-        };
+        if (activePartnerData) {
+          const savedPartner = isEditing && partnerToEdit
+            ? await updatePartnerMutation.mutateAsync({
+              partnerId: partnerToEdit.id,
+              partner: payload,
+            })
+            : await createPartnerMutation.mutateAsync({
+              partnerDataId: activePartnerData.id,
+              partner: payload,
+            });
+          const updatedPartnerData: Api.PartnerData = {
+            ...activePartnerData,
+            partner: isEditing && partnerToEdit
+              ? activePartnerData.partner?.map((p: Api.Partner) => (p.id === partnerToEdit.id ? savedPartner : p)) || []
+              : [...(activePartnerData.partner || []), savedPartner],
+          };
 
-        // Actualizar inmediatamente el contexto con el consultor actualizado
-        updateConsultantPartners(updatedConsultant);
-      } else {
-        throw new Error('No active partner data selected');
+          const updatedConsultant: Api.Consultant = {
+            ...activeConsultant,
+            partnerData: activeConsultant.partnerData?.map((p: Api.PartnerData) => (p.id === activePartnerData.id ? updatedPartnerData : p)) || [],
+          };
+
+          // Actualizar inmediatamente el contexto con el consultor actualizado
+          updateConsultantPartners(updatedConsultant);
+        } else {
+          throw new Error('No active partner data selected');
+        }
+
+        closeForm();
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : t('errors.savePartner') as string);
+      } finally {
+        setIsLoading(false);
       }
-
-      closeForm();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : t('errors.savePartner') as string);
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
   const handleUseConsultant = () => {
     updateValues({
