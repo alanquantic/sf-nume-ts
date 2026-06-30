@@ -22,6 +22,27 @@ export async function getGuestEnergy(userId: number): Promise<Api.GuestEnergy | 
 }
 
 async function replaceGuestPartners(userId: number, partners: Api.Partner[]) {
+  const payload = partners.map((partner) => ({
+    names: partner.names,
+    lastName: partner.lastName,
+    scdLastName: partner.scdLastName,
+    date: partner.date,
+  }));
+
+  try {
+    // Reemplazo atómico (deleteMany + create en una transacción en el backend).
+    await axios.put(`/users/${userId}/guest-energy/partners`, { partners: payload });
+    return;
+  } catch (error) {
+    // Fallback para backends sin el endpoint atómico desplegado todavía.
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (status !== 404) {
+      throw error;
+    }
+  }
+
+  // Fallback no atómico (borrar-todo + recrear). Quitar cuando el endpoint
+  // atómico esté desplegado en todos los entornos.
   const currentGuestEnergy = await getGuestEnergy(userId);
 
   if (currentGuestEnergy?.guestPartners?.length) {
@@ -33,18 +54,35 @@ async function replaceGuestPartners(userId: number, partners: Api.Partner[]) {
   }
 
   await Promise.all(
-    partners.map((partner) => (
-      axios.post(`/users/${userId}/guest-energy/partners`, {
-        names: partner.names,
-        lastName: partner.lastName,
-        scdLastName: partner.scdLastName,
-        date: partner.date,
-      })
+    payload.map((partner) => (
+      axios.post(`/users/${userId}/guest-energy/partners`, partner)
     )),
   );
 }
 
 async function replaceGuestGroupMembers(userId: number, members: Api.GroupMember[]) {
+  const payload = members.map((member) => ({
+    name: member.name,
+    lastName: member.lastName,
+    scdLastName: member.scdLastName,
+    date: member.date,
+    dateInit: member.dateInit,
+  }));
+
+  try {
+    // Reemplazo atómico (deleteMany + create en una transacción en el backend).
+    await axios.put(`/users/${userId}/guest-energy/group-members`, { members: payload });
+    return;
+  } catch (error) {
+    // Fallback para backends sin el endpoint atómico desplegado todavía.
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (status !== 404) {
+      throw error;
+    }
+  }
+
+  // Fallback no atómico (borrar-todo + recrear). Quitar cuando el endpoint
+  // atómico esté desplegado en todos los entornos.
   const currentGuestEnergy = await getGuestEnergy(userId);
 
   if (currentGuestEnergy?.guestGroupMembers?.length) {
@@ -56,14 +94,8 @@ async function replaceGuestGroupMembers(userId: number, members: Api.GroupMember
   }
 
   await Promise.all(
-    members.map((member) => (
-      axios.post(`/users/${userId}/guest-energy/group-members`, {
-        name: member.name,
-        lastName: member.lastName,
-        scdLastName: member.scdLastName,
-        date: member.date,
-        dateInit: member.dateInit,
-      })
+    payload.map((member) => (
+      axios.post(`/users/${userId}/guest-energy/group-members`, member)
     )),
   );
 }
