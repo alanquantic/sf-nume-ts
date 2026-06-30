@@ -19,6 +19,7 @@ import PinnacleCreateName from '@/components/personal/createName/PinnacleCreateN
 import AnnualReturn from '@/components/personal/vibrationTime/AnnualReturn';
 import { useAuth } from '@/context/AuthProvider';
 import useConsult from '@/hooks/useConsult';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import Person, { AnnualReturn as AnnualReturnPerson } from '@/resources/Person';
 import { PDFPageConfig } from '@/types/pdf.types';
 import { pdf } from '@react-pdf/renderer';
@@ -51,6 +52,7 @@ function CreateNamePage() {
   } = userAuth?.user ?? {};
   const createCreateNameMutation = useCreateCreateName();
   const deleteCreateNameMutation = useDeleteCreateName();
+  const runOnce = useSubmitGuard();
 
   const [inputName, setInputName] = useState<string>('');
   const [inputDate, setInputDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
@@ -148,7 +150,7 @@ function CreateNamePage() {
   };
 
   // Función para guardar
-  const handleSave = async () => {
+  const handleSave = () => runOnce(async () => {
     try {
       if (!activeConsultant || !isValid()) {
         return;
@@ -189,7 +191,7 @@ function CreateNamePage() {
         confirmButtonText: t('createName.acceptButton') as string,
       });
     }
-  };
+  });
 
   // Función para manejar selección de nombre guardado
   const handleSavedNameSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -589,7 +591,7 @@ function CreateNamePage() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={!isValid() || !hasCalculated}
+                  disabled={!isValid() || !hasCalculated || createCreateNameMutation.isLoading}
                   className={`btn-save !bg-main-50 ${(!isValid() || !hasCalculated) ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {t('createName.save')}

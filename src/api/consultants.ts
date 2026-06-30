@@ -75,7 +75,7 @@ export async function getConsultantsByUserId(userId: number): Promise<Api.Consul
   return response.map(mapConsultant);
 }
 
-export async function createConsultant(consultant: Api.Consultant): Promise<Api.Consultant> {
+export async function createConsultant(consultant: Omit<Api.Consultant, 'id'>): Promise<Api.Consultant> {
   const response = await axios.post<BackendConsultant>('/consultants', consultant) as unknown as BackendConsultant;
   return mapConsultant(response);
 }

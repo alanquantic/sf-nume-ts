@@ -2,6 +2,7 @@
 import useConsult from '@/hooks/useConsult';
 import useConsultants from '@/hooks/useConsultants';
 import useForm from '@/hooks/useForm';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 import countries from '@/resources/countries.json';
 import { useEffect, useState } from 'react';
 
@@ -19,11 +20,12 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
   const createConsultantMutation = useCreateConsultant();
   const updateConsultantMutation = useUpdateConsultant();
   const [isLoading, setIsLoading] = useState(false);
+  const runOnce = useSubmitGuard();
   const { consultant } = useConsult();
   const { user: userAuth } = useAuth();
 
   const {
-    handleIsEditingConsultant, isEditingConsultant, activeConsultant, selectActiveConsultant, selectConsultant,
+    handleIsEditingConsultant, isEditingConsultant, selectActiveConsultant, selectConsultant,
   } = useConsult();
   const {
     names, lastName, scdLastName, date, nationality, gender, company, email, phone,
@@ -53,74 +55,71 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
     isFormValid();
   }, [names, lastName, scdLastName, date]);
 
-  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formStatus.isValid) {
       setFormStatus((prevState) => ({ ...prevState, displayValidations: true }));
       return;
     }
-    setFormError('');
-    setIsLoading(true);
-    if (isEditingConsultant) {
-      const editedConsultant: Partial<Api.Consultant> = {
-        company,
-        date,
-        email,
-        gender,
-        lastName,
-        names,
-        nationality,
-        phone,
-        scdLastName,
-      };
-      updateConsultantMutation.mutateAsync({
-        consultantId: consultant?.id || '',
-        consultant: editedConsultant,
-      }).then((savedConsultant) => {
-        Swal.fire({
-          title: t('forms.success') as string,
-          icon: 'success',
-          confirmButtonText: t('forms.confirm') as string,
-        });
-        handleIsEditingConsultant(false);
-        selectActiveConsultant(savedConsultant);
-        setFormStatus(FORM_STATUS_INITIAL_STATE);
-        reset();
-      }).catch((err) => {
-        setFormError(err.message);
-      }).finally(() => {
+    runOnce(async () => {
+      setFormError('');
+      setIsLoading(true);
+      try {
+        if (isEditingConsultant) {
+          const editedConsultant: Partial<Api.Consultant> = {
+            company,
+            date,
+            email,
+            gender,
+            lastName,
+            names,
+            nationality,
+            phone,
+            scdLastName,
+          };
+          const savedConsultant = await updateConsultantMutation.mutateAsync({
+            consultantId: consultant?.id || '',
+            consultant: editedConsultant,
+          });
+          Swal.fire({
+            title: t('forms.success') as string,
+            icon: 'success',
+            confirmButtonText: t('forms.confirm') as string,
+          });
+          handleIsEditingConsultant(false);
+          selectActiveConsultant(savedConsultant);
+          setFormStatus(FORM_STATUS_INITIAL_STATE);
+          reset();
+        } else {
+          const newConsultant: Omit<Api.Consultant, 'id'> = {
+            company,
+            date,
+            email,
+            gender,
+            lastName,
+            names,
+            nationality,
+            phone,
+            scdLastName,
+            userId: userAuth?.user.id,
+          };
+          const savedConsultant = await createConsultantMutation.mutateAsync(newConsultant);
+          Swal.fire({
+            title: t('forms.success') as string,
+            icon: 'success',
+            confirmButtonText: t('forms.confirm') as string,
+          });
+          handleIsEditingConsultant(false);
+          selectConsultant(savedConsultant);
+          setFormStatus(FORM_STATUS_INITIAL_STATE);
+          reset();
+        }
+      } catch (err) {
+        setFormError(err instanceof Error ? err.message : String(err));
+      } finally {
         setIsLoading(false);
-      });
-    } else {
-      const newConsultant: Api.Consultant = {
-        id: Math.random().toString(36).substring(2, 9),
-        company,
-        date,
-        email,
-        gender,
-        lastName,
-        names,
-        nationality,
-        phone,
-        scdLastName,
-        userId: userAuth?.user.id,
-      };
-      createConsultantMutation.mutateAsync(newConsultant).then((savedConsultant) => {
-        Swal.fire({
-          title: t('forms.success') as string,
-          icon: 'success',
-          confirmButtonText: t('forms.confirm') as string,
-        });
-        handleIsEditingConsultant(false);
-        selectConsultant(savedConsultant);
-        setFormStatus(FORM_STATUS_INITIAL_STATE);
-        reset();
-      }).catch((err) => {
-        setFormError(err.message);
-      }).finally(() => {
-        setIsLoading(false);
-      });
-    }
+      }
+    });
   };
 
   const createMarkup = (text: string) => ({ __html: text });
@@ -262,7 +261,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
             ? (
               <div className="text-center flex justify-center items-center flex-col">
                 <img src="/assets/navbar/add_user.svg" className="mb-3" alt="addUserMain" />
-                <button type="submit" className="btn w-full">
+                <button type="submit" className="btn w-full" disabled={isLoading}>
                   {isLoading ? (
                     <svg className="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -276,7 +275,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
             )
             : (
               <div className="w-full flex flex-wrap">
-                <button className="w-full btn mb-3 bg-[#0000ff]" type="submit">
+                <button className="w-full btn mb-3 bg-[#0000ff]" type="submit" disabled={isLoading}>
                   {isLoading ? (
                     <svg className="mr-3 size-5 animate-spin ..." viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
