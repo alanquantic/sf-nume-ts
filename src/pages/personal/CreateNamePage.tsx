@@ -45,7 +45,7 @@ function CreateNamePage() {
   const { t } = useTranslation();
   const { user: userAuth } = useAuth();
   const {
-    consultant, activeConsultant, calculationDate, selectActiveConsultant, consultationDate,
+    consultant, activeConsultant, calculationDate, updateConsultantPartners, consultationDate,
   } = useConsult();
   const {
     firstName, lastName, scdLastName, birthDate,
@@ -170,7 +170,7 @@ function CreateNamePage() {
       });
 
       // Actualizar el contexto para reflejar los cambios inmediatamente
-      selectActiveConsultant({
+      updateConsultantPartners({
         ...activeConsultant,
         createNames: [...(activeConsultant.createNames || []), savedCreateName],
       });
@@ -284,7 +284,7 @@ function CreateNamePage() {
         await deleteCreateNameMutation.mutateAsync(id);
 
         // Actualizar el contexto para reflejar los cambios inmediatamente
-        selectActiveConsultant({
+        updateConsultantPartners({
           ...activeConsultant,
           createNames: activeConsultant.createNames?.filter((name: Api.CreateName) => name.id !== id) || [],
         });

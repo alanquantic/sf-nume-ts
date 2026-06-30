@@ -2,10 +2,13 @@ import { format } from 'date-fns';
 import {
   useCallback, useEffect, useMemo, useReducer, useState,
 } from 'react';
+import { useQueryClient } from 'react-query';
 
 import { ConsultContext, ConsultContextInterface } from './ConsultContext';
 import { consultReducer, types } from './ConsultReducer';
 
+import { getConsultantsQueryKey, useConsultantsQuery } from '@/api/consultants';
+import { useAuth } from '@/context/AuthProvider';
 import Person from '@/resources/Person';
 import { sanitizeName } from '@/utils/constants';
 
@@ -27,12 +30,54 @@ const INITIAL_STATE = {
 
 function ConsultProvider({ children }: any) {
   const [consultState, dispatch] = useReducer(consultReducer, INITIAL_STATE);
-  const [consultant, setConsultant] = useState<Person | null>(null);
-  const [activeConsultant, setActiveConsultant] = useState<Api.Consultant | null>(null);
+
+  // Single source of truth: the consultants list from react-query.
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const userId = user?.user?.id;
+  const consultantsQueryKey = useMemo(() => getConsultantsQueryKey(userId), [userId]);
+  const { data: consultantsData } = useConsultantsQuery();
+  const consultants = useMemo<Api.Consultant[]>(
+    () => (Array.isArray(consultantsData) ? consultantsData : []),
+    [consultantsData],
+  );
+
+  // The active consultant is stored by id and always derived from the cache, so it
+  // never goes stale and editing scalar fields can't wipe the nested relations.
+  // The fallback holds the last-selected object for the brief window before a freshly
+  // created consultant appears in the (re)fetched list.
+  const [activeConsultantId, setActiveConsultantId] = useState<string | null>(null);
+  const [activeConsultantFallback, setActiveConsultantFallback] = useState<Api.Consultant | null>(null);
+
+  const activeConsultant = useMemo<Api.Consultant | null>(() => {
+    if (!activeConsultantId) return null;
+    const fromCache = consultants.find((c) => c?.id === activeConsultantId);
+    if (fromCache) return fromCache;
+    if (activeConsultantFallback?.id === activeConsultantId) return activeConsultantFallback;
+    return null;
+  }, [consultants, activeConsultantId, activeConsultantFallback]);
+
+  // Person derived from the active consultant (always fresh, e.g. after editing the name).
+  const consultant = useMemo<Person | null>(() => {
+    if (!activeConsultant) return null;
+    return new Person({
+      id: activeConsultant.id || '',
+      name: sanitizeName(activeConsultant.names || ''),
+      lastName: sanitizeName(activeConsultant.lastName || ''),
+      scdLastName: sanitizeName(activeConsultant.scdLastName || ''),
+      birthDate: activeConsultant.date?.toString() || '',
+    });
+  }, [activeConsultant]);
+
+  // Available sub-collections derived from the active consultant (no mirrored state).
+  const partnersAvailable = useMemo<Api.Partner[]>(() => activeConsultant?.partner || [], [activeConsultant]);
+  const partnerDataAvailable = useMemo<Api.PartnerData[]>(() => activeConsultant?.partnerData || [], [activeConsultant]);
+  const groupsAvailable = useMemo<Api.GroupData[]>(() => activeConsultant?.groupData || [], [activeConsultant]);
+
   const [consultationDate, setConsultationDate] = useState<Date>(new Date());
   const [activePartner, setActivePartner] = useState<Person | null>(null);
-  const [partnersAvailable, setPartnersAvailable] = useState<Api.Partner[]>([]);
   const [selectedMonthReport, setSelectedMonthReport] = useState<number>(0);
+
   // Memoize calculationDate to prevent unnecessary recalculations
   const calculationDate = useMemo(() => ({
     day: Number(format(consultationDate, 'dd')),
@@ -53,60 +98,50 @@ function ConsultProvider({ children }: any) {
     }
   }, [calculationDate.month, selectedMonthReport]);
 
-  // Group management state
-  const [groupsAvailable, setGroupsAvailable] = useState<Api.GroupData[]>([]);
+  // Group management state (UI selection)
   const [activeGroup, setActiveGroup] = useState<Api.GroupData | null>(null);
   const [isEditingGroup, setIsEditingGroup] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<Person[]>([]);
 
-  // PartnerData management state
-  const [partnerDataAvailable, setPartnerDataAvailable] = useState<Api.PartnerData[]>([]);
+  // PartnerData management state (UI selection)
   const [activePartnerData, setActivePartnerData] = useState<Api.PartnerData | null>(null);
   const [isEditingPartnerData, setIsEditingPartnerData] = useState(false);
   const [selectedPartnersAsPersons, setSelectedPartnersAsPersons] = useState<Person[]>([]);
+
+  // Optimistically patch a consultant into the react-query cache so the derived
+  // activeConsultant / lists update instantly; the mutation hooks revalidate afterwards.
+  const patchConsultantInCache = useCallback((updated: Api.Consultant) => {
+    setActiveConsultantFallback(updated);
+    queryClient.setQueryData<Api.Consultant[]>(consultantsQueryKey, (old) => {
+      const list = Array.isArray(old) ? old : [];
+      return list.some((c) => c?.id === updated.id)
+        ? list.map((c) => (c?.id === updated.id ? updated : c))
+        : [...list, updated];
+    });
+  }, [queryClient, consultantsQueryKey]);
 
   // Memoize selectConsultant function
   const selectConsultant = useCallback((newConsultant: Api.Consultant) => {
     if (!newConsultant) throw new Error('consultant is required');
 
-    const newConsultantPerson = new Person({
-      id: newConsultant.id || '',
-      name: sanitizeName(newConsultant.names || ''),
-      lastName: sanitizeName(newConsultant.lastName || ''),
-      scdLastName: sanitizeName(newConsultant.scdLastName || ''),
-      birthDate: newConsultant.date?.toString() || '',
-    });
-    setConsultant(newConsultantPerson);
-    setActiveConsultant(newConsultant);
+    setActiveConsultantFallback(newConsultant);
+    setActiveConsultantId(newConsultant.id || null);
 
-    // Assign partners from the consultant or empty array if none
-    setPartnersAvailable(newConsultant.partner as Api.Partner[] || []);
-
-    // Load partnerData from consultant
-    setPartnerDataAvailable(newConsultant.partnerData || []);
+    // Reset partner/group selections when switching consultant
     setActivePartnerData(null);
     setSelectedPartnersAsPersons([]);
-
-    // Load group data from consultant
-    setGroupsAvailable(newConsultant.groupData || []);
+    setActivePartner(null);
     setActiveGroup(null);
-
-    const action = { type: types.selectConsultant, consultant: newConsultant };
-    dispatch(action);
-  }, [dispatch]);
+    setSelectedGroup([]);
+  }, []);
 
   // Memoize selectActiveConsultant function
   const selectActiveConsultant = useCallback((newActiveConsultant: Api.Consultant) => {
-    setActiveConsultant(newActiveConsultant);
-    // Actualizar también la lista de partners disponibles
-    setPartnersAvailable(newActiveConsultant.partner || []);
-    // Load partnerData from consultant
-    setPartnerDataAvailable(newActiveConsultant.partnerData || []);
+    setActiveConsultantFallback(newActiveConsultant);
+    setActiveConsultantId(newActiveConsultant.id || null);
     // Clear active partner data when switching consultants
     setActivePartnerData(null);
     setSelectedPartnersAsPersons([]);
-    // Load group data from consultant
-    setGroupsAvailable(newActiveConsultant.groupData || []);
   }, []);
 
   // Memoize selectActivePartner function
@@ -132,17 +167,13 @@ function ConsultProvider({ children }: any) {
     });
 
     setActivePartner(newPartnerPerson);
-    const action = { type: types.selectConsultant, consultant: updatedPartner };
-    dispatch(action);
-  }, [partnersAvailable, dispatch]);
+  }, [partnersAvailable]);
 
   // Memoize updateUserPartnerActive function
   const updateUserPartnerActive = useCallback((activePartnerId: string) => {
     const newPartner: Api.Partner | undefined = activeConsultant?.partner?.find((p:Api.Partner) => p.id === activePartnerId);
     if (newPartner) {
       selectActivePartner(newPartner);
-      // Actualizar también la lista de partners disponibles
-      setPartnersAvailable(activeConsultant?.partner || []);
     }
   }, [activeConsultant, selectActivePartner]);
 
@@ -181,15 +212,9 @@ function ConsultProvider({ children }: any) {
     }
   }, [partnerDataAvailable]);
 
-  // Memoize createPartnerData function
-  const createPartnerData = useCallback((partnerDataInput: Omit<Api.PartnerData, 'id' | 'partner'>) => {
-    const newPartnerData: Api.PartnerData = {
-      ...partnerDataInput,
-      id: Math.random().toString(36).substring(2, 9),
-      partner: [],
-    };
-    setPartnerDataAvailable((prevPartnerData) => [...prevPartnerData, newPartnerData]);
-  }, []);
+  // Deprecated: partnerData creation now goes through the API hook (useCreatePartnerData).
+  // Kept as a no-op for interface compatibility.
+  const createPartnerData = useCallback(() => {}, []);
 
   // Memoize handleIsEditingPartnerData function
   const handleIsEditingPartnerData = useCallback((isEditing: boolean) => {
@@ -201,14 +226,11 @@ function ConsultProvider({ children }: any) {
     setSelectedPartnersAsPersons(partners);
   }, []);
 
-  // Memoize updateConsultantPartners function
+  // Memoize updateConsultantPartners function — patches the cache (optimistic) so the
+  // derived activeConsultant / lists update instantly; the API hooks revalidate after.
   const updateConsultantPartners = useCallback((updatedConsultant: Api.Consultant) => {
-    setActiveConsultant(updatedConsultant);
-    setPartnersAvailable(updatedConsultant.partner || []);
-    // También actualizar partnerData disponibles
-    setPartnerDataAvailable(updatedConsultant.partnerData || []);
-    // También actualizar grupos disponibles
-    setGroupsAvailable(updatedConsultant.groupData || []);
+    patchConsultantInCache(updatedConsultant);
+    setActiveConsultantId(updatedConsultant.id || null);
 
     // Si hay un partnerData activo, actualizarlo también
     if (activePartnerData) {
@@ -248,12 +270,12 @@ function ConsultProvider({ children }: any) {
         setActivePartner(updatedPartnerPerson);
       }
     }
-  }, [activePartner, activePartnerData]);
+  }, [patchConsultantInCache, activePartner, activePartnerData]);
 
-  // Memoize updateConsultantGroups function
+  // Memoize updateConsultantGroups function — patches the cache (optimistic).
   const updateConsultantGroups = useCallback((updatedConsultant: Api.Consultant) => {
-    setActiveConsultant(updatedConsultant);
-    setGroupsAvailable(updatedConsultant.groupData || []);
+    patchConsultantInCache(updatedConsultant);
+    setActiveConsultantId(updatedConsultant.id || null);
 
     // Si hay un grupo activo, actualizarlo también
     if (activeGroup) {
@@ -274,7 +296,7 @@ function ConsultProvider({ children }: any) {
         }
       }
     }
-  }, [activeGroup]);
+  }, [patchConsultantInCache, activeGroup]);
 
   // Memoize selectActiveGroup function
   const selectActiveGroup = useCallback((group: Api.GroupData | null) => {
@@ -300,19 +322,11 @@ function ConsultProvider({ children }: any) {
       setSelectedGroup(membersPerson as Person[]);
     }
     setActiveGroup(updatedGroup);
-    const action = { type: types.selectConsultant, consultant: updatedGroup };
-    dispatch(action);
-  }, [groupsAvailable, dispatch]);
+  }, [groupsAvailable]);
 
-  // Memoize createGroup function
-  const createGroup = useCallback((groupDataInput: Omit<Api.GroupData, 'id' | 'members'>) => {
-    const newGroup: Api.GroupData = {
-      ...groupDataInput,
-      id: Math.random().toString(36).substring(2, 9),
-      members: [],
-    };
-    setGroupsAvailable((prevGroups) => [...prevGroups, newGroup]);
-  }, []);
+  // Deprecated: group creation now goes through the API hook (useCreateGroupData).
+  // Kept as a no-op for interface compatibility.
+  const createGroup = useCallback(() => {}, []);
 
   // Memoize handleIsEditingConsultant function
   const handleIsEditingConsultant = useCallback((isEditing: boolean) => {
