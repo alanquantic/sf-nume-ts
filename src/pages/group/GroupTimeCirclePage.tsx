@@ -46,7 +46,7 @@ function GroupTimeCirclePage() {
     );
   }
 
-  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit);
+  const GroupPerson = new Group(selectedGroup, activeGroup.lastInit || 0);
 
   return (
     <div className="page-content bg-cover grid grid-cols-12">

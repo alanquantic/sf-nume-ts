@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '@/context/AuthProvider';
+import { useDeleteConsultant } from '@/api/consultants';
 import useConsult from '@/hooks/useConsult';
 import { formatDate } from '@/utils/constants';
 // eslint-disable-next-line import/order
 import Swal from 'sweetalert2';
 
-import makeConsultant from '@/api/useConsultant';
 import useConsultants from '@/hooks/useConsultants';
 
 type Props = {
@@ -14,10 +13,8 @@ type Props = {
 };
 
 function ConsultantList({ searchUser }: Props) {
-  const { user: userAuth } = useAuth();
-  const users = userAuth?.consultants;
-  const deleteConsultantAsync = makeConsultant();
-  const handleConsultants = useConsultants();
+  const { consultants } = useConsultants();
+  const deleteConsultantAsync = useDeleteConsultant();
   const { t } = useTranslation();
 
   const { handleIsEditingConsultant, selectConsultant } = useConsult();
@@ -38,8 +35,7 @@ function ConsultantList({ searchUser }: Props) {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        const consultantToDelete = handleConsultants.removeConsultant(user.id);
-        deleteConsultantAsync.mutateAsync(consultantToDelete).then(() => {
+        deleteConsultantAsync.mutateAsync(user.id).then(() => {
           Swal.fire(
             t('consultant.list.deleted') as string,
             t('consultant.list.deletedSuccessfully') as string,
@@ -56,10 +52,20 @@ function ConsultantList({ searchUser }: Props) {
     });
   };
 
-  const search = Array.isArray(users) ? users.filter((user) => user?.names?.includes(searchUser)) : [];
+  const normalizedSearch = searchUser.trim().toLowerCase();
+  const search = Array.isArray(consultants)
+    ? consultants.filter((user) => {
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const fullName = `${user?.names || ''} ${user?.lastName || ''} ${user?.scdLastName || ''}`.toLowerCase();
+      return fullName.includes(normalizedSearch);
+    })
+    : [];
 
   // Si no hay consultantes, mostrar mensaje
-  if (!Array.isArray(users) || users.length === 0) {
+  if (!Array.isArray(consultants) || consultants.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <img

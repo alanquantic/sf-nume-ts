@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import makeGuestEnergy from '@/api/useGuestEnergy';
 import MyModal from '@/components/MyModal';
 import useEnergy from '@/hooks/useEnergy';
-import { isValidDate } from '@/utils/constants';
+import { isValidDate, toDateInputValue } from '@/utils/constants';
 import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
+import useSubmitGuard from '@/hooks/useSubmitGuard';
 
 type PartnerSelectionModalProps = {
   isOpen: boolean;
@@ -21,6 +23,7 @@ function PartnerSelectionModal({
   const { t } = useTranslation();
   const updateGuestEnergy = makeGuestEnergy();
   const { selectActiveGuestPartner } = useEnergy();
+  const runOnce = useSubmitGuard();
 
   const [yearMeet, setYearMeet] = useState(0);
   const [name, setName] = useState('');
@@ -32,52 +35,79 @@ function PartnerSelectionModal({
     name: '',
     birthDate: '',
   });
+
+  const guestMeetYear = guestPartnerProps?.guestMeetYear || 0;
+  const guestName = guestPartnerProps?.name || '';
+  const guestPartnerOneName = guestPartnerProps?.guestPartner?.[0]?.names || '';
+  const guestPartnerOneBirthDate = toDateInputValue(guestPartnerProps?.guestPartner?.[0]?.date);
+  const guestPartnerTwoName = guestPartnerProps?.guestPartner?.[1]?.names || '';
+  const guestPartnerTwoBirthDate = toDateInputValue(guestPartnerProps?.guestPartner?.[1]?.date);
+
   useEffect(() => {
-    if (guestPartnerProps) {
-      setYearMeet(guestPartnerProps.guestMeetYear || 0);
-      setName(guestPartnerProps.name || '');
-      setPartnerOne({
-        name: guestPartnerProps.guestPartner?.[0]?.names || '',
-        birthDate: guestPartnerProps.guestPartner?.[0]?.date || '',
-      });
-      setPartnerTwo({
-        name: guestPartnerProps.guestPartner?.[1]?.names || '',
-        birthDate: guestPartnerProps.guestPartner?.[1]?.date || '',
-      });
+    if (!isOpen) {
+      return;
     }
-  }, [guestPartnerProps]);
+
+    setYearMeet((prev) => (prev === guestMeetYear ? prev : guestMeetYear));
+    setName((prev) => (prev === guestName ? prev : guestName));
+    setPartnerOne((prev) => (
+      prev.name === guestPartnerOneName && prev.birthDate === guestPartnerOneBirthDate
+        ? prev
+        : {
+          name: guestPartnerOneName,
+          birthDate: guestPartnerOneBirthDate,
+        }
+    ));
+    setPartnerTwo((prev) => (
+      prev.name === guestPartnerTwoName && prev.birthDate === guestPartnerTwoBirthDate
+        ? prev
+        : {
+          name: guestPartnerTwoName,
+          birthDate: guestPartnerTwoBirthDate,
+        }
+    ));
+  }, [
+    isOpen,
+    guestMeetYear,
+    guestName,
+    guestPartnerOneName,
+    guestPartnerOneBirthDate,
+    guestPartnerTwoName,
+    guestPartnerTwoBirthDate,
+  ]);
 
   // IMPORTANTE: El return debe estar DESPUÉS de TODOS los hooks
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidDate(partnerOne.birthDate) || !isValidDate(partnerTwo.birthDate)) {
       return;
     }
 
-    const partnerOneTemp: Api.Partner = {
-      id: Math.random().toString(36).substring(2, 9) || '',
-      names: partnerOne.name || '',
-      lastName: '',
-      scdLastName: '',
-      date: partnerOne.birthDate || '',
-    };
-    const partnerTwoTemp: Api.Partner = {
-      id: Math.random().toString(36).substring(2, 9) || '',
-      names: partnerTwo.name || '',
-      lastName: '',
-      scdLastName: '',
-      date: partnerTwo.birthDate || '',
-    };
+    runOnce(async () => {
+      const partnerOneTemp: Api.Partner = {
+        id: uuidv4(),
+        names: partnerOne.name || '',
+        lastName: '',
+        scdLastName: '',
+        date: partnerOne.birthDate || '',
+      };
+      const partnerTwoTemp: Api.Partner = {
+        id: uuidv4(),
+        names: partnerTwo.name || '',
+        lastName: '',
+        scdLastName: '',
+        date: partnerTwo.birthDate || '',
+      };
 
-    const guestEnergyPartner: Api.GuestEnergyPartner = {
-      guestPartner: [partnerOneTemp, partnerTwoTemp],
-      guestMeetYear: yearMeet,
-      name,
-    };
+      const guestEnergyPartner: Api.GuestEnergyPartner = {
+        guestPartner: [partnerOneTemp, partnerTwoTemp],
+        guestMeetYear: yearMeet,
+        name,
+      };
 
-    try {
-      await updateGuestEnergy.mutateAsync(guestEnergyPartner).then(() => {
+      try {
+        await updateGuestEnergy.mutateAsync(guestEnergyPartner);
         selectActiveGuestPartner({ guestPartner: [partnerOneTemp, partnerTwoTemp], guestMeetYear: yearMeet, name });
         setIsOpen(false);
         Swal.fire({
@@ -86,15 +116,15 @@ function PartnerSelectionModal({
           icon: 'success',
           confirmButtonText: t('modal.partner.accept') as string,
         });
-      });
-    } catch (err) {
-      Swal.fire({
-        title: t('modal.partner.errorSave') as string,
-        text: err instanceof Error ? err.message : t('modal.partner.unknownError') as string,
-        icon: 'error',
-        confirmButtonText: t('modal.partner.accept') as string,
-      });
-    }
+      } catch (err) {
+        Swal.fire({
+          title: t('modal.partner.errorSave') as string,
+          text: err instanceof Error ? err.message : t('modal.partner.unknownError') as string,
+          icon: 'error',
+          confirmButtonText: t('modal.partner.accept') as string,
+        });
+      }
+    });
   };
 
   return (
@@ -175,6 +205,7 @@ function PartnerSelectionModal({
           <button
             type="submit"
             className="btn"
+            disabled={updateGuestEnergy.isLoading}
           >
             {t('modal.partner.save')}
           </button>

@@ -1,4 +1,5 @@
 import { useAuth } from '@/context/AuthProvider';
+import { useGuestEnergySession } from '@/api/guest-energy';
 import Group from '@/resources/Group';
 import Person from '@/resources/Person';
 import Synastry from '@/resources/Synastry';
@@ -19,6 +20,7 @@ type GuestGroup = {
 
 function EnergyProvider({ children }: any) {
   const { user: userAuth } = useAuth();
+  const { guestSession } = useGuestEnergySession();
 
   // Crear userPerson por defecto
   const userPerson = new Person({
@@ -40,24 +42,24 @@ function EnergyProvider({ children }: any) {
   useEffect(() => {
     if (userAuth?.user) {
       // Load guest partner from user
-      const guestPartnerData: GuestPartner = userAuth?.guests?.guestEnergyPartner || null;
+      const guestPartnerData: GuestPartner = guestSession.guestEnergyPartner || null;
       setGuestPartner(guestPartnerData || null);
 
       if (guestPartnerData && guestPartnerData.guestPartner.length >= 2) {
         const synastry = new Synastry(
           new Person({
             id: guestPartnerData.guestPartner[0].id,
-            name: guestPartnerData.guestPartner[0].names,
-            lastName: guestPartnerData.guestPartner[0].lastName,
-            scdLastName: guestPartnerData.guestPartner[0].scdLastName,
-            birthDate: guestPartnerData.guestPartner[0].date,
+            name: guestPartnerData.guestPartner[0].names || '',
+            lastName: guestPartnerData.guestPartner[0].lastName || '',
+            scdLastName: guestPartnerData.guestPartner[0].scdLastName || '',
+            birthDate: guestPartnerData.guestPartner[0].date || '',
           }),
           new Person({
             id: guestPartnerData.guestPartner[1].id,
-            name: guestPartnerData.guestPartner[1].names,
-            lastName: guestPartnerData.guestPartner[1].lastName,
-            scdLastName: guestPartnerData.guestPartner[1].scdLastName,
-            birthDate: guestPartnerData.guestPartner[1].date,
+            name: guestPartnerData.guestPartner[1].names || '',
+            lastName: guestPartnerData.guestPartner[1].lastName || '',
+            scdLastName: guestPartnerData.guestPartner[1].scdLastName || '',
+            birthDate: guestPartnerData.guestPartner[1].date || '',
           }),
         );
         setActiveGuestPartner(synastry);
@@ -66,17 +68,17 @@ function EnergyProvider({ children }: any) {
       }
 
       // Load guest group from user
-      const guestGroupData: GuestGroup = userAuth.guests.guestEnergyGroup;
+      const guestGroupData: GuestGroup = guestSession.guestEnergyGroup;
       setGuestGroup(guestGroupData || null);
 
       if (guestGroupData && guestGroupData.guestGroup.length > 0) {
         const group = new Group(
           guestGroupData.guestGroup.map((g: Api.GroupMember) => new Person({
             id: g.id,
-            name: g.name,
-            lastName: g.lastName,
-            scdLastName: g.scdLastName,
-            birthDate: g.date,
+            name: g.name || '',
+            lastName: g.lastName || '',
+            scdLastName: g.scdLastName || '',
+            birthDate: g.date || '',
           })),
           guestGroupData.guestYearGroup || 0,
         );
@@ -85,7 +87,7 @@ function EnergyProvider({ children }: any) {
         setActiveGuestGroup(null);
       }
     }
-  }, [userAuth]);
+  }, [guestSession, userAuth]);
 
   // Funciones para manejo de selección activa (estabilizadas con useCallback)
   const setActiveSelection = useCallback((selection: Person | Synastry | Group | undefined) => {
@@ -119,10 +121,10 @@ function EnergyProvider({ children }: any) {
     }
     const mapPartner: Person[] = guestPartnerData.guestPartner.map((p: Api.Partner) => new Person({
       id: p.id,
-      name: p.names,
-      lastName: p.lastName,
-      scdLastName: p.scdLastName,
-      birthDate: p.date,
+      name: p.names || '',
+      lastName: p.lastName || '',
+      scdLastName: p.scdLastName || '',
+      birthDate: p.date || '',
       yearMet: guestPartnerData.guestMeetYear,
     }));
     const synastry: Synastry = new Synastry(
@@ -140,10 +142,10 @@ function EnergyProvider({ children }: any) {
     }
     const mapGroup: Person[] = guestGroupData.guestGroup.map((g: Api.GroupMember) => new Person({
       id: g.id,
-      name: g.name,
-      lastName: g.lastName,
-      scdLastName: g.scdLastName,
-      birthDate: g.date,
+      name: g.name || '',
+      lastName: g.lastName || '',
+      scdLastName: g.scdLastName || '',
+      birthDate: g.date || '',
     }));
     const groupClass: Group = new Group(mapGroup, guestGroupData.guestYearGroup);
     setActiveGuestGroup(groupClass);
