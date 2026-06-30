@@ -12,10 +12,10 @@ module.exports = {
     'vite.config.ts',
   ],
   rules: {
-    'linebreak-style': [
-      'error',
-      'unix',
-    ],
+    // El repo usa CRLF en Windows y no hay normalizacion via .gitattributes.
+    // Se apaga para que el lint se enfoque en problemas reales; enforcar LF con
+    // .gitattributes + renormalizacion queda como mejora futura.
+    'linebreak-style': 'off',
     'import/extensions': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/no-duplicates': 'off',

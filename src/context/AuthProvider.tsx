@@ -123,9 +123,12 @@ function normalizeLicense(license?: BackendMeLicense | null): Api.License {
     return EMPTY_LICENSE;
   }
 
-  const normalizedStatus = typeof license.status === 'number'
-    ? (license.status === 1 ? 'active' : 'inactive')
-    : (license.status || 'inactive');
+  let normalizedStatus: string;
+  if (typeof license.status === 'number') {
+    normalizedStatus = license.status === 1 ? 'active' : 'inactive';
+  } else {
+    normalizedStatus = license.status || 'inactive';
+  }
 
   return {
     id: license.id || 0,
