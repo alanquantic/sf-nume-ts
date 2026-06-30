@@ -6,13 +6,11 @@ import { useAuth } from '@/context/AuthProvider';
 import { normalizeDateOnlyValue } from '@/utils/constants';
 
 type BackendPartnerData = Omit<Api.PartnerData, 'partner'> & {
-  partner?: Api.Partner[];
   partners?: Api.Partner[];
 };
 
 type BackendConsultant = Omit<Api.Consultant, 'notes' | 'partnerData' | 'partner'> & {
   notes?: Api.Note[];
-  partner?: Api.Partner[];
   partnerData?: BackendPartnerData[];
   partners?: Api.Partner[];
 };
@@ -39,14 +37,14 @@ function mapConsultant(consultant: BackendConsultant): Api.Consultant {
     notes: Array.isArray(consultant.notes)
       ? mapNotesToLegacyShape(consultant.notes)
       : consultant.notes,
-    partner: (consultant.partners || consultant.partner || []).map((partner) => ({
+    partner: (consultant.partners || []).map((partner) => ({
       ...partner,
       date: normalizeDateOnlyValue(partner.date),
     })),
     partnerData: (consultant.partnerData || []).map((partnerData) => ({
       ...partnerData,
       date: normalizeDateOnlyValue(partnerData.date),
-      partner: (partnerData.partners || partnerData.partner || []).map((partner) => ({
+      partner: (partnerData.partners || []).map((partner) => ({
         ...partner,
         date: normalizeDateOnlyValue(partner.date),
       })),
