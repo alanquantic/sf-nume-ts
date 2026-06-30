@@ -70,7 +70,7 @@ function ConsultProvider({ children }: any) {
   }, [activeConsultant]);
 
   // Available sub-collections derived from the active consultant (no mirrored state).
-  const partnersAvailable = useMemo<Api.Partner[]>(() => activeConsultant?.partner || [], [activeConsultant]);
+  const partnersAvailable = useMemo<Api.Partner[]>(() => (activeConsultant?.partnerData || []).flatMap((pd) => pd.partner || []), [activeConsultant]);
   const partnerDataAvailable = useMemo<Api.PartnerData[]>(() => activeConsultant?.partnerData || [], [activeConsultant]);
   const groupsAvailable = useMemo<Api.GroupData[]>(() => activeConsultant?.groupData || [], [activeConsultant]);
 
@@ -171,11 +171,11 @@ function ConsultProvider({ children }: any) {
 
   // Memoize updateUserPartnerActive function
   const updateUserPartnerActive = useCallback((activePartnerId: string) => {
-    const newPartner: Api.Partner | undefined = activeConsultant?.partner?.find((p:Api.Partner) => p.id === activePartnerId);
+    const newPartner = partnersAvailable.find((p) => p.id === activePartnerId);
     if (newPartner) {
       selectActivePartner(newPartner);
     }
-  }, [activeConsultant, selectActivePartner]);
+  }, [partnersAvailable, selectActivePartner]);
 
   // Memoize selectActivePartnerData function
   const selectActivePartnerData = useCallback((partnerData: Api.PartnerData) => {
@@ -211,10 +211,6 @@ function ConsultProvider({ children }: any) {
       setActivePartner(null);
     }
   }, [partnerDataAvailable]);
-
-  // Deprecated: partnerData creation now goes through the API hook (useCreatePartnerData).
-  // Kept as a no-op for interface compatibility.
-  const createPartnerData = useCallback(() => {}, []);
 
   // Memoize handleIsEditingPartnerData function
   const handleIsEditingPartnerData = useCallback((isEditing: boolean) => {
@@ -257,7 +253,9 @@ function ConsultProvider({ children }: any) {
 
     // Si hay un partner activo, actualizarlo también
     if (activePartner) {
-      const updatedActivePartner = updatedConsultant.partner?.find((p) => p.id === activePartner.id);
+      const updatedActivePartner = (updatedConsultant.partnerData || [])
+        .flatMap((pd) => pd.partner || [])
+        .find((p) => p.id === activePartner.id);
       if (updatedActivePartner) {
         const updatedPartnerPerson = new Person({
           id: updatedActivePartner.id || '',
@@ -324,10 +322,6 @@ function ConsultProvider({ children }: any) {
     setActiveGroup(updatedGroup);
   }, [groupsAvailable]);
 
-  // Deprecated: group creation now goes through the API hook (useCreateGroupData).
-  // Kept as a no-op for interface compatibility.
-  const createGroup = useCallback(() => {}, []);
-
   // Memoize handleIsEditingConsultant function
   const handleIsEditingConsultant = useCallback((isEditing: boolean) => {
     dispatch({ type: types.isEditingConsultant, isEditing });
@@ -368,7 +362,6 @@ function ConsultProvider({ children }: any) {
     selectActivePartnerData,
     isEditingPartnerData,
     handleIsEditingPartnerData,
-    createPartnerData,
     selectedPartnersAsPersons,
     setSelectedPartnersAsPersons: handleSetSelectedPartnersAsPersons,
     // Group management
@@ -377,7 +370,6 @@ function ConsultProvider({ children }: any) {
     isEditingGroup,
     setIsEditingGroup: handleSetIsEditingGroup,
     selectActiveGroup,
-    createGroup,
     selectedGroup,
     setSelectedGroup: handleSetSelectedGroup,
     updateConsultantGroups,
@@ -404,7 +396,6 @@ function ConsultProvider({ children }: any) {
     selectActivePartnerData,
     isEditingPartnerData,
     handleIsEditingPartnerData,
-    createPartnerData,
     selectedPartnersAsPersons,
     handleSetSelectedPartnersAsPersons,
     // Group dependencies
@@ -413,7 +404,6 @@ function ConsultProvider({ children }: any) {
     isEditingGroup,
     handleSetIsEditingGroup,
     selectActiveGroup,
-    createGroup,
     selectedGroup,
     handleSetSelectedGroup,
     updateConsultantGroups,
