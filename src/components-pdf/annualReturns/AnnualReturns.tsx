@@ -61,47 +61,47 @@ export default function AnnualReturns({ consultant, date }: { consultant: Person
   const now = date.year;
   const annualReturn = consultant.annualReturn(date);
   const personalYear = consultant.calcPersonalYear(date.year);
-  const yearsOld = consultant.getYearsOld(date.year);
+  const yearsOld = consultant.getYearsOldAtDate(date);
 
   const y1 = date.year - 4;
   const annualReturnY1 = consultant.annualReturn({ ...date, year: y1 });
   const personalYearY1 = consultant.calcPersonalYear(y1);
-  const yearsOldY1 = consultant.getYearsOld(y1);
+  const yearsOldY1 = consultant.getYearsOldAtDate({ ...date, year: y1 });
 
   const y2 = date.year - 3;
   const annualReturnY2 = consultant.annualReturn({ ...date, year: y2 });
   const personalYearY2 = consultant.calcPersonalYear(y2);
-  const yearsOldY2 = consultant.getYearsOld(y2);
+  const yearsOldY2 = consultant.getYearsOldAtDate({ ...date, year: y2 });
 
   const y3 = date.year - 2;
   const annualReturnY3 = consultant.annualReturn({ ...date, year: y3 });
   const personalYearY3 = consultant.calcPersonalYear(y3);
-  const yearsOldY3 = consultant.getYearsOld(y3);
+  const yearsOldY3 = consultant.getYearsOldAtDate({ ...date, year: y3 });
 
   const y4 = date.year - 1;
   const annualReturnY4 = consultant.annualReturn({ ...date, year: y4 });
   const personalYearY4 = consultant.calcPersonalYear(y4);
-  const yearsOldY4 = consultant.getYearsOld(y4);
+  const yearsOldY4 = consultant.getYearsOldAtDate({ ...date, year: y4 });
 
   const y6 = date.year + 1;
   const annualReturnY6 = consultant.annualReturn({ ...date, year: y6 });
   const personalYearY6 = consultant.calcPersonalYear(y6);
-  const yearsOldY6 = consultant.getYearsOld(y6);
+  const yearsOldY6 = consultant.getYearsOldAtDate({ ...date, year: y6 });
 
   const y7 = date.year + 2;
   const annualReturnY7 = consultant.annualReturn({ ...date, year: y7 });
   const personalYearY7 = consultant.calcPersonalYear(y7);
-  const yearsOldY7 = consultant.getYearsOld(y7);
+  const yearsOldY7 = consultant.getYearsOldAtDate({ ...date, year: y7 });
 
   const y8 = date.year + 3;
   const annualReturnY8 = consultant.annualReturn({ ...date, year: y8 });
   const personalYearY8 = consultant.calcPersonalYear(y8);
-  const yearsOldY8 = consultant.getYearsOld(y8);
+  const yearsOldY8 = consultant.getYearsOldAtDate({ ...date, year: y8 });
 
   const y9 = date.year + 4;
   const annualReturnY9 = consultant.annualReturn({ ...date, year: y9 });
   const personalYearY9 = consultant.calcPersonalYear(y9);
-  const yearsOldY9 = consultant.getYearsOld(y9);
+  const yearsOldY9 = consultant.getYearsOldAtDate({ ...date, year: y9 });
   return (
     <View style={annual.container}>
       <View style={annual.wrap}>
