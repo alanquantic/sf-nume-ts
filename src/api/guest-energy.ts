@@ -107,21 +107,22 @@ export async function saveGuestEnergy({
   userId: number;
   guestEnergy: Api.GuestEnergyPartner | Api.GuestEnergyGroup;
 }) {
+  const currentGuestEnergy = await getGuestEnergy(userId);
   const isPartner = 'guestPartner' in guestEnergy;
 
   if (isPartner) {
     await axios.post(`/users/${userId}/guest-energy`, {
       partnerName: guestEnergy.name,
       partnerMeetYear: guestEnergy.guestMeetYear,
-      groupName: null,
-      groupYear: null,
+      groupName: currentGuestEnergy?.guest.groupName ?? null,
+      groupYear: currentGuestEnergy?.guest.groupYear ?? null,
     });
 
     await replaceGuestPartners(userId, guestEnergy.guestPartner);
   } else {
     await axios.post(`/users/${userId}/guest-energy`, {
-      partnerName: null,
-      partnerMeetYear: null,
+      partnerName: currentGuestEnergy?.guest.partnerName ?? null,
+      partnerMeetYear: currentGuestEnergy?.guest.partnerMeetYear ?? null,
       groupName: guestEnergy.name,
       groupYear: guestEnergy.guestYearGroup,
     });

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import makeGuestEnergy from '@/api/useGuestEnergy';
 import MyModal from '@/components/MyModal';
 import useEnergy from '@/hooks/useEnergy';
+import { toDateInputValue } from '@/utils/constants';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 import useSubmitGuard from '@/hooks/useSubmitGuard';
@@ -53,32 +54,33 @@ function GroupSelectionModal({
   };
 
   useEffect(() => {
-    if (guestGroupProps) {
-      setName(guestGroupProps.name || '');
-      setGuestYear(guestGroupProps.guestYearGroup || 0);
-
-      // Verificar que guestGroup existe y es un array antes de mapear
-      if (guestGroupProps.guestGroup && Array.isArray(guestGroupProps.guestGroup)) {
-        const mappedMembers = guestGroupProps.guestGroup.map((member: Api.GroupMember, index: number) => ({
-          id: index + 1,
-          name: member.name || '',
-          date: member.date || '',
-        }));
-
-        // Completar con miembros vacíos hasta tener 8
-        const fullMembers = [...mappedMembers];
-        while (fullMembers.length < 8) {
-          fullMembers.push({
-            id: fullMembers.length + 1,
-            name: '',
-            date: '',
-          });
-        }
-
-        setGroupMembers(fullMembers.slice(0, 8));
-      }
+    if (!isOpen) {
+      return;
     }
-  }, [guestGroupProps]);
+
+    setName(guestGroupProps?.name || '');
+    setGuestYear(guestGroupProps?.guestYearGroup || 0);
+
+    const currentGuestGroup = guestGroupProps?.guestGroup ?? [];
+    const mappedMembers = Array.isArray(currentGuestGroup)
+      ? currentGuestGroup.map((member: Api.GroupMember, index: number) => ({
+        id: index + 1,
+        name: member.name || '',
+        date: toDateInputValue(member.date),
+      }))
+      : [];
+
+    const fullMembers = [...mappedMembers];
+    while (fullMembers.length < 8) {
+      fullMembers.push({
+        id: fullMembers.length + 1,
+        name: '',
+        date: '',
+      });
+    }
+
+    setGroupMembers(fullMembers.slice(0, 8));
+  }, [guestGroupProps, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

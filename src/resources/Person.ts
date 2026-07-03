@@ -188,6 +188,20 @@ class Person {
   getYearsOld(number?: number): number {
     const yearToCalculate = _.isNil(number) ? getYear(this.NOW) : number;
     let age = yearToCalculate - getYear(this.birthDate);
+
+    if (_.isNil(number)) {
+      const currentMonth = getMonth(this.NOW);
+      const currentDay = getDate(this.NOW);
+      const birthMonth = getMonth(this.birthDate);
+      const birthDay = getDate(this.birthDate);
+      const birthdayHasPassed = currentMonth > birthMonth
+        || (currentMonth === birthMonth && currentDay >= birthDay);
+
+      if (!birthdayHasPassed) {
+        age -= 1;
+      }
+    }
+
     if (age < 1) { age = 0; }
     return age;
   }
