@@ -6,6 +6,18 @@ import { formatDate } from '@/utils/constants';
 import { PDFDocumentProps, PDFPageConfig } from '../../types/pdf.types';
 import { configReport } from '../styles';
 
+function normalizeLogoUrlForPdf(logoURL?: string): string | undefined {
+  if (!logoURL) {
+    return undefined;
+  }
+
+  if (!logoURL.includes('res.cloudinary.com')) {
+    return logoURL;
+  }
+
+  return logoURL.replace('/upload/', '/upload/f_png/');
+}
+
 export default function PDF({
   consultant,
   config,
@@ -24,6 +36,8 @@ export default function PDF({
   if (!consultant || !profile || !Array.isArray(config) || config.length === 0) {
     return null;
   }
+
+  const normalizedLogoURL = normalizeLogoUrlForPdf(logoURL);
 
   const listOfPDF = config.reduce<PDFPageConfig[]>((pages, configItem) => {
     const pdfConfigItem = configItem as unknown as ((props: unknown) => PDFPageConfig | PDFPageConfig[]);
@@ -77,7 +91,7 @@ export default function PDF({
               <Text>{consultant.getYearsOld()}</Text>
             </View>
             <View style={configReport.header_logo} />
-            {logoURL ? <Image style={configReport.img_logo} src={logoURL} /> : null}
+            {normalizedLogoURL ? <Image style={configReport.img_logo} src={normalizedLogoURL} /> : null}
           </View>
 
           <View style={configReport.sidebar}>

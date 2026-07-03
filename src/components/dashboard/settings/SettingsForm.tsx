@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import { useEffect, useState } from 'react';
 
-import { uploadCompanyLogo } from '@/api/cloudinary';
+import uploadCompanyLogo from '@/api/cloudinary';
 import makeProfile from '@/api/useProfileUpdate';
 import { useAuth } from '@/context/AuthProvider';
 import useForm from '@/hooks/useForm';

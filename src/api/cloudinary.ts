@@ -17,7 +17,7 @@ type CloudinaryUploadResponse = {
   };
 };
 
-export async function uploadCompanyLogo(file: File): Promise<string> {
+async function uploadCompanyLogo(file: File): Promise<string> {
   const signature = await axios.post(
     '/users/company-logo/signature',
     {},
@@ -44,3 +44,5 @@ export async function uploadCompanyLogo(file: File): Promise<string> {
 
   return payload.secure_url;
 }
+
+export default uploadCompanyLogo;
