@@ -1,6 +1,7 @@
 /* eslint-disable import/order */
 import { useEffect, useState } from 'react';
 
+import uploadCompanyLogo from '@/api/cloudinary';
 import makeProfile from '@/api/useProfileUpdate';
 import { useAuth } from '@/context/AuthProvider';
 import useForm from '@/hooks/useForm';
@@ -19,6 +20,8 @@ function SettingsForm() {
 
   const [formStatus, setFormStatus] = useState<FormStatus>(FORM_STATUS_INITIAL_STATE);
   const [isLoading, setIsLoading] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState('');
   const { t } = useTranslation();
 
   const initialForm = {
@@ -68,6 +71,28 @@ function SettingsForm() {
 
   useEffect(() => {}, [isLoading]);
 
+  useEffect(() => {
+    setLogoPreview(typeof logo === 'string' ? logo : '');
+  }, [logo]);
+
+  useEffect(() => {
+    if (!logoFile) {
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(logoFile);
+    setLogoPreview(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [logoFile]);
+
+  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setLogoFile(file);
+  };
+
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formStatus.isValid) {
@@ -75,35 +100,44 @@ function SettingsForm() {
       return;
     }
     setFormError('');
-
-    const newProfile: Api.ProfileUser = {
-      names: firstName,
-      lastName: lastName || undefined,
-      scdLastName: scdLastName || undefined,
-      date: birthDate?.toString() || undefined,
-      tel: phone || undefined,
-      address: direction || undefined,
-      logoURL: typeof logo === 'string' && logo ? logo : undefined,
-      company: name || undefined,
-      phone: phoneCompany || undefined,
-      webSite: website || undefined,
-    };
-
     setIsLoading(true);
-    await updateProfileSync.mutateAsync(newProfile).then(() => {
+    try {
+      let logoURL = typeof logo === 'string' && logo ? logo : undefined;
+
+      if (logoFile) {
+        logoURL = await uploadCompanyLogo(logoFile);
+      }
+
+      const newProfile: Api.ProfileUser = {
+        names: firstName,
+        lastName: lastName || undefined,
+        scdLastName: scdLastName || undefined,
+        date: birthDate?.toString() || undefined,
+        tel: phone || undefined,
+        address: direction || undefined,
+        logoURL,
+        company: name || undefined,
+        phone: phoneCompany || undefined,
+        webSite: website || undefined,
+      };
+
+      await updateProfileSync.mutateAsync(newProfile);
+
       Swal.fire({
         title: t('forms.success') as string,
         icon: 'success',
         confirmButtonText: t('forms.confirm') as string,
       });
       setFormStatus(FORM_STATUS_INITIAL_STATE);
-      setIsLoading(false);
+      setLogoFile(null);
+      setLogoPreview(logoURL || '');
       reset();
-    }).catch((err) => {
-      setFormError(err.message);
-    }).finally(() => {
+    } catch (err) {
+      const error = err as Error;
+      setFormError(error.message);
+    } finally {
       setIsLoading(false);
-    });
+    }
   };
   return (
     <form action="" onSubmit={handleOnSubmit}>
@@ -274,12 +308,12 @@ function SettingsForm() {
                   type="file"
                   name="logo"
                   className="rounded  border-[#C4C4C4]  border w-11/12"
-                  onChange={(e) => handleInputChange(e.target)}
+                  onChange={handleLogoChange}
                   accept="image/*"
                 />
-                {logo && typeof logo === 'string' && (
+                {logoPreview && (
                   <div className="mt-2">
-                    <img src={logo} alt="Logo" className="max-w-full h-20 object-contain" />
+                    <img src={logoPreview} alt="Logo" className="max-w-full h-20 object-contain" />
                   </div>
                 )}
                 <p className="text-13 mt-2">{t('forms.logoSize')}</p>
