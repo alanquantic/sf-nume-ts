@@ -62,12 +62,12 @@ export default function SynastryData({ synastry, date, horizontal }: SynastryDat
         <View style={data.partners}>
           <Text style={[data.textName, { top: 18 }, { left: 50 }]}>{consultant.fullName}</Text>
           <Text style={[data.textBirth, { top: 18 }, { right: 220 }]}>{consultant.getFormBirthDate()}</Text>
-          <Text style={[data.textAge, { top: 18 }, { right: 175 }]}>{consultant.getYearsOld(date.year)}</Text>
+          <Text style={[data.textAge, { top: 18 }, { right: 175 }]}>{consultant.getYearsOldAtDate(date)}</Text>
         </View>
         <View style={data.partners}>
           <Text style={[data.textName, { top: 45 }, { left: 50 }]}>{partner.fullName}</Text>
           <Text style={[data.textBirth, { top: 45 }, { right: 220 }]}>{partner.getFormBirthDate()}</Text>
-          <Text style={[data.textAge, { top: 45 }, { right: 175 }]}>{partner.getYearsOld(date.year)}</Text>
+          <Text style={[data.textAge, { top: 45 }, { right: 175 }]}>{partner.getYearsOldAtDate(date)}</Text>
         </View>
         <View>
           <Text style={[data.textYear, { top: 45, left: 525 }]}>{yearMet}</Text>
@@ -80,12 +80,12 @@ export default function SynastryData({ synastry, date, horizontal }: SynastryDat
       <View style={data.partners}>
         <Text style={[data.textName, { top: 18 }]}>{consultant.fullName}</Text>
         <Text style={[data.textBirth, { top: 18 }]}>{consultant.getFormBirthDate()}</Text>
-        <Text style={[data.textAge, { top: 18 }]}>{consultant.getYearsOld(date.year)}</Text>
+        <Text style={[data.textAge, { top: 18 }]}>{consultant.getYearsOldAtDate(date)}</Text>
       </View>
       <View style={data.partners}>
         <Text style={[data.textName, { top: 45 }]}>{partner.fullName}</Text>
         <Text style={[data.textBirth, { top: 45 }]}>{partner.getFormBirthDate()}</Text>
-        <Text style={[data.textAge, { top: 45 }]}>{partner.getYearsOld(date.year)}</Text>
+        <Text style={[data.textAge, { top: 45 }]}>{partner.getYearsOldAtDate(date)}</Text>
       </View>
       <View>
         <Text style={[data.textYear]}>{yearMet}</Text>

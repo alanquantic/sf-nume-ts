@@ -28,7 +28,11 @@ function ActiveName({
   date: any;
   position: any;
 }) {
-  const consultantAge = consultant.getYearsOld(date.year());
+  const consultantAge = consultant.getYearsOldAtDate({
+    year: date.year(),
+    month: date.month() + 1,
+    day: date.date(),
+  });
   const isCycle = (i: any) => (i === consultantAge ? false : nameCycles.includes(i));
   const bkConfig = (i: any, bg: any) => {
     if (i === consultantAge) {

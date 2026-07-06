@@ -22,7 +22,7 @@ export const pinnacleName = StyleSheet.create({
 export function ActiveName({
   table, start, consultant, nameCycles, date, position,
 }: { table: any, start: number, consultant: Person, nameCycles: any, date: SplittedDate, position: number }) {
-  const consultantAge = consultant.getYearsOld(date.year);
+  const consultantAge = consultant.getYearsOldAtDate(date);
   const isCycle = (i: number) => (i === consultantAge ? false : nameCycles.includes(i));
   const bkConfig = (i: number, bg: string) => {
     if (i === consultantAge) {

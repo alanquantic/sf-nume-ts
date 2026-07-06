@@ -206,6 +206,21 @@ class Person {
     return age;
   }
 
+  getYearsOldAtDate(compareDate: SplittedDate): number {
+    let age = compareDate.year - getYear(this.birthDate);
+    const birthMonth = getMonth(this.birthDate) + 1;
+    const birthDay = getDate(this.birthDate);
+    const birthdayHasPassed = compareDate.month > birthMonth
+      || (compareDate.month === birthMonth && compareDate.day >= birthDay);
+
+    if (!birthdayHasPassed) {
+      age -= 1;
+    }
+
+    if (age < 1) { age = 0; }
+    return age;
+  }
+
   calcAgeDigit(yearToCalculate?: number): number {
     return reduceNumber((this.getYearsOld(yearToCalculate) - 1) + this.getYearsOld(yearToCalculate));
   }
