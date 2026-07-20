@@ -19,9 +19,9 @@ function StageOne() {
     if (!rows[i + 1]) return row;
     return [...row, rows[i + 1][0]];
   });
-  const normalizedRows = Array.from({ length: 4 }, (_, rowIndex) => {
+  const normalizedRows = Array.from({ length: 4 }, (_outer, rowIndex) => {
     const row = displayRows[rowIndex] || [];
-    return Array.from({ length: 10 }, (_, colIndex) => row[colIndex] || 0);
+    return Array.from({ length: 10 }, (_inner, colIndex) => row[colIndex] || 0);
   });
   return (
     <>
