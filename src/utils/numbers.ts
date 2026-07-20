@@ -308,8 +308,14 @@ export function capitalize(str: string): string {
   return str.replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase());
 }
 
+function normalizeHierarchyNumber(value: number): number {
+  if (value === 11) return 2;
+  if (value === 22) return 4;
+  return value;
+}
+
 export function getSumHierarchy(a: number, b: number): number {
-  const sum = reduceNumber(a + b);
+  const sum = reduceNumberForSub(normalizeHierarchyNumber(a) + normalizeHierarchyNumber(b));
   return sum;
 }
 
@@ -326,13 +332,9 @@ export function getCompatibility(number: number, partnerN: number): string {
 }
 
 export function getResHierarchy(a: number, b: number): number {
-  let n1 = 0;
-  let n2 = 0;
-  if (a === 11) { n1 = 2; } else { n1 = a; }
-  if (a === 22) { n1 = 4; } else { n1 = a; }
-  if (b === 11) { n2 = 2; } else { n2 = b; }
-  if (b === 22) { n2 = 4; } else { n2 = b; }
-  const res = reduceNumber(n1 - n2);
+  const n1 = normalizeHierarchyNumber(a);
+  const n2 = normalizeHierarchyNumber(b);
+  const res = reduceNumberForSub(n1 - n2);
   return Math.abs(res);
 }
 
