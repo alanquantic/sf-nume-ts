@@ -106,6 +106,13 @@ class Synastry {
     return reduceNumber((getMonth(birthDate) + 1) + (getMonth(partnerBirthDate) + 1));
   }
 
+  getAISK():string {
+    const birthDate = this.consultant.getBirthDate();
+    const partnerBirthDate = this.partner.getBirthDate();
+    const A = reduceNumberISK((getMonth(birthDate) + 1) + (getMonth(partnerBirthDate) + 1));
+    return this.karmic.includes(A) ? '*' : '';
+  }
+
   getB():number {
     const birthDate = this.consultant.getBirthDate();
     const partnerBirthDate = this.partner.getBirthDate();
@@ -170,11 +177,15 @@ class Synastry {
   }
 
   getDISKCheck():string {
-    const D = reduceNumberISK(
-      this.getA()
-      + this.getB()
-      + this.getC(),
-    );
+    // Aligned with getDCheck(), which reduces the RAW sum of both birth dates.
+    const birthDate = this.consultant.getBirthDate();
+    const partnerBirthDate = this.partner.getBirthDate();
+
+    const sumReduce = (getMonth(birthDate) + 1) + getYear(birthDate)
+      + (getMonth(partnerBirthDate) + 1) + getYear(partnerBirthDate)
+      + getDate(birthDate) + getDate(partnerBirthDate);
+
+    const D = reduceNumberISK(sumReduce);
     return this.karmic.includes(D) ? '*' : '';
   }
 
@@ -247,10 +258,14 @@ class Synastry {
   }
 
   getHISK():string {
-    const H = reduceNumberISK(
-      this.getA()
-      + this.getC(),
-    );
+    // Aligned with getHCheck() (normal view), which reduces the RAW month+year sum of both.
+    const birthDate = this.consultant.getBirthDate();
+    const partnerBirthDate = this.partner.getBirthDate();
+
+    const sumReduce = (getMonth(birthDate) + 1) + getYear(birthDate)
+      + (getMonth(partnerBirthDate) + 1) + getYear(partnerBirthDate);
+
+    const H = reduceNumberISK(sumReduce);
     return this.karmic.includes(H) ? '*' : '';
   }
 
@@ -534,6 +549,39 @@ class Synastry {
   calcMaturityISK():string {
     const maturity = reduceNumberISK(this.consultant.calcMaturity() + this.partner.calcMaturity());
     return this.karmic.includes(maturity) ? '*' : '';
+  }
+
+  /**
+   * Default-view karmic markers. The synastry value already reduces the sum of the
+   * members' reduced numbers, so the ISK is aligned by construction — these mirror
+   * the *ISK methods so the shared name cards call the same View method for every entity.
+   */
+  calcNameViewISK(): string {
+    return this.calcNameISK();
+  }
+
+  calcSoulNumberViewISK(): string {
+    return this.calcSoulNumberISK();
+  }
+
+  calcSoulExpressionViewISK(): string {
+    return this.calcSoulExpressionISK();
+  }
+
+  /** "Comprobación" (check) view markers, aligned with getNameCheck / getSoulCheck / getExpressionSoulCheck. */
+  getNameCheckISK(): string {
+    const name = reduceNumberISK(this.consultant.getNameCheck() + this.partner.getNameCheck());
+    return this.karmic.includes(name) ? '*' : '';
+  }
+
+  getSoulCheckISK(): string {
+    const soul = reduceNumberISK(this.consultant.getSoulCheck() + this.partner.getSoulCheck());
+    return this.karmic.includes(soul) ? '*' : '';
+  }
+
+  getExpressionSoulCheckISK(): string {
+    const soul = reduceNumberISK(this.consultant.getExpressionSoulCheck() + this.partner.getExpressionSoulCheck());
+    return this.karmic.includes(soul) ? '*' : '';
   }
 
   /**

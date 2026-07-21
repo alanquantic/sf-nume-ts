@@ -544,6 +544,59 @@ class Group {
     return this.karmic.includes(soulISK) ? '*' : '';
   }
 
+  /**
+   * Default-view karmic markers. For a group the displayed value already sums the
+   * members' reduced numbers, so the ISK is aligned by construction — these mirror
+   * the *ISK methods and exist so the shared name cards can call the same View method
+   * for both Person and Group.
+   */
+  calcSoulNumberViewISK(): string {
+    return this.calcSoulNumberISK();
+  }
+
+  calcSoulExpressionViewISK(): string {
+    return this.calcSoulExpressionISK();
+  }
+
+  calcNameViewISK(): string {
+    return this.calcNameISK();
+  }
+
+  /**
+   * Karmic markers for the "Comprobación" (check) view, aligned with the
+   * getNameCheck / getSoulCheck / getExpressionSoulCheck totals (which sum the
+   * members' own check values).
+   */
+  getNameCheckISK(): string {
+    const partnerGroup = this.group;
+    let result = 0;
+    partnerGroup.forEach((g) => {
+      result += g.getNameCheck();
+    });
+    const resultISK = reduceNumberISK(result);
+    return this.karmic.includes(resultISK) ? '*' : '';
+  }
+
+  getSoulCheckISK(): string {
+    const partnerGroup = this.group;
+    let soul = 0;
+    partnerGroup.forEach((g) => {
+      soul += g.getSoulCheck();
+    });
+    const soulISK = reduceNumberISK(soul);
+    return this.karmic.includes(soulISK) ? '*' : '';
+  }
+
+  getExpressionSoulCheckISK(): string {
+    const partnerGroup = this.group;
+    let soul = 0;
+    partnerGroup.forEach((g) => {
+      soul += g.getExpressionSoulCheck();
+    });
+    const soulISK = reduceNumberISK(soul);
+    return this.karmic.includes(soulISK) ? '*' : '';
+  }
+
   getExpressionSoulCheck():number {
     const partnerGroup = this.group;
     let soul = 0;

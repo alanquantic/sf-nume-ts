@@ -21,19 +21,19 @@ export function GroupPinnacleName({ Consultant, main, isVerificationActive }: Pi
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10">{t('pinnacle.name.name')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue">
-          { (isVerificationActive) ? `${Consultant.getNameCheck()}${Consultant.calcNameISK()}` : `${Consultant.calcName()}${Consultant.calcNameISK()}`}
+          { (isVerificationActive) ? `${Consultant.getNameCheck()}${Consultant.getNameCheckISK()}` : `${Consultant.calcName()}${Consultant.calcNameViewISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10 mt-3">{t('pinnacle.name.soul')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue" radiant="true">
-          { (isVerificationActive) ? `${Consultant.getSoulCheck()}${Consultant.calcSoulNumberISK()}` : `${Consultant.calcSoulNumber()}${Consultant.calcSoulNumberISK()}`}
+          { (isVerificationActive) ? `${Consultant.getSoulCheck()}${Consultant.getSoulCheckISK()}` : `${Consultant.calcSoulNumber()}${Consultant.calcSoulNumberViewISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10 mt-3">{t('pinnacle.name.expression')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue">
-          { (isVerificationActive) ? `${Consultant.getExpressionSoulCheck()}${Consultant.calcSoulExpressionISK()}` : `${Consultant.calcSoulExpression()}${Consultant.calcSoulExpressionISK()}`}
+          { (isVerificationActive) ? `${Consultant.getExpressionSoulCheck()}${Consultant.getExpressionSoulCheckISK()}` : `${Consultant.calcSoulExpression()}${Consultant.calcSoulExpressionViewISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">

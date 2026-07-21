@@ -1549,7 +1549,7 @@ class Person {
   }
 
   getBISK(): string {
-    const B = reduceNumberISK(getDate(this.birthDate) + 1);
+    const B = reduceNumberISK(getDate(this.birthDate));
     return this.karmic.includes(B) ? '*' : '';
   }
 
@@ -1585,11 +1585,8 @@ class Person {
   }
 
   getEISKCheck(): string {
-    const reducedMonth = getMonth(this.birthDate) + 1;
-    const reducedDay = getDate(this.birthDate);
-    const stageOne = reduceNumberISK(reducedMonth + reducedDay);
-
-    return this.karmic.includes(stageOne) ? '*' : '';
+    // Aligned with getE() (calcLifeStage(1)), which reduces each component first.
+    return this.getEISK();
   }
 
   getFISK(): string {
@@ -1601,11 +1598,8 @@ class Person {
   }
 
   getFISKCheck(): string {
-    const reducedDay = getDate(this.birthDate);
-    const reducedYear = getYear(this.birthDate);
-    const stageTwo = reduceNumberISK(reducedDay + reducedYear);
-
-    return this.karmic.includes(stageTwo) ? '*' : '';
+    // Aligned with getF() (calcLifeStage(2)), which reduces each component first.
+    return this.getFISK();
   }
 
   getGISK(): string {
@@ -1769,6 +1763,50 @@ class Person {
     });
     const soulExp = reduceNumberISK(nameConsonantsValue + lastnameConsonantsValue);
     return this.karmic.includes(soulExp) ? '*' : '';
+  }
+
+  /**
+   * Karmic marker for the soul number in the DEFAULT view.
+   * Aligned with calcSoulNumber() = reduceNumber(calcSoulNumberFull()),
+   * so the '*' reflects the same reduction as the displayed value.
+   */
+  calcSoulNumberViewISK(): string {
+    const soulNumber = reduceNumberISK(this.calcSoulNumberFull());
+    return this.karmic.includes(soulNumber) ? '*' : '';
+  }
+
+  /**
+   * Karmic marker for the expression number in the DEFAULT view.
+   * Aligned with calcSoulExpression() = reduceNumber(calcSoulExpresionFull()).
+   */
+  calcSoulExpressionViewISK(): string {
+    const soulExp = reduceNumberISK(this.calcSoulExpresionFull());
+    return this.karmic.includes(soulExp) ? '*' : '';
+  }
+
+  /**
+   * Karmic marker for the name number in the DEFAULT view.
+   * Aligned with calcName() = reduceNumber(calcNameFull()).
+   */
+  calcNameViewISK(): string {
+    if (this.calcName() === 22 || this.calcName() === 11) {
+      return '';
+    }
+    const name = reduceNumberISK(this.calcNameFull());
+    return this.karmic.includes(name) ? '*' : '';
+  }
+
+  /**
+   * Karmic markers for the "Comprobación" (check) view. For a Person the check
+   * value is the raw letter total, which is exactly what calcSoulNumberISK /
+   * calcSoulExpressionISK already reduce, so these delegate.
+   */
+  getSoulCheckISK(): string {
+    return this.calcSoulNumberISK();
+  }
+
+  getExpressionSoulCheckISK(): string {
+    return this.calcSoulExpressionISK();
   }
 
   calcMaturityISK(): string {

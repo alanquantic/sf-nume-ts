@@ -90,7 +90,7 @@ export default function ActiveNameComponents({ checkActiveName }: { checkActiveN
             </div>
             <div className="w-10 h-10 text-xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow mx-4">
               {checkActiveName ? consultant.getSoulCheck() : consultant.calcSoulNumber()}
-              {consultant.calcSoulNumberISK()}
+              {checkActiveName ? consultant.calcSoulNumberISK() : consultant.calcSoulNumberViewISK()}
             </div>
             <div className="col-span-2 text-13 font-bold text-gray-500 w-32">
               {t('name.activeName.soulNumber')}
@@ -130,7 +130,7 @@ export default function ActiveNameComponents({ checkActiveName }: { checkActiveN
             </div>
             <div className="w-10 h-10 text-xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow-gold mx-4">
               {consultant.calcSoulExpression()}
-              {consultant.calcSoulExpressionISK()}
+              {consultant.calcSoulExpressionViewISK()}
             </div>
             <div className="col-span-2 text-13 font-bold text-gray-500 w-32">
               {t('name.activeName.expressionNumber')}
@@ -176,7 +176,7 @@ export default function ActiveNameComponents({ checkActiveName }: { checkActiveN
             </div>
             <div className="w-10 h-10 text-xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow mx-4">
               {consultant.calcName()}
-              {consultant.calcNameISK()}
+              {consultant.calcNameViewISK()}
             </div>
             <div className="col-span-2 text-13 font-bold text-gray-500 w-32">
               {t('name.activeName.powerOfNameNumber')}

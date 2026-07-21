@@ -98,42 +98,42 @@ export default function SynastryPinnaclePage() {
   // Calculate synastry metrics directly
   const synastryMetrics: SynastryMetrics = {
     name: checkboxState.checkN
-      ? `${synastry.getNameCheck()}${synastry.calcNameISK()}`
-      : `${synastry.calcName()}${synastry.calcNameISK()}`,
+      ? `${synastry.getNameCheck()}${synastry.getNameCheckISK()}`
+      : `${synastry.calcName()}${synastry.calcNameViewISK()}`,
     soul: checkboxState.checkN
-      ? `${synastry.getSoulCheck()}${synastry.calcSoulNumberISK()}`
-      : `${synastry.calcSoulNumber()}${synastry.calcSoulNumberISK()}`,
+      ? `${synastry.getSoulCheck()}${synastry.getSoulCheckISK()}`
+      : `${synastry.calcSoulNumber()}${synastry.calcSoulNumberViewISK()}`,
     expression: checkboxState.checkN
-      ? `${synastry.getExpressionSoulCheck()}${synastry.calcSoulExpressionISK()}`
-      : `${synastry.calcSoulExpression()}${synastry.calcSoulExpressionISK()}`,
+      ? `${synastry.getExpressionSoulCheck()}${synastry.getExpressionSoulCheckISK()}`
+      : `${synastry.calcSoulExpression()}${synastry.calcSoulExpressionViewISK()}`,
     maturity: `${synastry.calcMaturity()}${synastry.calcMaturityISK()}`,
   };
 
   // Calculate partner1 metrics directly
   const partner1Metrics: SynastryMetrics = {
     name: checkboxState.checkN1
-      ? `${partner1.getNameCheck()}${partner1.calcNameISK()}`
-      : `${partner1.calcName()}${partner1.calcNameISK()}`,
+      ? `${partner1.getNameCheck()}${partner1.getNameCheckISK()}`
+      : `${partner1.calcName()}${partner1.calcNameViewISK()}`,
     soul: checkboxState.checkN1
-      ? `${partner1.getSoulCheck()}${partner1.calcSoulNumberISK()}`
-      : `${partner1.calcSoulNumber()}${partner1.calcSoulNumberISK()}`,
+      ? `${partner1.getSoulCheck()}${partner1.getSoulCheckISK()}`
+      : `${partner1.calcSoulNumber()}${partner1.calcSoulNumberViewISK()}`,
     expression: checkboxState.checkN1
-      ? `${partner1.getExpressionSoulCheck()}${partner1.calcSoulExpressionISK()}`
-      : `${partner1.calcSoulExpression()}${partner1.calcSoulExpressionISK()}`,
+      ? `${partner1.getExpressionSoulCheck()}${partner1.getExpressionSoulCheckISK()}`
+      : `${partner1.calcSoulExpression()}${partner1.calcSoulExpressionViewISK()}`,
     maturity: `${partner1.calcMaturity()}${partner1.calcMaturityISK()}`,
   };
 
   // Calculate partner2 metrics directly
   const partner2Metrics: SynastryMetrics = {
     name: checkboxState.checkN2
-      ? `${partner2.getNameCheck()}${partner2.calcNameISK()}`
-      : `${partner2.calcName()}${partner2.calcNameISK()}`,
+      ? `${partner2.getNameCheck()}${partner2.getNameCheckISK()}`
+      : `${partner2.calcName()}${partner2.calcNameViewISK()}`,
     soul: checkboxState.checkN2
-      ? `${partner2.getSoulCheck()}${partner2.calcSoulNumberISK()}`
-      : `${partner2.calcSoulNumber()}${partner2.calcSoulNumberISK()}`,
+      ? `${partner2.getSoulCheck()}${partner2.getSoulCheckISK()}`
+      : `${partner2.calcSoulNumber()}${partner2.calcSoulNumberViewISK()}`,
     expression: checkboxState.checkN2
-      ? `${partner2.getExpressionSoulCheck()}${partner2.calcSoulExpressionISK()}`
-      : `${partner2.calcSoulExpression()}${partner2.calcSoulExpressionISK()}`,
+      ? `${partner2.getExpressionSoulCheck()}${partner2.getExpressionSoulCheckISK()}`
+      : `${partner2.calcSoulExpression()}${partner2.calcSoulExpressionViewISK()}`,
     maturity: `${partner2.calcMaturity()}${partner2.calcMaturityISK()}`,
   };
 

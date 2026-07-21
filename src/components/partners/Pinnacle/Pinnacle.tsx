@@ -13,7 +13,7 @@ function Pinnacle({ entity, size, isVerificationActive = false }: PinnacleProps)
       <img id="pinnacle-img" src="/assets/pinnacle.svg" className="absolute top-0 left-0 right-0 mx-auto" alt="background" />
 
       <div id="pinnacle-letters" className="relative w-full left-0 right-0 mx-auto">
-        <div className="pinnacle-letter" data-letter="A">{entity.getA()}</div>
+        <div className="pinnacle-letter" data-letter="A">{entity.getA()}{entity.getAISK()}</div>
         <div className="pinnacle-letter" data-letter="B">
           {entity.getB()}
           {entity.getBISK()}

@@ -17,7 +17,7 @@ export default function NumericValues({
 
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow">
             {!checkN
-              ? `${createNameObj.calcName()}${createNameObj.calcNameISK()}`
+              ? `${createNameObj.calcName()}${createNameObj.calcNameViewISK()}`
               : `${createNameObj.getNameCheck()}${createNameObj.getNameCheckISK()}`}
           </div>
         </div>
@@ -27,7 +27,7 @@ export default function NumericValues({
 
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow-gold">
             {!checkN
-              ? `${createNameObj.calcSoulNumber()}${createNameObj.calcSoulNumberISK()}`
+              ? `${createNameObj.calcSoulNumber()}${createNameObj.calcSoulNumberViewISK()}`
               : `${createNameObj.getSoulCheck()}${createNameObj.calcSoulNumberISK()}`}
           </div>
         </div>
@@ -37,7 +37,7 @@ export default function NumericValues({
 
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow">
             {!checkN
-              ? `${createNameObj.calcSoulExpression()}${createNameObj.calcSoulExpressionISK()}`
+              ? `${createNameObj.calcSoulExpression()}${createNameObj.calcSoulExpressionViewISK()}`
               : `${createNameObj.getExpressionSoulCheck()}${createNameObj.calcSoulExpressionISK()}`}
           </div>
         </div>

@@ -19,7 +19,7 @@ export default function NumericalValuesOfTheName({
           <p className="text-13 mb-3">{t('name.numericValues.name')}</p>
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow">
             {!checkN
-              ? `${consultant.calcName()}${consultant.calcNameISK()}`
+              ? `${consultant.calcName()}${consultant.calcNameViewISK()}`
               : `${consultant.getNameCheck()}${consultant.getNameCheckISK()}`}
           </div>
         </div>
@@ -27,7 +27,7 @@ export default function NumericalValuesOfTheName({
           <p className="text-13 mb-3">{t('name.numericValues.soul')}</p>
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow-gold">
             {!checkN
-              ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberISK()}`
+              ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberViewISK()}`
               : `${consultant.getSoulCheck()}${consultant.calcSoulNumberISK()}`}
           </div>
         </div>
@@ -35,7 +35,7 @@ export default function NumericalValuesOfTheName({
           <p className="text-13 mb-3">{t('name.numericValues.expression')}</p>
           <div className="w-18 h-18 text-3xl font-black text-black flex justify-center items-center bg-blue-30 border border-blue rounded-full inner-shadow">
             {!checkN
-              ? `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionISK()}`
+              ? `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionViewISK()}`
               : `${consultant.getExpressionSoulCheck()}${consultant.calcSoulExpressionISK()}`}
           </div>
         </div>

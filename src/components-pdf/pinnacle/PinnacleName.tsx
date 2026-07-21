@@ -48,19 +48,19 @@ export default function PinnacleName({ consultant }: { consultant: Person }) {
         <View style={[pinnacleName.circle, pinnacleName.name]}>
           <Text>
             {consultant.calcName()}
-            {consultant.calcNameISK()}
+            {consultant.calcNameViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, pinnacleName.soul]}>
           <Text>
             {consultant.calcSoulNumber()}
-            {consultant.calcSoulNumberISK()}
+            {consultant.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, pinnacleName.soul_expresion]}>
           <Text>
             {consultant.calcSoulExpression()}
-            {consultant.calcSoulExpressionISK()}
+            {consultant.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, pinnacleName.maturity]}>

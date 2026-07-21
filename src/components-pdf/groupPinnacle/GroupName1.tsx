@@ -101,19 +101,19 @@ export default function GroupName1({ groupConsult, members }: { groupConsult: Gr
         <View style={[style.letter, style.A]}>
           <Text>
             {groupConsult.calcName()}
-            {groupConsult.calcNameISK()}
+            {groupConsult.calcNameViewISK()}
           </Text>
         </View>
         <View style={[style.letter, style.B]}>
           <Text>
             {groupConsult.calcSoulNumber()}
-            {groupConsult.calcSoulNumberISK()}
+            {groupConsult.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[style.letter, style.C]}>
           <Text>
             {groupConsult.calcSoulExpression()}
-            {groupConsult.calcSoulExpressionISK()}
+            {groupConsult.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[style.letter, style.D]}>
@@ -129,19 +129,19 @@ export default function GroupName1({ groupConsult, members }: { groupConsult: Gr
           <View style={[style.letter, style.A]}>
             <Text>
               {members[0].calcName()}
-              {members[0].calcNameISK()}
+              {members[0].calcNameViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.B]}>
             <Text>
               {members[0].calcSoulNumber()}
-              {members[0].calcSoulNumberISK()}
+              {members[0].calcSoulNumberViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.C]}>
             <Text>
               {members[0].calcSoulExpression()}
-              {members[0].calcSoulExpressionISK()}
+              {members[0].calcSoulExpressionViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.D]}>
@@ -158,19 +158,19 @@ export default function GroupName1({ groupConsult, members }: { groupConsult: Gr
           <View style={[style.letter, style.A]}>
             <Text>
               {members[1].calcName()}
-              {members[1].calcNameISK()}
+              {members[1].calcNameViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.B]}>
             <Text>
               {members[1].calcSoulNumber()}
-              {members[1].calcSoulNumberISK()}
+              {members[1].calcSoulNumberViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.C]}>
             <Text>
               {members[1].calcSoulExpression()}
-              {members[1].calcSoulExpressionISK()}
+              {members[1].calcSoulExpressionViewISK()}
             </Text>
           </View>
           <View style={[style.letter, style.D]}>

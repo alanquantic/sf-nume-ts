@@ -236,7 +236,7 @@ export default function GroupPinnacle3({ members }: { members: Person[] }) {
           <View style={[style.letter, style.H]}>
             <Text>
               {members[0].getH()}
-              {members[0].getHISK()}
+              {members[0].getHISKCheck()}
             </Text>
           </View>
           <View style={[style.letter, style.G]}>
@@ -342,7 +342,7 @@ export default function GroupPinnacle3({ members }: { members: Person[] }) {
           <View style={[style.letter, style.H]}>
             <Text>
               {members[1].getH()}
-              {members[1].getHISK()}
+              {members[1].getHISKCheck()}
             </Text>
           </View>
           <View style={[style.letter, style.G]}>
@@ -448,7 +448,7 @@ export default function GroupPinnacle3({ members }: { members: Person[] }) {
           <View style={[style.letter, style.H]}>
             <Text>
               {members[2].getH()}
-              {members[2].getHISK()}
+              {members[2].getHISKCheck()}
             </Text>
           </View>
           <View style={[style.letter, style.G]}>

@@ -290,7 +290,7 @@ export default function BridgeStage({ consultant }: { consultant: Person }) {
           <View style={[pinnacleStage.circle, pinnacleStage.bridgeTop]}>
             <Text>
               {consultant.getH()}
-              {consultant.getHISK()}
+              {consultant.getHISKCheck()}
             </Text>
           </View>
           <View style={[pinnacleStage.circle, pinnacleStage.bridgeLeft]}>

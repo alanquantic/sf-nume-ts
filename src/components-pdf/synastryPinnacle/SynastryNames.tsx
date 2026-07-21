@@ -59,19 +59,19 @@ export default function SynastryNames({ synastry }: { synastry: Synastry }) {
         <View style={[data.number, { top: 32, left: 11 }]}>
           <Text>
             {synastry.calcName()}
-            {synastry.calcNameISK()}
+            {synastry.calcNameViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 50 }]}>
           <Text>
             {synastry.calcSoulNumber()}
-            {synastry.calcSoulNumberISK()}
+            {synastry.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 90 }]}>
           <Text>
             {synastry.calcSoulExpression()}
-            {synastry.calcSoulExpressionISK()}
+            {synastry.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 135 }]}>
@@ -88,19 +88,19 @@ export default function SynastryNames({ synastry }: { synastry: Synastry }) {
         <View style={[data.number, { top: 32, left: 11 }]}>
           <Text>
             {consultant.calcName()}
-            {consultant.calcNameISK()}
+            {consultant.calcNameViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 50 }]}>
           <Text>
             {consultant.calcSoulNumber()}
-            {consultant.calcSoulNumberISK()}
+            {consultant.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 90 }]}>
           <Text>
             {consultant.calcSoulExpression()}
-            {consultant.calcSoulExpressionISK()}
+            {consultant.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 135 }]}>
@@ -117,19 +117,19 @@ export default function SynastryNames({ synastry }: { synastry: Synastry }) {
         <View style={[data.number, { top: 32, left: 11 }]}>
           <Text>
             {partner.calcName()}
-            {partner.calcNameISK()}
+            {partner.calcNameViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 50 }]}>
           <Text>
             {partner.calcSoulNumber()}
-            {partner.calcSoulNumberISK()}
+            {partner.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 90 }]}>
           <Text>
             {partner.calcSoulExpression()}
-            {partner.calcSoulExpressionISK()}
+            {partner.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[data.number, { top: 32, left: 135 }]}>
