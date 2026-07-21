@@ -93,8 +93,8 @@ export default function NameActive({ consultant }: { consultant: Person }) {
         <Text>
           {
               config === 'v'
-                ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberISK()}`
-                : `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionISK()}`
+                ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberViewISK()}`
+                : `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionViewISK()}`
             }
         </Text>
       </View>
@@ -128,7 +128,7 @@ export default function NameActive({ consultant }: { consultant: Person }) {
       <View style={[pinnacleName.circle, { top, left: 209 }]}>
         <Text>
           {consultant.calcName()}
-          {consultant.calcNameISK()}
+          {consultant.calcNameViewISK()}
         </Text>
       </View>
     </>

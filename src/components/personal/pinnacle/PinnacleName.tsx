@@ -15,19 +15,19 @@ export function PinnacleName({ isVerificationActive }: { isVerificationActive: b
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10">{t('pinnacle.name.name')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue">
-          {(!isVerificationActive) ? `${consultant.calcName()}${consultant.calcNameISK()}` : `${consultant.getNameCheck()}${consultant.getNameCheckISK()}`}
+          {(!isVerificationActive) ? `${consultant.calcName()}${consultant.calcNameViewISK()}` : `${consultant.getNameCheck()}${consultant.getNameCheckISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10 mt-3">{t('pinnacle.name.soul')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue" radiant="true">
-          {(!isVerificationActive) ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberISK()}` : `${consultant.getSoulCheck()}${consultant.calcSoulNumberISK()}`}
+          {(!isVerificationActive) ? `${consultant.calcSoulNumber()}${consultant.calcSoulNumberViewISK()}` : `${consultant.getSoulCheck()}${consultant.calcSoulNumberISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">
         <label className="text-10 mt-3">{t('pinnacle.name.expression')}</label>
         <CircleNumber size="sm" appearance="blue-30" border="blue">
-          {(!isVerificationActive) ? `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionISK()}` : `${consultant.getExpressionSoulCheck()}${consultant.calcSoulExpressionISK()}`}
+          {(!isVerificationActive) ? `${consultant.calcSoulExpression()}${consultant.calcSoulExpressionViewISK()}` : `${consultant.getExpressionSoulCheck()}${consultant.calcSoulExpressionISK()}`}
         </CircleNumber>
       </div>
       <div className="flex flex-col items-center justify-center text-gray-500 font-bold">

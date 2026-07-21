@@ -14,7 +14,7 @@ function NineYearsCycle() {
   const nineYearCycle = consultant.getNineYearCycleStage(calculationDate.year);
 
   return (
-    <div className="grid grid-cols-9 px-4 py-8 w-full">
+    <div className="grid grid-cols-10 px-4 py-8 w-full">
       <div className="col-start-4 col-end-6 flex justify-between items-center mb-6 row-start-1">
         {t('vibrationTime.nineYearsCycle.stage')}
         {' '}

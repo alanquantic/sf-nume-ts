@@ -13,7 +13,10 @@ function PinnacleCreateName({ size, isVerificationActive, consultant }: Pinnacle
       <img id="pinnacle-img" src="/assets/pinnacle.svg" className="absolute top-0 left-0 right-0 mx-auto" alt="background" />
 
       <div id="pinnacle-letters" className="relative w-full left-0 right-0 mx-auto">
-        <div className="pinnacle-letter" data-letter="A">{consultant.getA()}</div>
+        <div className="pinnacle-letter" data-letter="A">
+          {consultant.getA()}
+          {consultant.getAISK()}
+        </div>
         <div className="pinnacle-letter" data-letter="B">
           {consultant.getB()}
           {consultant.getBISK()}

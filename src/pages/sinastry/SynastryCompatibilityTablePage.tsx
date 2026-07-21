@@ -51,13 +51,13 @@ function SynastryCompatibilityTablePage() {
           <div className="col-start-4 row-start-2 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner1.calcSoulNumber()}
-              {partner1.calcSoulNumberISK()}
+              {partner1.calcSoulNumberViewISK()}
             </div>
           </div>
           <div className="col-start-6 row-start-2 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner2.calcSoulNumber()}
-              {partner2.calcSoulNumberISK()}
+              {partner2.calcSoulNumberViewISK()}
             </div>
           </div>
           <div className="col-start-8 row-start-2 col-span-2 border border-black p-4 font-bold flex items-center justify-center">
@@ -70,13 +70,13 @@ function SynastryCompatibilityTablePage() {
           <div className="col-start-4 row-start-3 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner1.calcSoulExpression()}
-              {partner1.calcSoulExpressionISK()}
+              {partner1.calcSoulExpressionViewISK()}
             </div>
           </div>
           <div className="col-start-6 row-start-3 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner2.calcSoulExpression()}
-              {partner2.calcSoulExpressionISK()}
+              {partner2.calcSoulExpressionViewISK()}
             </div>
           </div>
           <div className="col-start-8 row-start-3 col-span-2 border border-black p-4 font-bold flex items-center justify-center">
@@ -89,13 +89,13 @@ function SynastryCompatibilityTablePage() {
           <div className="col-start-4 row-start-4 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner1.calcName()}
-              {partner1.calcNameISK()}
+              {partner1.calcNameViewISK()}
             </div>
           </div>
           <div className="col-start-6 row-start-4 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner2.calcName()}
-              {partner2.calcNameISK()}
+              {partner2.calcNameViewISK()}
             </div>
           </div>
           <div className="col-start-8 row-start-4 col-span-2 border border-black p-4 font-bold flex items-center justify-center">
@@ -165,13 +165,13 @@ function SynastryCompatibilityTablePage() {
           <div className="col-start-4 row-start-8 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner1.getH()}
-              {partner1.getHISK()}
+              {partner1.getHISKCheck()}
             </div>
           </div>
           <div className="col-start-6 row-start-8 col-span-2 border border-black p-4 font-bold">
             <div className="cicle-year bg-gray-300 text-xl border border-black font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
               {partner2.getH()}
-              {partner2.getHISK()}
+              {partner2.getHISKCheck()}
             </div>
           </div>
           <div className="col-start-8 row-start-8 col-span-2 border border-black p-4 font-bold flex items-center justify-center">

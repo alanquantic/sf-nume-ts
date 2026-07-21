@@ -34,7 +34,7 @@ export default function CreateNumeric({ consultant }: { consultant: Person }) {
         <View style={[pinnacleName.circle, { left: 22 }]}>
           <Text>
             {consultant.calcName()}
-            {consultant.calcNameISK()}
+            {consultant.calcNameViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, { left: 85 }]}>

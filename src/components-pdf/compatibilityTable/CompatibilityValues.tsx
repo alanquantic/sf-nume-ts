@@ -60,13 +60,13 @@ export default function CompatibilityTable({ synastry }: { synastry: Synastry })
         <View style={[comp.squad, comp.row1, comp.p1]}>
           <Text style={comp.text}>
             {consultant.calcSoulNumber()}
-            {consultant.calcSoulNumberISK()}
+            {consultant.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[comp.squad, comp.row1, comp.p2]}>
           <Text style={comp.text}>
             {partner.calcSoulNumber()}
-            {partner.calcSoulNumberISK()}
+            {partner.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[comp.circle, comp.row1, comp.CN]}><Text style={comp.text}>{getCompatibility(consultant.calcSoulNumber(), partner.calcSoulNumber())}</Text></View>
@@ -75,13 +75,13 @@ export default function CompatibilityTable({ synastry }: { synastry: Synastry })
         <View style={[comp.squad, comp.row2, comp.p1]}>
           <Text style={comp.text}>
             {consultant.calcSoulExpression()}
-            {consultant.calcSoulExpressionISK()}
+            {consultant.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[comp.squad, comp.row2, comp.p2]}>
           <Text style={comp.text}>
             {partner.calcSoulExpression()}
-            {partner.calcSoulExpressionISK()}
+            {partner.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[comp.circle, comp.row2, comp.CN]}><Text style={comp.text}>{getCompatibility(consultant.calcSoulExpression(), partner.calcSoulExpression())}</Text></View>
@@ -90,13 +90,13 @@ export default function CompatibilityTable({ synastry }: { synastry: Synastry })
         <View style={[comp.squad, comp.row3, comp.p1]}>
           <Text style={comp.text}>
             {consultant.calcName()}
-            {consultant.calcNameISK()}
+            {consultant.calcNameViewISK()}
           </Text>
         </View>
         <View style={[comp.squad, comp.row3, comp.p2]}>
           <Text style={comp.text}>
             {partner.calcName()}
-            {partner.calcNameISK()}
+            {partner.calcNameViewISK()}
           </Text>
         </View>
         <View style={[comp.circle, comp.row3, comp.CN]}><Text style={comp.text}>{getCompatibility(consultant.calcName(), partner.calcName())}</Text></View>
@@ -150,13 +150,13 @@ export default function CompatibilityTable({ synastry }: { synastry: Synastry })
         <View style={[comp.squad, comp.row7, comp.p1]}>
           <Text style={comp.text}>
             {consultant.getH()}
-            {consultant.getHISK()}
+            {consultant.getHISKCheck()}
           </Text>
         </View>
         <View style={[comp.squad, comp.row7, comp.p2]}>
           <Text style={comp.text}>
             {partner.getH()}
-            {partner.getHISK()}
+            {partner.getHISKCheck()}
           </Text>
         </View>
         <View style={[comp.circle, comp.row7, comp.CN]}><Text style={comp.text}>{getCompatibility(consultant.getH(), partner.getH())}</Text></View>

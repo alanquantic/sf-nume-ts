@@ -7,28 +7,28 @@ function StageOne() {
   const birthYear = consultant.getYearOfBirth();
   const duration = consultant.calcLifeStageDuration(1) - birthYear;
   const startYear = birthYear;
-  const endYear = birthYear + duration;
-  const arrayOfYears = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+  const stageOneEndYear = birthYear + duration;
+  const endYear = Math.min(stageOneEndYear, calculationDate.year);
+  const realYears = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
   const nineYearCycleOfBirth = consultant.getNineYearCycleStage(birthYear);
-
-  nineYearCycleOfBirth.forEach((e) => {
-    if (e < birthYear) {
-      arrayOfYears.push(0);
-    }
-  });
+  const paddingYears = nineYearCycleOfBirth.filter((year) => year < birthYear).map(() => 0);
+  const arrayOfYears = [...paddingYears, ...realYears];
 
   const rows = sliceIntoChunks(arrayOfYears, 9);
-  rows.forEach((row, i) => {
-    if (rows[i + 1]) {
-      row.push(rows[i + 1][0]);
-    }
+  const displayRows = rows.map((row, i) => {
+    if (!rows[i + 1]) return row;
+    return [...row, rows[i + 1][0]];
+  });
+  const normalizedRows = Array.from({ length: 4 }, (_outer, rowIndex) => {
+    const row = displayRows[rowIndex] || [];
+    return Array.from({ length: 10 }, (_inner, colIndex) => row[colIndex] || 0);
   });
   return (
     <>
-      {rows.map((years:number[], i) => years.map((year:number, j) => (
+      {normalizedRows.map((years:number[], i) => years.map((year:number, j) => (
         <b key={generateUniqueKey()} className={`  col-start-${j + 1} row-start-${i + 3} ${(year === calculationDate.year) ? 'text-black' : 'text-gray-300'}`}>
           {' '}
-          {year}
+          {year === 0 ? '' : year}
         </b>
       )))}
     </>
