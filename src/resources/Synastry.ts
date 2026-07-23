@@ -5,7 +5,7 @@ import {
 } from 'date-fns';
 import _ from 'lodash';
 import {
-  capitalize, getDaysOfWeek, getDaysOfWeekEnglish, getMonthName, reduceNumber,
+  capitalize, getDaysOfWeek, getDaysOfWeekEnglish, getMonthName, normalizeMasterNumberForSubtraction, reduceNumber,
 } from '../utils/numbers';
 import Person from './Person';
 
@@ -1123,12 +1123,14 @@ class Synastry {
 
   getQuarterTwo(year :number):number {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    return reduceNumber(yearToCalculate - this.getD());
+    return reduceNumber(yearToCalculate - normalizeMasterNumberForSubtraction(this.getD()));
   }
 
   getQuarterTwoISK(year :number):string {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    const quarterTwo = reduceNumberISK(yearToCalculate - this.getD());
+    const quarterTwo = reduceNumberISK(
+      yearToCalculate - normalizeMasterNumberForSubtraction(this.getD()),
+    );
     return this.karmic.includes(quarterTwo) ? '*' : '';
   }
 

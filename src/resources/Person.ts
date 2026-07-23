@@ -23,6 +23,7 @@ import {
   getMonthName,
   inclusionValue,
   letterValue,
+  normalizeMasterNumberForSubtraction,
   reduceNumber,
   reduceNumberForSub,
   reduceNumberISK,
@@ -977,7 +978,7 @@ class Person {
     const year = getYear(this.birthDate);
     const month = getMonth(this.birthDate) + 1;
     const day = getDate(this.birthDate);
-    const reduced = reduceNumber(year + month + day);
+    const reduced = normalizeMasterNumberForSubtraction(reduceNumber(year + month + day));
     const stageOneEnd = year + 36 - reduced;
     if (stage === 1) return stageOneEnd;
     if (stage < 8) {
@@ -994,12 +995,7 @@ class Person {
     const dC = this.getDCheck();
     let reduced = dC;
     if (D === dC) {
-      if (D === 11) {
-        reduced = 2;
-      }
-      if (D === 22) {
-        reduced = 4;
-      }
+      reduced = normalizeMasterNumberForSubtraction(D);
     }
     const stageOneEnd = year + 36 - reduced;
     if (stage === 1) return stageOneEnd;
@@ -1077,7 +1073,9 @@ class Person {
     const monthBirthDate = getMonth(this.birthDate) + 1;
     const dayBirthDate = getDate(this.birthDate);
 
-    const reduceSum = reduceNumber(dayBirthDate + monthBirthDate + yearBirthDate);
+    const reduceSum = normalizeMasterNumberForSubtraction(
+      reduceNumber(dayBirthDate + monthBirthDate + yearBirthDate),
+    );
     const stageOneEnd = yearBirthDate + 36 - reduceSum;
     if (yearBirthDate <= yearToCalculate && yearToCalculate <= stageOneEnd) {
       if (yearToCalculate === stageOneEnd && monthBirthDate <= monthToCalculate) {
@@ -1136,12 +1134,7 @@ class Person {
     const dC = this.getDCheck();
     let reduceSum = dC;
     if (D === dC) {
-      if (D === 11) {
-        reduceSum = 2;
-      }
-      if (D === 22) {
-        reduceSum = 4;
-      }
+      reduceSum = normalizeMasterNumberForSubtraction(D);
     }
 
     const stageOneEnd = yearBirthDate + 36 - reduceSum;
@@ -1429,7 +1422,9 @@ class Person {
      */
   getQuarterTwo(year: number): number {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    return reduceNumber(yearToCalculate - this.calcPersonalityNumber());
+    return reduceNumber(
+      yearToCalculate - normalizeMasterNumberForSubtraction(this.calcPersonalityNumber()),
+    );
   }
 
   /**
@@ -1946,7 +1941,9 @@ class Person {
 
   getQuarterTwoISK(year: number): string {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    const quarterTwo = reduceNumberISK(yearToCalculate - this.calcPersonalityNumber());
+    const quarterTwo = reduceNumberISK(
+      yearToCalculate - normalizeMasterNumberForSubtraction(this.calcPersonalityNumber()),
+    );
     return this.karmic.includes(quarterTwo) ? '*' : '';
   }
 

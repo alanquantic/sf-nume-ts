@@ -15,6 +15,7 @@ import {
   getDaysOfWeek,
   getDaysOfWeekEnglish,
   getMonthName,
+  normalizeMasterNumberForSubtraction,
   reduceMonth, reduceNumber, reduceNumberForSub, reduceNumberISK,
 } from '@/utils/numbers';
 import { useTranslation } from 'react-i18next';
@@ -876,12 +877,14 @@ class Group {
 
   getQuarterTwo(year:number):number {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    return reduceNumber(yearToCalculate - this.getD());
+    return reduceNumber(yearToCalculate - normalizeMasterNumberForSubtraction(this.getD()));
   }
 
   getQuarterTwoISK(year:number):string {
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    const quarterTwo = reduceNumberISK(yearToCalculate - this.getD());
+    const quarterTwo = reduceNumberISK(
+      yearToCalculate - normalizeMasterNumberForSubtraction(this.getD()),
+    );
     return this.karmic.includes(quarterTwo) ? '*' : '';
   }
 
