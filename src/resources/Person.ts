@@ -978,7 +978,10 @@ class Person {
     const year = getYear(this.birthDate);
     const month = getMonth(this.birthDate) + 1;
     const day = getDate(this.birthDate);
-    const reduced = normalizeMasterNumberForSubtraction(reduceNumber(year + month + day));
+    // Línea normal: conserva el número maestro sin reducir (p. ej. 22 → 36-22 = 14).
+    // La línea reducida (36-4 = 32) la da calcDoubleLifeStageDuration; así la doble
+    // etapa muestra dos timelines distintas. No aplicar normalizeMasterNumberForSubtraction aquí.
+    const reduced = reduceNumber(year + month + day);
     const stageOneEnd = year + 36 - reduced;
     if (stage === 1) return stageOneEnd;
     if (stage < 8) {
@@ -1073,9 +1076,8 @@ class Person {
     const monthBirthDate = getMonth(this.birthDate) + 1;
     const dayBirthDate = getDate(this.birthDate);
 
-    const reduceSum = normalizeMasterNumberForSubtraction(
-      reduceNumber(dayBirthDate + monthBirthDate + yearBirthDate),
-    );
+    // Etapa activa sobre la línea normal: maestro sin reducir (ver calcLifeStageDuration).
+    const reduceSum = reduceNumber(dayBirthDate + monthBirthDate + yearBirthDate);
     const stageOneEnd = yearBirthDate + 36 - reduceSum;
     if (yearBirthDate <= yearToCalculate && yearToCalculate <= stageOneEnd) {
       if (yearToCalculate === stageOneEnd && monthBirthDate <= monthToCalculate) {
