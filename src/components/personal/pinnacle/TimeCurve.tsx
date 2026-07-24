@@ -306,6 +306,28 @@ function TimeCurve({ isPartner, isVerificationActive }: { isPartner: boolean, is
           {t('pinnacle.timeCurve.fromNowOn')}
           ...
         </div>
+        {(!isPartner && doubleStage) && (
+          <>
+            <div className="col-start-7 col-end-9 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(1)}
+            </div>
+            <div className="col-start-9 col-end-11 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(2)}
+            </div>
+            <div className="col-start-11 col-end-13 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(3)}
+            </div>
+            <div className="col-start-13 col-end-15 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(4)}
+            </div>
+            <div className="col-start-15 col-end-17 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(5)}
+            </div>
+            <div className="col-start-17 col-end-18 text-13 row-start-2 text-gray">
+              {consultant.calcDoubleLifeStageDuration(6)}
+            </div>
+          </>
+        )}
       </div>
     </>
   );
