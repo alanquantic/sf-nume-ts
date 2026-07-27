@@ -10,13 +10,19 @@ function SynastryActiveEnergy({ synastry }: { synastry: Synastry | Group }) {
   if (!synastry) return null;
 
   const { t } = useTranslation();
+  const currentStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
+  const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
+  const currentStageValue = currentStageCheck === 11 || currentStageCheck === 22
+    ? currentStageCheck
+    : synastry.calcLifeStage(currentStage);
+
   return (
     <div className="grid grid-cols-6 px-4 py-8 w-full ">
       <b className="col-start-1 row-start-1 text-sm">{t('vibrationTime.energy.stage')}</b>
       <div className="col-start-1 row-start-2 row-span-2 m-auto">
         <CircleNumber size="sm" appearance="green-50" border="green">
-          {synastry.calcLifeStage(synastry.getLifeStageNumber(calculationDate.month, calculationDate.year))}
-          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(calculationDate.month, calculationDate.year))}
+          {currentStageValue}
+          {synastry.calcLifeStageISK(currentStage)}
         </CircleNumber>
       </div>
       <b className="col-start-2 row-start-2 text-sm pl-1">{t('vibrationTime.energy.year')}</b>

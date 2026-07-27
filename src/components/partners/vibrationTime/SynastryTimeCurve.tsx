@@ -12,6 +12,10 @@ function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPa
 
   if (!synastry) return null;
 
+  const stageFourCheck = synastry.getHCheck();
+  const stageFourValue = (!isVerificationActive && (stageFourCheck === 11 || stageFourCheck === 22))
+    ? stageFourCheck
+    : (!isVerificationActive ? synastry.calcLifeStage(4) : synastry.getHCheck());
   let activeStage;
   if (isPartner) {
     activeStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
@@ -195,7 +199,7 @@ function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPa
         <div className="m-auto col-start-11 col-end-13 row-start-4 relative w-full h-full">
           <div className="absolute z-10 centered-axis-x">
             <div className="w-10 h-10 text-xl font-black text-black flex justify-center items-center bg-green border border-green rounded-full inner-shadow">
-              {(!isVerificationActive) ? synastry.calcLifeStage(4) : synastry.getHCheck()}
+              {stageFourValue}
               {synastry.calcLifeStageISK(4)}
             </div>
           </div>
