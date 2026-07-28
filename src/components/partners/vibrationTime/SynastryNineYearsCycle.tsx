@@ -11,6 +11,11 @@ function SynastryNineYearsCycle({ synastry }: { synastry: Synastry | Group }) {
   const { t } = useTranslation();
   if (!synastry) return null;
 
+  const currentStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
+  const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
+  const currentStageValue = currentStageCheck === 11 || currentStageCheck === 22
+    ? currentStageCheck
+    : synastry.calcLifeStage(currentStage);
   const nineYearCycle = synastry.getNineYearCycleStage(calculationDate.year);
 
   return (
@@ -18,11 +23,11 @@ function SynastryNineYearsCycle({ synastry }: { synastry: Synastry | Group }) {
       <div className="col-start-4 col-end-6 flex justify-between items-center mb-6 row-start-1">
         {t('vibrationTime.nineYearsCycle.stage')}
         {' '}
-        {synastry.getLifeStageNumber(calculationDate.month, calculationDate.year)}
+        {currentStage}
         :
         <CircleNumber size="sm" appearance="green-50" border="green">
-          {synastry.calcLifeStage(synastry.getLifeStageNumber(calculationDate.month, calculationDate.year))}
-          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(calculationDate.month, calculationDate.year))}
+          {currentStageValue}
+          {synastry.calcLifeStageISK(currentStage)}
 
         </CircleNumber>
       </div>
