@@ -13,9 +13,10 @@ function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPa
   if (!synastry) return null;
 
   const stageFourCheck = synastry.getHCheck();
-  const stageFourValue = (!isVerificationActive && (stageFourCheck === 11 || stageFourCheck === 22))
+  const stageFourIsMaster = stageFourCheck === 11 || stageFourCheck === 22;
+  const stageFourValue = (isVerificationActive || stageFourIsMaster)
     ? stageFourCheck
-    : (!isVerificationActive ? synastry.calcLifeStage(4) : synastry.getHCheck());
+    : synastry.calcLifeStage(4);
   let activeStage;
   if (isPartner) {
     activeStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
