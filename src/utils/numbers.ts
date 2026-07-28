@@ -30,6 +30,25 @@ export function reduceNumberForSub(reduceSum: number): number {
 }
 
 /**
+   * Check if the number is a master number (11 or 22)
+   * @param value
+   * @returns {Boolean}
+   */
+export function isMasterNumber(value: number | null | undefined): value is number {
+  return value === 11 || value === 22;
+}
+
+/**
+   * Format a master number next to its reduction: 11 => "11/2", 22 => "22/4".
+   * Any other number is returned unchanged.
+   * @param value
+   * @returns {String}
+   */
+export function formatMasterNumber(value: number): string {
+  return isMasterNumber(value) ? `${value}/${reduceNumberForSub(value)}` : String(value);
+}
+
+/**
    * Reduce the number just one time
    * @param reduceSum
    * @returns {Number}

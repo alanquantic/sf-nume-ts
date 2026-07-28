@@ -4,7 +4,7 @@ import CircleNumber from '@/components/CircleNumber';
 import useConsult from '@/hooks/useConsult';
 import Group from '@/resources/Group';
 import Synastry from '@/resources/Synastry';
-import { generateUniqueKey } from '@/utils/numbers';
+import { formatMasterNumber, generateUniqueKey, isMasterNumber } from '@/utils/numbers';
 
 function SynastryNineYearsCycle({ synastry }: { synastry: Synastry | Group }) {
   const { calculationDate } = useConsult();
@@ -13,8 +13,9 @@ function SynastryNineYearsCycle({ synastry }: { synastry: Synastry | Group }) {
 
   const currentStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
   const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
-  const currentStageValue = currentStageCheck === 11 || currentStageCheck === 22
-    ? currentStageCheck
+  const currentStageIsMaster = isMasterNumber(currentStageCheck);
+  const currentStageValue = currentStageIsMaster
+    ? formatMasterNumber(currentStageCheck)
     : synastry.calcLifeStage(currentStage);
   const nineYearCycle = synastry.getNineYearCycleStage(calculationDate.year);
 
@@ -26,9 +27,10 @@ function SynastryNineYearsCycle({ synastry }: { synastry: Synastry | Group }) {
         {currentStage}
         :
         <CircleNumber size="sm" appearance="green-50" border="green">
-          {currentStageValue}
-          {synastry.calcLifeStageISK(currentStage)}
-
+          <span className={currentStageIsMaster ? 'text-sm' : ''}>
+            {currentStageValue}
+            {synastry.calcLifeStageISK(currentStage)}
+          </span>
         </CircleNumber>
       </div>
       {nineYearCycle.map((year, i) => (
