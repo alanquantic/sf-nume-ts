@@ -4,6 +4,7 @@ import CircleNumber from '@/components/CircleNumber';
 import useConsult from '@/hooks/useConsult';
 import Group from '@/resources/Group';
 import Synastry from '@/resources/Synastry';
+import { formatMasterNumber, isMasterNumber } from '@/utils/numbers';
 
 function SynastryActiveEnergy({ synastry }: { synastry: Synastry | Group }) {
   const { calculationDate } = useConsult();
@@ -12,8 +13,9 @@ function SynastryActiveEnergy({ synastry }: { synastry: Synastry | Group }) {
   const { t } = useTranslation();
   const currentStage = synastry.getLifeStageNumber(calculationDate.month, calculationDate.year);
   const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
-  const currentStageValue = currentStageCheck === 11 || currentStageCheck === 22
-    ? currentStageCheck
+  const currentStageIsMaster = isMasterNumber(currentStageCheck);
+  const currentStageValue = currentStageIsMaster
+    ? formatMasterNumber(currentStageCheck)
     : synastry.calcLifeStage(currentStage);
 
   return (
@@ -21,8 +23,10 @@ function SynastryActiveEnergy({ synastry }: { synastry: Synastry | Group }) {
       <b className="col-start-1 row-start-1 text-sm">{t('vibrationTime.energy.stage')}</b>
       <div className="col-start-1 row-start-2 row-span-2 m-auto">
         <CircleNumber size="sm" appearance="green-50" border="green">
-          {currentStageValue}
-          {synastry.calcLifeStageISK(currentStage)}
+          <span className={currentStageIsMaster ? 'text-sm' : ''}>
+            {currentStageValue}
+            {synastry.calcLifeStageISK(currentStage)}
+          </span>
         </CircleNumber>
       </div>
       <b className="col-start-2 row-start-2 text-sm pl-1">{t('vibrationTime.energy.year')}</b>

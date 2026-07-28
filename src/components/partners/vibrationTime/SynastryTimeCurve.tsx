@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useConsult from '@/hooks/useConsult';
 import Group from '@/resources/Group';
 import Synastry from '@/resources/Synastry';
+import { formatMasterNumber, isMasterNumber } from '@/utils/numbers';
 
 function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPartner: boolean, synastry: Synastry | Group, isVerificationActive: boolean }) {
   const { calculationDate } = useConsult();
@@ -13,9 +14,9 @@ function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPa
   if (!synastry) return null;
 
   const stageFourCheck = synastry.getHCheck();
-  const stageFourIsMaster = stageFourCheck === 11 || stageFourCheck === 22;
+  const stageFourIsMaster = isMasterNumber(stageFourCheck);
   const stageFourValue = (isVerificationActive || stageFourIsMaster)
-    ? stageFourCheck
+    ? formatMasterNumber(stageFourCheck)
     : synastry.calcLifeStage(4);
   let activeStage;
   if (isPartner) {
@@ -200,8 +201,10 @@ function SynastryTimeCurve({ isPartner, synastry, isVerificationActive }: { isPa
         <div className="m-auto col-start-11 col-end-13 row-start-4 relative w-full h-full">
           <div className="absolute z-10 centered-axis-x">
             <div className="w-10 h-10 text-xl font-black text-black flex justify-center items-center bg-green border border-green rounded-full inner-shadow">
-              {stageFourValue}
-              {synastry.calcLifeStageISK(4)}
+              <span className={stageFourIsMaster ? 'text-sm' : ''}>
+                {stageFourValue}
+                {synastry.calcLifeStageISK(4)}
+              </span>
             </div>
           </div>
         </div>

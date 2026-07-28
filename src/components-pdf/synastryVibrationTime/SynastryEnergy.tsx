@@ -1,4 +1,5 @@
 import Synastry, { SplittedDate } from '@/resources/Synastry';
+import { formatMasterNumber, isMasterNumber } from '@/utils/numbers';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 
 export const energy = StyleSheet.create({
@@ -18,13 +19,18 @@ export default function SynastryEnergy({ synastry, date }: { synastry: Synastry,
   const currentYear = date.year;
   const currentMonth = date.month;
   const currentDay = date.day;
+  const currentStage = synastry.getLifeStageNumber(currentMonth, currentYear);
+  const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
+  const currentStageValue = isMasterNumber(currentStageCheck)
+    ? formatMasterNumber(currentStageCheck)
+    : synastry.calcLifeStage(currentStage);
 
   return (
     <View style={energy.container}>
       <View>
         <Text style={[energy.text, { top: 30, left: 30 }]}>
-          {synastry.calcLifeStage(synastry.getLifeStageNumber(currentMonth, currentYear))}
-          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(currentMonth, currentYear))}
+          {currentStageValue}
+          {synastry.calcLifeStageISK(currentStage)}
         </Text>
       </View>
       <View>

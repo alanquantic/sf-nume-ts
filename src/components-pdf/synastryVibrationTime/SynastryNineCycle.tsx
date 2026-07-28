@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import Synastry, { SplittedDate } from '@/resources/Synastry';
+import { formatMasterNumber, isMasterNumber } from '@/utils/numbers';
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 
 export const cycle = StyleSheet.create({
@@ -45,19 +46,24 @@ export function Cycle({ synastry, date }: { synastry: Synastry, date: SplittedDa
 }
 export default function SynastryNineCycle({ synastry, date }: { synastry: Synastry, date: SplittedDate }) {
   const currentYear = date.year;
+  const currentStage = synastry.getLifeStageNumber(date.month, currentYear);
+  const currentStageCheck = currentStage === 4 ? synastry.getHCheck() : null;
+  const currentStageValue = isMasterNumber(currentStageCheck)
+    ? formatMasterNumber(currentStageCheck)
+    : synastry.calcLifeStage(currentStage);
 
   return (
     <View style={cycle.container}>
       <View style={[cycle.cyleMap, { width: '80px' }]}>
         <Text style={[cycle.text, { top: 25, left: 130, width: '50px' }]}>
           Etapa:
-          {synastry.getLifeStageNumber(date.month, currentYear)}
+          {currentStage}
           :
           {' '}
         </Text>
         <Text style={[cycle.number, { top: 23, left: 175, width: '30px' }]}>
-          {synastry.calcLifeStage(synastry.getLifeStageNumber(date.month, currentYear))}
-          {synastry.calcLifeStageISK(synastry.getLifeStageNumber(date.month, currentYear))}
+          {currentStageValue}
+          {synastry.calcLifeStageISK(currentStage)}
         </Text>
       </View>
       <View style={cycle.cyleMap}>

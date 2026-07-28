@@ -1,4 +1,5 @@
 import Synastry, { SplittedDate } from '@/resources/Synastry';
+import { formatMasterNumber, isMasterNumber } from '@/utils/numbers';
 import {
   Image, StyleSheet, Text, View,
 } from '@react-pdf/renderer';
@@ -222,6 +223,11 @@ export const timeCurve = StyleSheet.create({
 
 export default function SynastryTimeCurve({ synastry, date }: { synastry: Synastry, date: SplittedDate }) {
   const activeStage = synastry.getLifeStageNumber(date.month, date.year);
+  const stageFourCheck = synastry.getHCheck();
+  const stageFourIsMaster = isMasterNumber(stageFourCheck);
+  const stageFourValue = stageFourIsMaster
+    ? formatMasterNumber(stageFourCheck)
+    : synastry.calcLifeStage(4);
   return (
     <View style={[timeCurve.container]}>
 
@@ -269,8 +275,8 @@ export default function SynastryTimeCurve({ synastry, date }: { synastry: Synast
           </Text>
         </View>
         <View style={[timeCurve.circle, timeCurve.s4_vibration]}>
-          <Text>
-            {synastry.calcLifeStage(4)}
+          <Text style={stageFourIsMaster ? { fontSize: '8px' } : {}}>
+            {stageFourValue}
             {synastry.calcLifeStageISK(4)}
           </Text>
         </View>
