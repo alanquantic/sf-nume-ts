@@ -141,6 +141,7 @@ function Navbar() {
   }, [existDownloadPDF, activeConsultant, selectedGroup, selectedPartnersAsPersons, location]);
 
   const handlerEdit = () => {
+    if (!consultant?.id) return;
     handleIsEditingConsultant(true);
   };
 
@@ -517,18 +518,35 @@ function Navbar() {
                 </Link>
               </li>
               <li className="flex items-center justify-center">
-                <Link
-                  className="button-nav-bar"
-                  to="/consultant"
-                  onClick={handlerEdit}
-                >
-                  <img
-                    src="/assets/navbar/update_user.svg"
-                    className="mb-1"
-                    alt="update_user"
-                  />
-                  {t('navbar.updateData')}
-                </Link>
+                {consultant?.id
+                  ? (
+                    <Link
+                      className="button-nav-bar"
+                      to="/consultant"
+                      onClick={handlerEdit}
+                    >
+                      <img
+                        src="/assets/navbar/update_user.svg"
+                        className="mb-1"
+                        alt="update_user"
+                      />
+                      {t('navbar.updateData')}
+                    </Link>
+                  )
+                  : (
+                    <button
+                      type="button"
+                      className="button-nav-bar--disabled"
+                      disabled
+                    >
+                      <img
+                        src="/assets/navbar/update_user.svg"
+                        className="mb-1"
+                        alt="update_user"
+                      />
+                      {t('navbar.updateData')}
+                    </button>
+                  )}
               </li>
               <li className="flex items-center justify-center">
                 <ConsultationDateModal />

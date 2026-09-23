@@ -25,8 +25,10 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
   const { user: userAuth } = useAuth();
 
   const {
-    handleIsEditingConsultant, isEditingConsultant, selectActiveConsultant, selectConsultant,
+    handleIsEditingConsultant, isEditingConsultant: isEditingFlag, selectActiveConsultant, selectConsultant,
   } = useConsult();
+  // Solo se permite editar si hay un consultante seleccionado con id válido
+  const isEditingConsultant = isEditingFlag && !!consultant?.id;
   const {
     names, lastName, scdLastName, date, nationality, gender, company, email, phone,
     handleInputChange, formError, setFormError, reset,
@@ -66,6 +68,9 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
       setIsLoading(true);
       try {
         if (isEditingConsultant) {
+          if (!consultant?.id) {
+            throw new Error(t('forms.selectConsultantToEdit', 'Selecciona un consultante para editar sus datos.') as string);
+          }
           const editedConsultant: Partial<Api.Consultant> = {
             company,
             date,
@@ -78,7 +83,7 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
             scdLastName,
           };
           const savedConsultant = await updateConsultantMutation.mutateAsync({
-            consultantId: consultant?.id || '',
+            consultantId: consultant.id,
             consultant: editedConsultant,
           });
           Swal.fire({
@@ -302,7 +307,14 @@ function ConsultantForm({ initialForm }: { initialForm: any }) {
 }
 
 function ConsultantFormWrapper() {
-  const { isEditingConsultant, consultant } = useConsult();
+  const { isEditingConsultant: isEditingFlag, consultant, handleIsEditingConsultant } = useConsult();
+  const isEditingConsultant = isEditingFlag && !!consultant?.id;
+
+  // Si se activa el modo edición sin consultante (o se deselecciona), salir de modo edición
+  useEffect(() => {
+    if (isEditingFlag && !consultant?.id) handleIsEditingConsultant(false);
+  }, [isEditingFlag, consultant?.id]);
+
   const { consultants: users } = useConsultants();
   const consultantData = Array.isArray(users) ? users.find((element) => element.id === consultant?.id) : null;
 
