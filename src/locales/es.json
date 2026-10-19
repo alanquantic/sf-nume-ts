@@ -216,6 +216,23 @@
     "enter": "Ingresar",
     "forgotPassword": "¿Olvidaste tu contraseña?"
   },
+  "passwordReset": {
+    "forgotTitle": "Recuperar contraseña",
+    "forgotDescription": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "sendLink": "Enviar enlace",
+    "emailSent": "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.",
+    "backToLogin": "Volver a iniciar sesión",
+    "resetTitle": "Nueva contraseña",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "save": "Guardar",
+    "tooShort": "La contraseña debe tener al menos {{min}} caracteres.",
+    "mismatch": "Las contraseñas no coinciden.",
+    "success": "Contraseña actualizada. Ya puedes iniciar sesión.",
+    "missingToken": "El enlace no es válido o está incompleto.",
+    "requestNewLink": "Solicitar un nuevo enlace",
+    "genericError": "Ha ocurrido un error. Por favor, intenta nuevamente."
+  },
   "home": {
     "title": "Bienvenid@ {{name}}",
     "subtitle": "a tu Software de Numerología",

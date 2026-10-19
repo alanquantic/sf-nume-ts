@@ -216,6 +216,23 @@
     "enter": "Enter",
     "forgotPassword": "Forgot your password?"
   },
+  "passwordReset": {
+    "forgotTitle": "Recover password",
+    "forgotDescription": "Enter your email and we will send you a link to reset your password.",
+    "sendLink": "Send link",
+    "emailSent": "If the email is registered, you will receive a link to reset your password.",
+    "backToLogin": "Back to log in",
+    "resetTitle": "New password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "save": "Save",
+    "tooShort": "Password must be at least {{min}} characters long.",
+    "mismatch": "Passwords do not match.",
+    "success": "Password updated. You can now log in.",
+    "missingToken": "The link is invalid or incomplete.",
+    "requestNewLink": "Request a new link",
+    "genericError": "Something went wrong. Please try again."
+  },
   "home": {
     "title": "Welcome {{name}}",
     "subtitle": "to your Numerology Software",
