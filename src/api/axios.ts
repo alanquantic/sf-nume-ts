@@ -23,7 +23,9 @@ axios.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const requestUrl = error?.config?.url as string | undefined;
-    const isAuthRoute = requestUrl?.includes('/auth/login');
+    // 401 en rutas publicas de auth (credenciales o token de reset invalidos) no es sesion expirada
+    const isAuthRoute = ['/auth/login', '/auth/forgot-password', '/auth/reset-password']
+      .some((route) => requestUrl?.includes(route));
 
     if (status === 401 && !isAuthRoute) {
       storage.clearToken();
