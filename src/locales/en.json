@@ -213,6 +213,9 @@
     "login": "Log in",
     "email": "Email",
     "password": "Password",
+    "emailPlaceholder": "name@email.com",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "enter": "Enter",
     "forgotPassword": "Forgot your password?"
   },

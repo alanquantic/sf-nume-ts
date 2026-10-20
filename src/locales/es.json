@@ -213,6 +213,9 @@
     "login": "Iniciar sesión",
     "email": "Correo electrónico",
     "password": "Contraseña",
+    "emailPlaceholder": "nombre@correo.com",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
     "enter": "Ingresar",
     "forgotPassword": "¿Olvidaste tu contraseña?"
   },
