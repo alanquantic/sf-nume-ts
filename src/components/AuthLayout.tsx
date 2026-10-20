@@ -36,7 +36,7 @@ function AuthLayout({ children }: AuthLayoutProps) {
           </div>
           <div className="col-span-5 h-full flex flex-col items-center justify-center bg-white bg-opacity-50">
             <div className="w-full flex flex-col items-center justify-center">
-              <img src="/assets/welcome.png" className="w-32" alt="welcome" />
+              <img src="/assets/welcome.png" className="w-44 mb-2" alt="welcome" />
               {children}
             </div>
           </div>
