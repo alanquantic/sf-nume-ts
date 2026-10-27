@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_URL: string
   readonly VITE_API_URL: string
   readonly VITE_GA?: string;
+  readonly VITE_PROMO_API_URL?: string;
+  readonly VITE_PROMO_TYPES?: string;
   readonly DEV: boolean;
 }
 interface ImportMeta {
