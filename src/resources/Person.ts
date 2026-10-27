@@ -1464,46 +1464,36 @@ class Person {
   }
 
   /**
-   * calculate current quarter
-   * @param {Number} yearToCalculate
+   * calculate current quarter (cuatrimestre) for the consultation date
+   * The quarters follow the birthday cycle, as in the annual calendar:
+   * months 0-4 from the birth month → quarter one, 5-8 → quarter two,
+   * 9-11 → quarter three, all of them for the year the cycle started.
+   * Before the birthday day, the birth month closes the previous cycle (quarter three).
+   * @param {Number} month consultation month (1-12)
+   * @param {Number} year consultation year
+   * @param {Number} day consultation day
    * @returns {Number} current quarter
    */
-  calcCurrentQuarter(month: number, year: number): number {
+  calcCurrentQuarter(month: number, year: number, day?: number): number {
+    const monthToCalculate = _.isNil(month) ? getMonth(this.NOW) + 1 : month;
     const yearToCalculate = _.isNil(year) ? getYear(this.NOW) : year;
-    const listOfMonths = this.getCustomMonths();
-    const months = getAllMonths();
-    const actualMonth = getMonthName(this.NOW.getMonth() + 1);
-    const currentMonth = months.findIndex((i) => i === capitalize(actualMonth));
-    const birthDateMonth = getMonthName(this.getMonthOfBirth() + 1);
-    const index = listOfMonths.findIndex((i) => i === capitalize(actualMonth));
-    // Use birth month index (0-11) instead of searching for 'Enero'
-    const indexEnero = this.getMonthOfBirth();
-    const shouldAdvanceStage = (currentMonth + 1) >= indexEnero;
-    if (index < 5) {
-      if (birthDateMonth === actualMonth && getDate(this.birthDate) > 20) {
-        return this.getQuarterThree(yearToCalculate - 1);
-      }
-      return this.getQuarterOne();
-    }
-    if (index > 4 && index < 9) {
-      if (indexEnero === 0) {
-        return this.getQuarterTwo(yearToCalculate);
-      }
-      if (!shouldAdvanceStage) {
-        return this.getQuarterTwo(yearToCalculate - 1);
-      }
-      return this.getQuarterTwo(yearToCalculate);
-    }
-    if (index > 8) {
-      if (indexEnero === 0) {
-        return this.getQuarterThree(yearToCalculate);
-      }
-      if (!shouldAdvanceStage) {
-        return this.getQuarterThree(yearToCalculate - 1);
-      }
-      return this.getQuarterThree(yearToCalculate);
-    }
-    return 0;
+    const dayToCalculate = _.isNil(day) ? getDate(this.NOW) : day;
+    const birthMonth = this.getMonthOfBirth() + 1;
+    const birthDay = this.getDayOfBirth();
+
+    // Only the birth month is split by day (start and end of the cycle);
+    // the other months count whole, as the rows of the annual calendar.
+    const beforeBirthdayInBirthMonth = monthToCalculate === birthMonth && dayToCalculate < birthDay;
+    const monthsSinceBirthday = beforeBirthdayInBirthMonth
+      ? 11
+      : (monthToCalculate - birthMonth + 12) % 12;
+    const birthdayPassed = monthToCalculate > birthMonth
+      || (monthToCalculate === birthMonth && dayToCalculate >= birthDay);
+    const cycleYear = birthdayPassed ? yearToCalculate : yearToCalculate - 1;
+
+    if (monthsSinceBirthday < 5) return this.getQuarterOne();
+    if (monthsSinceBirthday < 9) return this.getQuarterTwo(cycleYear);
+    return this.getQuarterThree(cycleYear);
   }
 
   getQuarterMonth(monthToCalculate: number, yearToCalculate: number): number {

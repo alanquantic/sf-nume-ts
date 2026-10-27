@@ -87,30 +87,30 @@ export default function LifePathDialogs({ consultant, now }: { consultant: Perso
       </View>
       <View style={[lifePathDialogs.wrap, lifePathDialogs.wrap_3]}>
         <View style={[lifePathDialogs.item, lifePathDialogs.top]}>
-          <Text>{getSumHierarchy(consultant.calcPersonalYear(now.year), consultant.calcCurrentQuarter(now.month, now.year))}</Text>
+          <Text>{getSumHierarchy(consultant.calcPersonalYear(now.year), consultant.calcCurrentQuarter(now.month, now.year, now.day))}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.left]}>
           <Text>{consultant.calcPersonalYear(now.year)}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.right]}>
-          <Text>{consultant.calcCurrentQuarter(now.month, now.year)}</Text>
+          <Text>{consultant.calcCurrentQuarter(now.month, now.year, now.day)}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.bottom]}>
-          <Text>{getResHierarchy(consultant.calcPersonalYear(now.year), consultant.calcCurrentQuarter(now.month, now.year))}</Text>
+          <Text>{getResHierarchy(consultant.calcPersonalYear(now.year), consultant.calcCurrentQuarter(now.month, now.year, now.day))}</Text>
         </View>
       </View>
       <View style={[lifePathDialogs.wrap, lifePathDialogs.wrap_4]}>
         <View style={[lifePathDialogs.item, lifePathDialogs.top]}>
-          <Text>{getSumHierarchy(consultant.calcCurrentQuarter(now.month, now.year), consultant.calcPersonalMonth(now))}</Text>
+          <Text>{getSumHierarchy(consultant.calcCurrentQuarter(now.month, now.year, now.day), consultant.calcPersonalMonth(now))}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.left]}>
-          <Text>{consultant.calcCurrentQuarter(now.month, now.year)}</Text>
+          <Text>{consultant.calcCurrentQuarter(now.month, now.year, now.day)}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.right]}>
           <Text>{consultant.calcPersonalMonth(now)}</Text>
         </View>
         <View style={[lifePathDialogs.item, lifePathDialogs.bottom]}>
-          <Text>{getResHierarchy(consultant.calcCurrentQuarter(now.month, now.year), consultant.calcPersonalMonth(now))}</Text>
+          <Text>{getResHierarchy(consultant.calcCurrentQuarter(now.month, now.year, now.day), consultant.calcPersonalMonth(now))}</Text>
         </View>
       </View>
       <View style={[lifePathDialogs.wrap, lifePathDialogs.wrap_5]}>
