@@ -1,5 +1,6 @@
 import '../FloatingLaura.css';
 import FloatingLauraButton from '../FloatingLauraButton';
+import LauraRecommendation from './LauraRecommendation';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import ToastMessage from './ToastMessage';
@@ -15,6 +16,7 @@ function MainLayout({ children }: { children: React.ReactNode }) {
         </section>
       </div>
       <FloatingLauraButton />
+      <LauraRecommendation />
       <ToastMessage />
     </>
   );
