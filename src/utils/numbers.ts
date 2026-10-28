@@ -334,6 +334,8 @@ export function normalizeMasterNumberForSubtraction(value: number): number {
 }
 
 export function getSumHierarchy(a: number, b: number): number {
+  // Dos maestros 11 dialogan en 22; cualquier otra suma se reduce a un dígito.
+  if (a === 11 && b === 11) return 22;
   const sum = reduceNumberForSub(
     normalizeMasterNumberForSubtraction(a) + normalizeMasterNumberForSubtraction(b),
   );

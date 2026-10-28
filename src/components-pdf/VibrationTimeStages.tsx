@@ -157,7 +157,7 @@ export default function VibrationTimeStage({ consultant, date }: { consultant: P
             mestre
           </Text>
           <Text style={[vibrationStyle.squad, { backgroundColor: '#66AB8E' }]}>
-            {consultant.calcCurrentQuarter(date.month, date.year)}
+            {consultant.calcCurrentQuarter(date.month, date.year, date.day)}
             {consultant.calcCurrentQuarterISK(date.month, date.year)}
           </Text>
         </View>

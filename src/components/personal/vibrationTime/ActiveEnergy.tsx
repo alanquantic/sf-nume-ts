@@ -27,7 +27,7 @@ function ActiveEnergy() {
       </div>
       <b className="col-start-3 row-start-3 text-sm pl-1">{t('vibrationTime.energy.quarter')}</b>
       <div className="col-start-3 row-start-4 row-span-2 bg-green-70 text-xl font-bold flex items-center justify-center rounded-md w-10 h-10 m-auto">
-        {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year)}
+        {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day)}
         {consultant.calcCurrentQuarterISK(calculationDate.month, calculationDate.year)}
       </div>
       <b className="col-start-4 row-start-4 text-sm pl-1">{t('vibrationTime.energy.month')}</b>
