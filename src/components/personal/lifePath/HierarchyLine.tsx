@@ -75,7 +75,7 @@ export default function HierarchyLine() {
             <div className="col-start-2 row-start-1">
               <p className="mb-1 font-bold text-sm">{t('hierarchyLine.dialogue')}</p>
               <CircleNumber size="sm" appearance="green" border="green">
-                {getSumHierarchy(consultant.calcPersonalYear(calculationYear), consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year))}
+                {getSumHierarchy(consultant.calcPersonalYear(calculationYear), consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day))}
               </CircleNumber>
             </div>
             <div className="col-start-1 row-start-2 lines">
@@ -85,12 +85,12 @@ export default function HierarchyLine() {
             </div>
             <div className="col-start-3 row-start-2 triangle">
               <CircleNumber size="sm" appearance="white" border="secondary">
-                {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year)}
+                {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day)}
               </CircleNumber>
             </div>
             <div className="col-start-2 row-start-3">
               <CircleNumber size="sm" appearance="white" border="red">
-                {getResHierarchy(consultant.calcPersonalYear(calculationYear), consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year))}
+                {getResHierarchy(consultant.calcPersonalYear(calculationYear), consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day))}
               </CircleNumber>
               <p className="mb-1 font-bold text-sm">{t('hierarchyLine.challenge')}</p>
             </div>
@@ -103,12 +103,12 @@ export default function HierarchyLine() {
             <div className="col-start-2 row-start-1">
               <p className="mb-1 font-bold text-sm">{t('hierarchyLine.dialogue')}</p>
               <CircleNumber size="sm" appearance="green" border="green">
-                {getSumHierarchy(consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year), consultant.calcPersonalMonth(calculationDate))}
+                {getSumHierarchy(consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day), consultant.calcPersonalMonth(calculationDate))}
               </CircleNumber>
             </div>
             <div className="col-start-1 row-start-2 lines">
               <CircleNumber size="sm" appearance="white" border="main" radiant="inner-shadow-gold">
-                {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year)}
+                {consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day)}
               </CircleNumber>
             </div>
             <div className="col-start-3 row-start-2 triangle">
@@ -118,7 +118,7 @@ export default function HierarchyLine() {
             </div>
             <div className="col-start-2 row-start-3">
               <CircleNumber size="sm" appearance="white" border="red">
-                {getResHierarchy(consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year), consultant.calcPersonalMonth(calculationDate))}
+                {getResHierarchy(consultant.calcCurrentQuarter(calculationDate.month, calculationDate.year, calculationDate.day), consultant.calcPersonalMonth(calculationDate))}
               </CircleNumber>
               <p className="mb-1 font-bold text-sm">{t('hierarchyLine.challenge')}</p>
             </div>
