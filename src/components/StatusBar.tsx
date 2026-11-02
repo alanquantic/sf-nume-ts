@@ -5,7 +5,7 @@ import { formatDate } from '../utils/constants';
 import ConsultantPicker from './ConsultantPicker';
 
 function StatusBarConsultantDetails() {
-  const { consultant } = useConsult();
+  const { consultant, calculationDate } = useConsult();
   const { t } = useTranslation();
 
   if (!consultant) return null;
@@ -22,7 +22,7 @@ function StatusBarConsultantDetails() {
       <div>
         {t('age')}
         :
-        <strong className="ml-2">{consultant.getYearsOld()}</strong>
+        <strong className="ml-2">{consultant.getYearsOldAtDate(calculationDate)}</strong>
       </div>
     </>
   );

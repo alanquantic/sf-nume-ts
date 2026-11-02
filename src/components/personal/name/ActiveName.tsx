@@ -10,7 +10,7 @@ type ActiveNameProps = {
 export default function ActiveName({
   table, start, nameCycles, nameSubCycles,
 }: ActiveNameProps) {
-  const { consultationDate: newDate, consultant } = useConsult();
+  const { consultationDate: newDate, calculationDate, consultant } = useConsult();
 
   if (!consultant) return null;
   if (table.length === 0) return null;
@@ -49,7 +49,7 @@ export default function ActiveName({
             {' '}
           </div>
           <div className={`h-30 text-13 ${bkConfig(i + start, 'bg-main-15')} flex items-center justify-center border-r border-t border-b border-gray-500`}>
-            {i + start}
+            {consultant.getTableAge(i + start, calculationDate)}
             {' '}
           </div>
           <div className={`h-60 text-13 ${bkConfig(i + start, '')} text-black border-r border-b border-gray-500 flex flex-col items-center justify-center bg-gray-300`}>

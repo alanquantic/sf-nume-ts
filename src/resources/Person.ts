@@ -222,6 +222,11 @@ class Person {
     return age;
   }
 
+  // Edad a mostrar en una columna de las tablas, indexadas por años desde el nacimiento.
+  getTableAge(yearsSinceBirth: number, date: SplittedDate): number {
+    return this.getYearsOldAtDate({ ...date, year: this.getYearOfBirth() + yearsSinceBirth });
+  }
+
   calcAgeDigit(yearToCalculate?: number): number {
     return reduceNumber((this.getYearsOld(yearToCalculate) - 1) + this.getYearsOld(yearToCalculate));
   }
@@ -1169,15 +1174,17 @@ class Person {
 
   annualReturn(opts: SplittedDate): AnnualReturn {
     const yearToCalculate = _.isNil(opts.year) ? getYear(this.NOW) : opts.year;
-    const age = (yearToCalculate - this.getYearOfBirth());
+    // La vibración usa la diferencia de años; la edad mostrada respeta el cumpleaños.
+    const yearsSinceBirth = (yearToCalculate - this.getYearOfBirth());
+    const age = this.getYearsOldAtDate({ ...opts, year: yearToCalculate });
     const a = reduceNumber(yearToCalculate);
     const aK = reduceNumberISK(yearToCalculate);
     const A = `${a}${this.karmic.includes(aK) ? '*' : ''}`;
     const b = this.calcPersonalYear(yearToCalculate);
     const bK = reduceNumberISK(yearToCalculate + getMonth(this.birthDate) + 1 + getDate(this.birthDate));
     const B = `${b}${this.karmic.includes(bK) ? '*' : ''}`;
-    const c = reduceNumber(age);
-    const cK = reduceNumberISK(age);
+    const c = reduceNumber(yearsSinceBirth);
+    const cK = reduceNumberISK(yearsSinceBirth);
     const C = `${c}${this.karmic.includes(cK) ? '*' : ''}`;
     const d = reduceNumber(a + b);
     const dK = reduceNumberISK(a + b);

@@ -22,7 +22,7 @@ export const pinnacleName = StyleSheet.create({
 export function ActiveName({
   table, start, consultant, nameCycles, date, position,
 }: { table: any, start: number, consultant: Person, nameCycles: any, date: SplittedDate, position: number }) {
-  const consultantAge = consultant.getYearsOldAtDate(date);
+  const consultantAge = consultant.getYearsOld(date.year);
   const isCycle = (i: number) => (i === consultantAge ? false : nameCycles.includes(i));
   const bkConfig = (i: number, bg: string) => {
     if (i === consultantAge) {
@@ -68,7 +68,7 @@ export function ActiveName({
                 width: 20, height: 20, backgroundColor: `${bkConfig(i + start, '#3200332d')}`, display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
               >
-                <Text style={{ fontSize: 11 }}>{i + start}</Text>
+                <Text style={{ fontSize: 11 }}>{consultant.getTableAge(i + start, date)}</Text>
               </View>
               <View style={{
                 width: 20, height: 36, backgroundColor: `${bkConfig(i + start, '#0000002d')}`, display: 'flex', justifyContent: 'center',
