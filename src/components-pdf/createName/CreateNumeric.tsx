@@ -8,7 +8,7 @@ export const pinnacleName = StyleSheet.create({
     left: '11px',
     fontSize: '7px',
     width: '271px',
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
   },
   wrap: {
     position: 'relative',
@@ -39,14 +39,14 @@ export default function CreateNumeric({ consultant }: { consultant: Person }) {
         </View>
         <View style={[pinnacleName.circle, { left: 85 }]}>
           <Text>
-            {consultant.getSoulCheck()}
-            {consultant.calcSoulNumberISK()}
+            {consultant.calcSoulNumber()}
+            {consultant.calcSoulNumberViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, { left: 151 }]}>
           <Text>
-            {consultant.getExpressionSoulCheck()}
-            {consultant.calcSoulExpressionISK()}
+            {consultant.calcSoulExpression()}
+            {consultant.calcSoulExpressionViewISK()}
           </Text>
         </View>
         <View style={[pinnacleName.circle, { left: 220 }]}>
