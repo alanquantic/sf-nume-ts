@@ -39,12 +39,12 @@ export default function DestinyTableCreateName({ createNameObj, calculationDate 
     <div className="pinnacle-wrap px-8 py-8">
 
       <div>
-        <CreateNameActiveName table={table1} start={0} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
-        <CreateNameActiveName table={table2} start={31} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
-        <CreateNameActiveName table={table3} start={62} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
-        <CreateNameActiveName table={table4} start={93} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
-        <CreateNameActiveName table={table5} start={124} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
-        <CreateNameActiveName table={table6} start={155} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} />
+        <CreateNameActiveName table={table1} start={0} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
+        <CreateNameActiveName table={table2} start={31} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
+        <CreateNameActiveName table={table3} start={62} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
+        <CreateNameActiveName table={table4} start={93} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
+        <CreateNameActiveName table={table5} start={124} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
+        <CreateNameActiveName table={table6} start={155} nameCycles={nameCycles} nameSubCycles={nameSubCycles} consultant={createNameObj} age={age} calculationDate={calculationDate} />
       </div>
 
     </div>

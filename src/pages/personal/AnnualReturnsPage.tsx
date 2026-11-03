@@ -19,7 +19,7 @@ export default function AnnualReturnsPage() {
       year,
       annualReturn: consultant.annualReturn({ ...calculationDate, year }),
       personalYear: consultant.calcPersonalYear(year),
-      yearsOld: consultant.getYearsOld(year),
+      yearsOld: consultant.getYearsOldAtDate({ ...calculationDate, year }),
     };
   };
 

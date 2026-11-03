@@ -1,4 +1,4 @@
-import Person from '@/resources/Person';
+import Person, { SplittedDate } from '@/resources/Person';
 
 type ActiveNameProps = {
   table: any;
@@ -7,10 +7,11 @@ type ActiveNameProps = {
   nameSubCycles: number[];
   consultant: Person;
   age: number;
+  calculationDate: SplittedDate;
 };
 
 export default function CreateNameActiveName({
-  table, start, nameCycles, nameSubCycles, consultant, age,
+  table, start, nameCycles, nameSubCycles, consultant, age, calculationDate,
 }: ActiveNameProps) {
   if (table.length === 0) return null;
   const consultantAge = age;
@@ -47,7 +48,7 @@ export default function CreateNameActiveName({
             {' '}
           </div>
           <div className={`h-30 text-13 ${bkConfig(i + start, 'bg-main-15')} flex items-center justify-center border-r border-t border-b border-gray-500`}>
-            {i + start}
+            {consultant.getTableAge(i + start, calculationDate)}
             {' '}
           </div>
           <div className={`h-60 text-13 ${bkConfig(i + start, '')} text-black border-r border-b border-gray-500 flex flex-col items-center justify-center bg-gray-300`}>
