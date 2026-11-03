@@ -108,7 +108,7 @@ export default function DestinyTable({
                 'bg-black bg-opacity-10',
               )} text-center border-b border-r border-gray-400`}
             >
-              {i + start}
+              {consultant.getTableAge(i + start, calculationDate)}
               {' '}
             </div>
             <div

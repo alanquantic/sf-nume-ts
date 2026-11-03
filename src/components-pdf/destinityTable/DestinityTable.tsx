@@ -53,7 +53,7 @@ export default function DestinityTable({
 }: DestinityTableProps) {
   const single = consultant.getSingle();
 
-  const consultantAge = consultant.getYearsOldAtDate(newDate);
+  const consultantAge = consultant.getYearsOld(newDate.year);
   const isCycle = (i: number) => (i === consultantAge ? false : nameCycles.includes(i));
   const isSubCycle = (i: number) => (i === consultantAge ? false : nameSubCycles.includes(i));
   const bkConfig = (i: number, bg: string) => {
@@ -147,7 +147,7 @@ export default function DestinityTable({
               </View>
               <View style={[pinnacleName.item, { width: 19, height: 15, backgroundColor: bkConfig(i + start, '#e5e5e5') }]}>
                 <Text>
-                  {i + start}
+                  {consultant.getTableAge(i + start, newDate)}
                 </Text>
               </View>
               <View style={[pinnacleName.item, { width: 19, height: 15, backgroundColor: bkConfig(i + start, '#ffffff') }]}>

@@ -133,7 +133,7 @@ function SinastryDestinyTable({
                 calculationDate.year === consultant.getYearOfBirth() + i + start ? 'bg-red-50' : 'bg-black bg-opacity-10'
               }`}
               >
-                {i + start}
+                {consultant.getTableAge(i + start, calculationDate)}
               </div>
               <div className={`h-12 w-7 text-13 border-b border-r border-gray-400 flex flex-col ${
                 calculationDate.year === consultant.getYearOfBirth() + i + start ? 'bg-red-50' : 'bg-white'

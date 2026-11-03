@@ -197,7 +197,7 @@ export default function SynastryDestinityTable({
                 }]}
                 >
                   <Text>
-                    {i + start}
+                    {consultant.getTableAge(i + start, date)}
                   </Text>
                 </View>
                 <View style={[pinnacleName.item, {

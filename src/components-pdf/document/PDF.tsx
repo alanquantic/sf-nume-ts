@@ -88,7 +88,7 @@ export default function PDF({
               <Text>{consultant.getFormattedBirthDate()}</Text>
             </View>
             <View style={configReport.header_age}>
-              <Text>{consultant.getYearsOld()}</Text>
+              <Text>{date ? consultant.getYearsOldAtDate(date) : consultant.getYearsOld()}</Text>
             </View>
             <View style={configReport.header_logo} />
             {normalizedLogoURL ? <Image style={configReport.img_logo} src={normalizedLogoURL} /> : null}
